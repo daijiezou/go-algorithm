@@ -1,4 +1,4 @@
-package tree
+package tree_course
 
 import (
 	"fmt"

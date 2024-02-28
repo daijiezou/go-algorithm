@@ -1,4 +1,4 @@
-package tree
+package tree_course
 
 // https://leetcode.cn/problems/search-in-a-binary-search-tree/
 func searchBST(root *TreeNode, val int) *TreeNode {

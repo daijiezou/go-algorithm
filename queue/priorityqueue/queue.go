@@ -41,6 +41,8 @@ func (mpq *MaxPQ) delMin() int {
 
 /* 上浮第 x 个元素，以维护最小堆性质 */
 func (mpq *MaxPQ) swim(x int) {
+	// 查看是否比自己的父节点小
+	// 如果比自己的父节点小就与父节点交换位置
 	for x > 1 && mpq.more(mpq.parent(x), x) {
 		mpq.swap(mpq.parent(x), x)
 		x = mpq.parent(x)

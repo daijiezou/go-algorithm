@@ -1,20 +1,20 @@
 package _00questions
 
 import (
-	"Golang-algorithm/tree"
+	"Golang-algorithm/tree_course"
 	"strconv"
 )
 
 var binaryTreePathsRes []string
 var binaryTreePath []int
 
-func binaryTreePaths(root *tree.TreeNode) []string {
+func binaryTreePaths(root *tree_course.TreeNode) []string {
 	binaryTreePathsRes = []string{}
 	binaryTreePath = []int{}
 	binaryTreePathsHelper(root)
 	return binaryTreePathsRes
 }
-func binaryTreePathsHelper(node *tree.TreeNode) {
+func binaryTreePathsHelper(node *tree_course.TreeNode) {
 	if node == nil {
 		return
 	}
@@ -37,14 +37,14 @@ func binaryTreePathsHelper(node *tree.TreeNode) {
 var sumNumbersRes int
 var sumNumbersPath string
 
-func sumNumbers(root *tree.TreeNode) int {
+func sumNumbers(root *tree_course.TreeNode) int {
 	sumNumbersRes = 0
 	sumNumbersPath = ""
 	sumNumbersHelper(root)
 	return sumNumbersRes
 }
 
-func sumNumbersHelper(root *tree.TreeNode) {
+func sumNumbersHelper(root *tree_course.TreeNode) {
 	if root == nil {
 		return
 	}
@@ -62,12 +62,12 @@ func sumNumbersHelper(root *tree.TreeNode) {
 
 // 二叉树的右视图
 // https://leetcode.cn/problems/binary-tree-right-side-view/
-func rightSideView(root *tree.TreeNode) []int {
+func rightSideView(root *tree_course.TreeNode) []int {
 	var res []int
 	if root == nil {
 		return res
 	}
-	var trees []*tree.TreeNode
+	var trees []*tree_course.TreeNode
 	trees = append(trees, root)
 	for len(trees) > 0 {
 		length := len(trees)
@@ -148,7 +148,7 @@ var flipMatchVoyageRes []int
 var voyageFlag bool
 var flipMatchVoyageIndex int
 
-func flipMatchVoyage(root *tree.TreeNode, voyage []int) []int {
+func flipMatchVoyage(root *tree_course.TreeNode, voyage []int) []int {
 	flipMatchVoyageRes = []int{}
 	voyageFlag = true
 	flipMatchVoyageIndex = 0
@@ -159,7 +159,7 @@ func flipMatchVoyage(root *tree.TreeNode, voyage []int) []int {
 	return flipMatchVoyageRes
 }
 
-func flipMatchVoyageHelper(node *tree.TreeNode, voyage []int) {
+func flipMatchVoyageHelper(node *tree_course.TreeNode, voyage []int) {
 	if node == nil || !voyageFlag {
 		return
 	}

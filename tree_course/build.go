@@ -1,4 +1,4 @@
-package tree
+package tree_course
 
 func buildTree(preorder []int, inorder []int) *TreeNode {
 	// 根据函数定义，用 preorder 和 reversInorder 构造二叉树

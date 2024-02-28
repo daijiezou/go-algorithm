@@ -1,4 +1,4 @@
-package tree
+package tree_course
 
 type TreeNode struct {
 	Val   int

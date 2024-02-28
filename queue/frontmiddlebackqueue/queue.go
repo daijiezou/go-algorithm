@@ -1,4 +1,4 @@
-package queue
+package frontmiddlebackqueue
 
 type FrontMiddleBackQueue struct {
 	List   []int

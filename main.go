@@ -7,13 +7,6 @@ import (
 )
 
 func main() {
-	//resultLMap := make(map[int]int)
-	//
-	//FindNeighbour([][]int{{3, 1}, {3, 2}, {1, 0}, {0, 4}, {0, 5}, {4, 6}}, 0, 0, 1, resultLMap)
-	//fmt.Println(resultLMap)
-	res := make([][]int, 1)
-	res[0] = []int{1}
-	fmt.Println(string([]byte{65 + 25}))
 }
 
 func minimumFuelCost(roads [][]int, seats int) int64 {
@@ -469,4 +462,48 @@ func climbStairs(n int) int {
 		return 1
 	}
 	return climbStairs(n-1) + climbStairs(n-2)
+}
+
+// 计算质数
+// https://leetcode.cn/problems/count-primes/description/
+func countPrimes(n int) int {
+	count := 0
+	for i := 2; i < n; i++ {
+		if isPrime(i) {
+			count++
+		}
+	}
+	return count
+}
+
+func isPrime(n int) bool {
+	for i := 2; i*i <= n; i++ {
+		if n%i == 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func countPrimes2(n int) int {
+	isPrime := make([]bool, n)
+	// 将数组都初始化为 true
+	for i := range isPrime {
+		isPrime[i] = true
+	}
+	for i := 2; i < n; i++ {
+		if isPrime[i] {
+			// i 的倍数不可能是素数了
+			for j := i * i; j < n; j += i {
+				isPrime[j] = false
+			}
+		}
+	}
+	count := 0
+	for i := 2; i < n; i++ {
+		if isPrime[i] {
+			count++
+		}
+	}
+	return count
 }
