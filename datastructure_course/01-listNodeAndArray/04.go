@@ -189,21 +189,19 @@ func MaxSubArrayLen(nums []int, k int) int {
 	currentPreSum := 0
 	res := 0
 	preSumIndex := make(map[int]int)
-	preSumIndex[0] = -1
-	for i := 1; i < length; i++ {
-		currentPreSum = currentPreSum + nums[i]
+	preSumIndex[0] = 0
+	for i := 1; i < length+1; i++ {
+		currentPreSum = currentPreSum + nums[i-1]
 		if _, ok := preSumIndex[currentPreSum]; !ok {
 			preSumIndex[currentPreSum] = i
 		}
 		need := currentPreSum - k
 		if j, ok := preSumIndex[need]; ok {
-			length := i - j
-			if length > res {
-				res = length
+			tempLength := i - j
+			if tempLength > res {
+				res = tempLength
 			}
 		}
-
 	}
-	// 长度等于索引相减之后加1
 	return res
 }
