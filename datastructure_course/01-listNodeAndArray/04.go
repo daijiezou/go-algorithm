@@ -205,3 +205,65 @@ func MaxSubArrayLen(nums []int, k int) int {
 	}
 	return res
 }
+
+// 给定一个整数数组 nums 和一个整数 k ，返回其中元素之和可被 k 整除的（连续、非空） 子数组 的数目。
+// 子数组 是数组的 连续 部分。
+// https://leetcode.cn/problems/subarray-sums-divisible-by-k/description/
+func subarraysDivByK(nums []int, k int) int {
+	length := len(nums)
+	preSum := make([]int, length+1)
+	divIndex := make(map[int]int)
+	for i := 1; i < length+1; i++ {
+		preSum[i] = preSum[i-1] + nums[i-1]
+	}
+	var res int
+	for i := 0; i < length+1; i++ {
+		div := preSum[i] % k
+		if div < 0 {
+			div += k
+		}
+
+		if count, ok := divIndex[div]; ok {
+			res += count
+			divIndex[div]++
+		} else {
+			divIndex[div] = 1
+		}
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/longest-well-performing-interval/description/
+func longestWPI(hours []int) int {
+	length := len(hours)
+	preSum := make([]int, length+1)
+	valIndex := make(map[int]int)
+	res := 0
+	max := func(x, y int) int {
+		if x > y {
+			return x
+		}
+		return y
+	}
+
+	for i := 1; i < length+1; i++ {
+		if hours[i-1] <= 8 {
+			preSum[i] = preSum[i-1] - 1
+		} else {
+			preSum[i] = preSum[i-1] + 1
+		}
+		if _, ok := valIndex[preSum[i]]; !ok {
+			valIndex[preSum[i]] = i
+		}
+		if preSum[i] > 0 {
+			res = max(res, i)
+		} else {
+			// preSum[i] 为负，需要寻找一个 j 使得 preSum[i] - preSum[j] > 0
+			// 且 j 应该尽可能小，即寻找 preSum[j] == preSum[i] - 1
+			if j, ok := valIndex[preSum[i]-1]; ok {
+				res = max(res, i-j)
+			}
+		}
+	}
+	return res
+}
