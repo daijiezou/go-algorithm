@@ -1,5 +1,9 @@
 package _1_listNodeAndArray
 
+/*
+前缀和技巧经典习题
+*/
+
 // https://leetcode.cn/problems/range-sum-query-immutable/
 type NumArray struct {
 	preSum []int
