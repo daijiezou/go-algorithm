@@ -21,6 +21,8 @@ func NewDifference(nums []int) *Difference {
 
 func (d *Difference) Increment(i, j, val int) {
 	d.diff[i] += val
+	// 当 j+1 >= diff.length 时，说明是对 nums[i] 及以后的整个数组都进行修改，
+	// 那么就不需要再给 diff 数组减 val 了。
 	if j+1 < len(d.diff) {
 		d.diff[j+1] -= val
 	}
