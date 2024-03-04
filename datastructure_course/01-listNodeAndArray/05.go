@@ -22,24 +22,28 @@ func NewDifference(nums []int) *Difference {
 func (d *Difference) Increment(i, j, val int) {
 	d.diff[i] += val
 	if j+1 < len(d.diff) {
-		d.diff[j] -= val
+		d.diff[j+1] -= val
 	}
 }
 
 func (d *Difference) Result() []int {
-	lenth := len(d.diff)
+	length := len(d.diff)
 	res := make([]int, len(d.diff))
 	res[0] = d.diff[0]
-	for i := 1; i < lenth; i++ {
+	for i := 1; i < length; i++ {
 		res[i] = res[i-1] + d.diff[i]
 	}
 	return res
 }
 
 func corpFlightBookings(bookings [][]int, n int) []int {
-	diff := NewDifference(make([]int, n))
+	nums := make([]int, n)
+	diff := NewDifference(nums)
 	for _, book := range bookings {
-		diff.Increment(book[0]-1, book[1]+1, book[2])
+		i := book[0] - 1
+		j := book[1] - 1
+		val := book[2]
+		diff.Increment(i, j, val)
 	}
 	return diff.Result()
 }
