@@ -1,5 +1,7 @@
 package _1_listNodeAndArray
 
+import "fmt"
+
 /*
 	经典数组技巧：差分数组
 */
@@ -38,6 +40,8 @@ func (d *Difference) Result() []int {
 	return res
 }
 
+// https://leetcode.cn/problems/corporate-flight-bookings/description/
+// 这里有 n 个航班，它们分别从 1 到 n 进行编号。
 func corpFlightBookings(bookings [][]int, n int) []int {
 	nums := make([]int, n)
 	diff := NewDifference(nums)
@@ -48,4 +52,22 @@ func corpFlightBookings(bookings [][]int, n int) []int {
 		diff.Increment(i, j, val)
 	}
 	return diff.Result()
+}
+
+// https://leetcode.cn/problems/car-pooling/
+func carPooling(trips [][]int, capacity int) bool {
+	diff := NewDifference(make([]int, 10))
+	for _, trip := range trips {
+		val := trip[0]
+		i := trip[1]
+		j := trip[2] - 1
+		diff.Increment(i, j, val)
+	}
+	fmt.Println(diff.Result())
+	for _, peoples := range diff.Result() {
+		if peoples > capacity {
+			return false
+		}
+	}
+	return true
 }
