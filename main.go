@@ -63,7 +63,7 @@ func minWindow(s string, t string) string {
 	for _, b := range tByte {
 		need[b]++
 	}
-	var left, right int
+	left, right := 0, 0 // 滑动窗口
 	var start int
 	var valid int
 	length := math.MaxInt32
