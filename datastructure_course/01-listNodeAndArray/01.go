@@ -89,7 +89,7 @@ func merge(lists []*ListNode, left int, right int) *ListNode {
 	if left > right {
 		return nil
 	}
-	mid := (left + right) >> 1
+	mid := (left + right) / 2
 	return mergeTwoLists(merge(lists, left, mid), merge(lists, mid+1, right))
 }
 
