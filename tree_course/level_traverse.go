@@ -41,9 +41,9 @@ func levelOrder(root *TreeNode) [][]int {
 	var trees []*TreeNode
 	trees = append(trees, root)
 	for len(trees) > 0 {
-		lenth := len(trees)
+		length := len(trees)
 		var levelTress []int
-		for i := 0; i < lenth; i++ {
+		for i := 0; i < length; i++ {
 			cur := trees[0]
 			trees = trees[1:]
 			levelTress = append(levelTress, cur.Val)
@@ -67,9 +67,6 @@ func levelOrder2(root *TreeNode) [][]int {
 		return levelOrder2Res
 	}
 	levelOrder2Traverse(root, 0)
-	defer func() {
-		levelOrder2Res = [][]int{}
-	}()
 	return levelOrder2Res
 }
 
@@ -107,10 +104,8 @@ func levelOrderBottom(root *TreeNode) [][]int {
 				trees = append(trees, cur.Right)
 			}
 		}
-		res = append(res, levelTress)
-	}
-	for i := 0; i < len(res)/2; i++ {
-		res[i], res[len(res)-i-1] = res[len(res)-i-1], res[i]
+		// 把每一层添加到头部，就是自底向上的层序遍历。
+		res = append([][]int{levelTress}, res...)
 	}
 	return res
 }
