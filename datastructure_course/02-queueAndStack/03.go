@@ -7,14 +7,41 @@ package _2_queueAndStack
 */
 
 // 单调栈的基础模板
+// 下一个更大的元素
 func NextGreaterElement(nums []int) []int {
 	length := len(nums)
 	res := make([]int, length)
 	s := make([]int, 0)
+	// 倒着往栈里放
 	for i := length - 1; i >= 0; i-- {
+		// 删掉 nums[i] 后面较小的元素
 		for len(s) > 0 && s[len(s)-1] <= nums[i] {
 			s = s[:len(s)-1]
 		}
+		// 现在栈顶就是 nums[i] 后面的更大元素
+		if len(s) == 0 {
+			res[i] = 0
+		} else {
+			res[i] = s[len(s)-1]
+		}
+		s = append(s, nums[i])
+	}
+	return res
+}
+
+// 上一个更大的元素
+// 之前我们的 for 循环都是从数组的尾部开始往栈里添加元素，
+// 这样栈顶元素就是 nums[i] 之后的元素。所以只要我们从数组的头部开始往栈里添加元素，栈顶的元素就是 nums[i] 之前的元素，即可计算 nums[i] 的上一个更大元素。
+func PreGreaterElement(nums []int) []int {
+	length := len(nums)
+	res := make([]int, length)
+	s := make([]int, 0)
+	for i := 0; i < length; i++ {
+		// 删掉 nums[i] 前面较小的元素
+		for len(s) > 0 && s[len(s)-1] <= nums[i] {
+			s = s[:len(s)-1]
+		}
+		// 现在栈顶就是 nums[i] 前面的更大元素
 		if len(s) == 0 {
 			res[i] = 0
 		} else {

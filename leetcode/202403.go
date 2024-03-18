@@ -1,4 +1,4 @@
-package leetcode_one_question_one_day
+package leetcode
 
 import "strings"
 
