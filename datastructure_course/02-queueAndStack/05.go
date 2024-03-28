@@ -32,6 +32,8 @@ func longestSubarray(nums []int, limit int) int {
 	return res
 }
 
+// https://leetcode.cn/problems/shortest-subarray-with-sum-at-least-k/description/
+// 和至少为k的连续子数组
 func shortestSubarray(nums []int, k int) int {
 	n := len(nums)
 	preSum := make([]int, n+1)

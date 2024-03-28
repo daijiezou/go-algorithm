@@ -41,9 +41,9 @@ func levelOrder(root *TreeNode) [][]int {
 	var trees []*TreeNode
 	trees = append(trees, root)
 	for len(trees) > 0 {
-		length := len(trees)
+
 		var levelTress []int
-		for i := 0; i < length; i++ {
+		for i := 0; i < len(trees); i++ {
 			cur := trees[0]
 			trees = trees[1:]
 			levelTress = append(levelTress, cur.Val)

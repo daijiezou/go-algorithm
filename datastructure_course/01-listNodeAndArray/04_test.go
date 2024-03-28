@@ -1,6 +1,9 @@
 package _1_listNodeAndArray
 
-import "testing"
+import (
+	"math/rand"
+	"testing"
+)
 
 func Test_subarraySum(t *testing.T) {
 	type args struct {
@@ -97,5 +100,14 @@ func Test_longestWPI(t *testing.T) {
 				t.Errorf("longestWPI() = %v, want %v", got, tt.want)
 			}
 		})
+	}
+}
+
+func TestConstructor1(t *testing.T) {
+	N := 2000
+	Max := 1000000
+	nums := make([]int, 0)
+	for i := 0; i < N; i++ {
+		nums = append(nums, rand.Intn(Max)-Max/2)
 	}
 }

@@ -1,6 +1,8 @@
 package _1_listNodeAndArray
 
-// 快慢指针
+/*
+	快慢指针
+*/
 
 func deleteDuplicates(head *ListNode) *ListNode {
 	if head == nil {

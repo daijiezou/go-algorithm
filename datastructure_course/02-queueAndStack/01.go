@@ -27,7 +27,6 @@ func reorderList(head *ListNode) {
 			break
 		}
 
-		// 偶数节点，lastNode已经被接到链表的最后
 		if lastNode.Next == next {
 			lastNode.Next = nil
 			break

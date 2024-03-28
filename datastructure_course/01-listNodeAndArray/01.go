@@ -1,5 +1,9 @@
 package _1_listNodeAndArray
 
+/*
+ 链表双指针
+*/
+
 type ListNode struct {
 	Val  int
 	Next *ListNode

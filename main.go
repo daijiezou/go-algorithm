@@ -7,9 +7,15 @@ import (
 )
 
 func main() {
-	a1 := math.MinInt32
-	a2 := math.MinInt32
-	fmt.Println(int32(a1 + a2))
+	s1 := make(map[int]int)
+	s1[0] = 1
+	fmt.Println(s1)
+	f1(s1)
+	fmt.Println(s1)
+}
+
+func f1(s1 map[int]int) {
+	s1[0] = 666
 }
 
 func minimumFuelCost(roads [][]int, seats int) int64 {
