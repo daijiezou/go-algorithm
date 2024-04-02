@@ -7,15 +7,20 @@ import (
 )
 
 func main() {
-	s1 := make(map[int]int)
-	s1[0] = 1
+	s1 := [][]int{{1}}
+
 	fmt.Println(s1)
-	f1(s1)
+	f2(s1)
 	fmt.Println(s1)
+
 }
 
 func f1(s1 map[int]int) {
 	s1[0] = 666
+}
+
+func f2(in [][]int) {
+	in[0][0] = 1
 }
 
 func minimumFuelCost(roads [][]int, seats int) int64 {

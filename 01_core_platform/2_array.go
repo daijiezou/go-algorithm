@@ -1,4 +1,4 @@
-package __核心框架
+package _1_core_platform
 
 func removeDuplicates(nums []int) int {
 	length := len(nums)
