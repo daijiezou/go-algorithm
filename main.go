@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"sync"
 )
 
 func main() {
@@ -12,6 +13,8 @@ func main() {
 	fmt.Println(s1)
 	f2(s1)
 	fmt.Println(s1)
+	lock := sync.Mutex{}
+	lock.Lock()
 
 }
 

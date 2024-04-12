@@ -24,3 +24,38 @@ func maximumOddBinaryNumber(s string) string {
 	oneCnt := strings.Count(s, "1")
 	return strings.Repeat("1", oneCnt-1) + strings.Repeat("0", len(s)-oneCnt) + "1"
 }
+
+func maximumBinaryString(binary string) string {
+	if len(binary) < 2 {
+		return binary
+	}
+
+	binaryBytes := []byte(binary)
+	var preOne int
+	var ans []byte
+	for i := 0; i < len(binaryBytes); i++ {
+		if binaryBytes[i] == '1' {
+			preOne++
+			ans = append(ans, '1')
+		} else {
+			break
+		}
+	}
+	if preOne == len(binary) {
+		return string(ans)
+	}
+	var suf int
+	for i := preOne; i < len(binaryBytes); i++ {
+		if binaryBytes[i] == '1' {
+			suf++
+		}
+	}
+	for i := 0; i < len(binary)-preOne-suf-1; i++ {
+		ans = append(ans, '1')
+	}
+	ans = append(ans, '0')
+	for i := 0; i < suf; i++ {
+		ans = append(ans, '1')
+	}
+	return string(ans)
+}

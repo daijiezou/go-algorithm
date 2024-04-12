@@ -28,7 +28,7 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
 	for l2 != nil {
 		p.Next = l2
 		p = p.Next
-		l2 = l1.Next
+		l2 = l2.Next
 	}
 	return dummy.Next
 }
