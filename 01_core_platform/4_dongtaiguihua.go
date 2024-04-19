@@ -57,8 +57,8 @@ func coinChange(coins []int, amount int) int {
 	return dp2(coins, amount, note)
 }
 
-// 暴利解法
-func db(coins []int, amount int) int {
+// 定义：要凑出金额 n，至少要 dp(coins, n) 个硬币
+func dp(coins []int, amount int) int {
 	if amount == 0 {
 		return 0
 	}
@@ -67,7 +67,7 @@ func db(coins []int, amount int) int {
 	}
 	res := math.MaxInt32
 	for _, coin := range coins {
-		subProblem := db(coins, amount-coin)
+		subProblem := dp(coins, amount-coin)
 		if subProblem == -1 {
 			continue
 		}
@@ -89,6 +89,7 @@ func dp2(coins []int, amount int, note []int) int {
 	if note[amount] != -666 {
 		return note[amount]
 	}
+
 	res := math.MaxInt32
 	for _, coin := range coins {
 		subProblem := dp2(coins, amount-coin, note)
@@ -161,4 +162,78 @@ func myMax(x, y int) int {
 		return y
 	}
 	return x
+}
+
+func mycoinChange(coins []int, amount int) int {
+	if amount < 0 {
+		return -1
+	}
+	if amount == 0 {
+		return 0
+	}
+	res := math.MaxInt32
+	for _, coin := range coins {
+		subProblem := mycoinChange(coins, amount-coin)
+		if subProblem == -1 {
+			continue
+		}
+		res = mymin(res, subProblem+1)
+	}
+	if res == math.MaxInt32 {
+		return -1
+	}
+	return res
+}
+
+func mydpNote(coins []int, amount int, note map[int]int) int {
+	if amount < 0 {
+		return -1
+	}
+	if amount == 0 {
+		return 0
+	}
+	if note[amount] != -666 {
+		return note[amount]
+	}
+	res := math.MaxInt32
+	for _, coin := range coins {
+		subProblem := mycoinChange(coins, amount-coin)
+		if subProblem == -1 {
+			continue
+		}
+		res = mymin(res, subProblem+1)
+	}
+	if res == math.MaxInt32 {
+		note[amount] = -1
+		return -1
+	} else {
+		note[amount] = res
+		return res
+	}
+}
+
+func mycoinChange2(coins []int, amount int) int {
+	if amount < 0 {
+		return -1
+	}
+	if amount == 0 {
+		return 0
+	}
+	dp := make([]int, amount+1)
+	for i := 0; i < amount+1; i++ {
+		dp[i] = amount + 1
+	}
+	dp[0] = 0
+	for i := 0; i < amount+1; i++ {
+		for _, coin := range coins {
+			if i-coin < 0 {
+				continue
+			}
+			dp[i] = mymin(dp[i], dp[i-coin]+1)
+		}
+	}
+	if dp[amount] == amount+1 {
+		return -1
+	}
+	return dp[amount]
 }

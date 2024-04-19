@@ -119,3 +119,26 @@ func mergeTwoLists(l1 *ListNode, l2 *ListNode) *ListNode {
 	}
 	return dummy.Next
 }
+
+func mergeKLists(lists []*ListNode) *ListNode {
+	if len(lists) == 0 {
+		return nil
+	}
+	pq := NewMinPQ()
+	for _, listNode := range lists {
+		if listNode != nil {
+			pq.insert(listNode)
+		}
+	}
+	dummy := &ListNode{Val: -1}
+	cur := dummy
+	for pq.size > 0 {
+		node := pq.pop()
+		cur.Next = node
+		cur = cur.Next
+		if node.Next != nil {
+			pq.insert(node.Next)
+		}
+	}
+	return dummy.Next
+}

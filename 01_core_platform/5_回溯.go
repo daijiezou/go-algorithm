@@ -31,9 +31,12 @@ func backtrack(nums []int, track []int, used []bool, res *[][]int) {
 		if used[i] {
 			continue
 		}
-		used[i] = true
+		// 做选择
+		used[i] = true // 用 used 数组标记已经在路径上的元素避免重复选择，然后收集所有叶子节点上的值
 		track = append(track, nums[i])
 		backtrack(nums, track, used, res)
+
+		// 撤销选择
 		used[i] = false
 		track = track[:len(track)-1]
 	}

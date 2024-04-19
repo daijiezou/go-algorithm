@@ -3,19 +3,31 @@ package main
 import (
 	"fmt"
 	"math"
+	"os"
 	"slices"
-	"sync"
 )
 
+type byte_pointer *byte
+
 func main() {
-	s1 := [][]int{{1}}
+	i1 := int32(328)
+	starti := &i1
 
-	fmt.Println(s1)
-	f2(s1)
-	fmt.Println(s1)
-	lock := sync.Mutex{}
-	lock.Lock()
+	fmt.Println(*starti)
+	fmt.Printf("%x", starti)
+	fmt.Printf("%x", *(starti))
+	fmt.Printf("%x", *starti+2)
+	fmt.Printf("%x", *starti+3)
+	//i := uintptr(0)
+	//for ; i < unsafe.Sizeof(i1); i++ {
+	//	fmt.Printf("%.2x", starti)
+	//}
+}
 
+func do_exit() {
+	fmt.Println("try do some clear jobs")
+	fmt.Println("run done")
+	os.Exit(0)
 }
 
 func f1(s1 map[int]int) {
