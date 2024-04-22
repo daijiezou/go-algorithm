@@ -10,18 +10,40 @@ import (
 type byte_pointer *byte
 
 func main() {
-	i1 := int32(328)
-	starti := &i1
+	fmt.Println(mergeSort([]int{2, 1, 2, 3, 4, 10, 11}))
+}
 
-	fmt.Println(*starti)
-	fmt.Printf("%x", starti)
-	fmt.Printf("%x", *(starti))
-	fmt.Printf("%x", *starti+2)
-	fmt.Printf("%x", *starti+3)
-	//i := uintptr(0)
-	//for ; i < unsafe.Sizeof(i1); i++ {
-	//	fmt.Printf("%.2x", starti)
-	//}
+func mergeSort(nums []int) []int {
+	length := len(nums)
+	if length < 2 {
+		return nums
+	}
+
+	left := nums[:length/2]
+	right := nums[length/2:]
+	return merge(mergeSort(left), mergeSort(right))
+}
+
+func merge(nums1 []int, nums2 []int) []int {
+	res := make([]int, 0, len(nums1)+len(nums2))
+	for len(nums1) > 0 && len(nums2) > 0 {
+		if nums1[0] <= nums2[0] {
+			res = append(res, nums1[0])
+			nums1 = nums1[1:]
+		} else {
+			res = append(res, nums2[0])
+			nums2 = nums2[1:]
+		}
+	}
+	for len(nums1) > 0 {
+		res = append(res, nums1[0])
+		nums1 = nums1[1:]
+	}
+	for len(nums2) > 0 {
+		res = append(res, nums2[0])
+		nums2 = nums2[1:]
+	}
+	return res
 }
 
 func do_exit() {

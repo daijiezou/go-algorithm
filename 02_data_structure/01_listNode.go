@@ -84,6 +84,8 @@ func sort(head *ListNode, tail *ListNode) *ListNode {
 	if head.Next == tail {
 		return head
 	}
+
+	// 寻找到中间节点
 	fast := head
 	slow := head
 	for fast != tail && fast.Next != tail {
