@@ -7,8 +7,6 @@ import (
 	"slices"
 )
 
-type byte_pointer *byte
-
 func main() {
 	fmt.Println(mergeSort([]int{2, 1, 2, 3, 4, 10, 11}))
 }

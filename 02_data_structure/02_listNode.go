@@ -91,3 +91,116 @@ func Mymin(i, j, k int) int {
 		}
 	}
 }
+
+type kthSmallestPQ struct {
+	ValList []matrixVal
+	Length  int
+}
+
+type matrixVal struct {
+	val int
+	row int //数所在的行
+	col int //数所在列
+}
+
+func newKthSmallestPQ() *kthSmallestPQ {
+	return &kthSmallestPQ{
+		ValList: make([]matrixVal, 1), // 一定要从1开始，用数组表示二叉树的需求
+		Length:  0,
+	}
+}
+
+func (k *kthSmallestPQ) insert(val matrixVal) {
+	k.ValList = append(k.ValList, val)
+	k.Length++
+
+	// 上浮到正确的位置
+	k.swim(k.Length)
+}
+
+func (k *kthSmallestPQ) pop() matrixVal {
+	// 堆顶的元素就是最小的值
+	minVal := k.ValList[1] // 注意堆顶的元素的的index为1，因为0被舍弃了
+
+	//将其换到最后,并删除
+	k.swap(1, k.Length)
+	k.ValList = k.ValList[:k.Length]
+	k.Length--
+	// 将队首的元素下沉到正确位置
+	k.sink(1)
+	return minVal
+}
+
+// x表示在队列中的位置
+// 下沉，将元素和自己的左右子节点比较，若比自己的左右节点小就swap
+func (k *kthSmallestPQ) sink(x int) {
+
+	// 优先比较左节点，因为左节点的索引比较小
+	for left(x) <= k.Length {
+		minVal := left(x)
+		// 如果右节点比左节点小，更新最小值
+		if right(x) <= k.Length && k.more(minVal, right(x)) {
+			minVal = right(x)
+		}
+		// 左右节点比自己都大，退出循环
+		if k.more(minVal, x) {
+			break
+		}
+		k.swap(minVal, x)
+		x = minVal
+	}
+}
+
+// x表示在队列中的位置
+func (k *kthSmallestPQ) swim(x int) {
+	// x的父节点比自己大，将自己与父节点调换
+	// 需要判断x>1,因为1就是已经是堆顶，它没有父节点了
+	for x > 1 && k.more(parent(x), x) {
+		// swap
+		k.swap(x, parent(x))
+		x = parent(x)
+	}
+}
+
+func (k *kthSmallestPQ) swap(i, j int) {
+	// swap
+	temp := k.ValList[i]
+	k.ValList[i] = k.ValList[j]
+	k.ValList[j] = temp
+}
+
+// 判断i是否大于j
+// i>j:true
+// i<j false
+func (k *kthSmallestPQ) more(i, j int) bool {
+	if k.ValList[i].val > k.ValList[j].val {
+		return true
+	} else {
+		return false
+	}
+}
+
+// https://leetcode.cn/problems/kth-smallest-element-in-a-sorted-matrix/description/
+// 有序矩阵中的第k小元素
+func kthSmallest(matrix [][]int, k int) int {
+	pq := newKthSmallestPQ()
+	for i := 0; i < len(matrix); i++ {
+		pq.insert(matrixVal{row: i, col: 0, val: matrix[i][0]})
+	}
+	var res int
+	for k > 0 && pq.Length > 0 {
+		cur := pq.pop()
+		res = cur.val
+		k--
+		row, col := cur.row, cur.col+1
+		// 将数组中下一个元素加入堆中
+		if col < len(matrix[row]) {
+			pq.insert(matrixVal{
+				val: matrix[row][col],
+				row: row,
+				col: col,
+			})
+		}
+	}
+	return res
+}

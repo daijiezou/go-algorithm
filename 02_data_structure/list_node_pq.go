@@ -43,24 +43,28 @@ func (mpq *MinPQ) pop() *ListNode {
 func (mpq *MinPQ) swim(x int) {
 	// 查看是否比自己的父节点小
 	// 如果比自己的父节点小就与父节点交换位置
-	for x > 1 && mpq.more(mpq.parent(x), x) {
-		mpq.swap(mpq.parent(x), x)
-		x = mpq.parent(x)
+	for x > 1 && mpq.more(parent(x), x) {
+		mpq.swap(parent(x), x)
+		x = parent(x)
 	}
 }
 
 /* 下沉第 x 个元素，以维护最小堆性质 */
 func (mpq *MinPQ) sink(x int) {
-	for mpq.left(x) <= mpq.size {
-		tempMin := mpq.left(x)
+	// 这里先比较左孩子节点，因为左孩子节点的index比较小
+	for left(x) <= mpq.size {
+		tempMin := left(x)
+
 		// 如果tempMin比右孩子更大，则重置一下min的值
-		if mpq.right(x) <= mpq.size && mpq.more(tempMin, mpq.right(x)) {
-			tempMin = mpq.right(x)
+		if right(x) <= mpq.size && mpq.more(tempMin, right(x)) {
+			tempMin = right(x)
 		}
+
 		// 节点x比两个孩子都小，不必下沉了
 		if mpq.more(tempMin, x) {
 			break
 		}
+
 		mpq.swap(x, tempMin)
 		x = tempMin
 	}
@@ -79,16 +83,16 @@ func (mpq *MinPQ) more(i, j int) bool {
 }
 
 // 父节点的索引
-func (mpq *MinPQ) parent(root int) int {
+func parent(root int) int {
 	return root / 2
 }
 
 // 左孩子的索引
-func (mpq *MinPQ) left(root int) int {
+func left(root int) int {
 	return root * 2
 }
 
 // 右孩子的索引
-func (mpq *MinPQ) right(root int) int {
+func right(root int) int {
 	return root*2 + 1
 }
