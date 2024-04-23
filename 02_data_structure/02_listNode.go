@@ -204,3 +204,103 @@ func kthSmallest(matrix [][]int, k int) int {
 	}
 	return res
 }
+
+// 查找和最小的 K 对数字
+// https://leetcode.cn/problems/find-k-pairs-with-smallest-sums/description/
+func kSmallestPairs(nums1 []int, nums2 []int, k int) [][]int {
+	pq := newkSmallestPairsPQ()
+	for i := 0; i < len(nums1); i++ {
+		val := []int{nums1[i], nums2[0], 0}
+		pq.insert(val)
+	}
+	res := make([][]int, 0, k)
+	for k > 0 && pq.Length > 0 {
+		cur := pq.pop()
+		res = append(res, []int{cur[0], cur[1]})
+		index := cur[2] + 1
+		if index < len(nums2) {
+			pq.insert([]int{cur[0], nums2[index], index})
+		}
+		k--
+	}
+	return res
+}
+
+type kSmallestPairsPQ struct {
+	ValList [][]int
+	Length  int
+}
+
+func newkSmallestPairsPQ() *kSmallestPairsPQ {
+	return &kSmallestPairsPQ{
+		ValList: make([][]int, 1), // 一定要从1开始，用数组表示二叉树的需求
+		Length:  0,
+	}
+}
+
+func (k *kSmallestPairsPQ) insert(val []int) {
+	k.ValList = append(k.ValList, val)
+	k.Length++
+
+	// 上浮到正确的位置
+	k.swim(k.Length)
+}
+
+func (k *kSmallestPairsPQ) pop() []int {
+	// 堆顶的元素就是最小的值
+	minVal := k.ValList[1] // 注意堆顶的元素的的index为1，因为0被舍弃了
+
+	//将其换到最后,并删除
+	k.swap(1, k.Length)
+	k.ValList = k.ValList[:k.Length]
+	k.Length--
+	// 将队首的元素下沉到正确位置
+	k.sink(1)
+	return minVal
+}
+
+// x表示在队列中的位置
+// 下沉，将元素和自己的左右子节点比较，若比自己的左右节点小就swap
+func (k *kSmallestPairsPQ) sink(x int) {
+
+	// 优先比较左节点，因为左节点的索引比较小
+	for left(x) <= k.Length {
+		minVal := left(x)
+		// 如果右节点比左节点小，更新最小值
+		if right(x) <= k.Length && k.more(minVal, right(x)) {
+			minVal = right(x)
+		}
+		// 左右节点比自己都大，退出循环
+		if k.more(minVal, x) {
+			break
+		}
+		k.swap(minVal, x)
+		x = minVal
+	}
+}
+
+// x表示在队列中的位置
+func (k *kSmallestPairsPQ) swim(x int) {
+	// x的父节点比自己大，将自己与父节点调换
+	// 需要判断x>1,因为1就是已经是堆顶，它没有父节点了
+	for x > 1 && k.more(parent(x), x) {
+		// swap
+		k.swap(x, parent(x))
+		x = parent(x)
+	}
+}
+
+func (k *kSmallestPairsPQ) swap(i, j int) {
+	// swap
+	temp := k.ValList[i]
+	k.ValList[i] = k.ValList[j]
+	k.ValList[j] = temp
+}
+
+func (k *kSmallestPairsPQ) more(i, j int) bool {
+	if k.ValList[i][0]+k.ValList[i][1] > k.ValList[j][0]+k.ValList[j][1] {
+		return true
+	} else {
+		return false
+	}
+}
