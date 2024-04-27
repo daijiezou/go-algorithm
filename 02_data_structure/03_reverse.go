@@ -26,33 +26,34 @@ func reverseN(head *ListNode, n int) *ListNode {
 
 var nextNode *ListNode
 
+// 反转一个区间里的链表
 func reverseBetween(head *ListNode, left int, right int) *ListNode {
 	defer func() {
 		nextNode = nil
 	}()
 
-	/*	if left == 1 {
-			return reverseN(head, right)
-		}
-		// 前进到反转的起点触发 base case
-		head.Next = reverseBetween(head.Next, left-1, right-1)
-		return head*/
-
-	n := right - left + 1
-	temp := head
-	var pre *ListNode
 	if left == 1 {
-		pre = head
+		return reverseN(head, right)
 	}
-	for ; left > 1; left-- {
-		if left == 2 {
-			pre = temp
-		}
-		temp = temp.Next
-	}
-
-	last := reverseN(temp, n)
-	pre.Next = last
+	// 前进到反转的起点触发 base case
+	head.Next = reverseBetween(head.Next, left-1, right-1)
 	return head
+
+	/*	n := right - left + 1
+		temp := head
+		var pre *ListNode
+		if left == 1 {
+			pre = head
+		}
+		for ; left > 1; left-- {
+			if left == 2 {
+				pre = temp
+			}
+			temp = temp.Next
+		}
+
+		last := reverseN(temp, n)
+		pre.Next = last
+		return head*/
 
 }

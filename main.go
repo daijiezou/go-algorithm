@@ -22,6 +22,24 @@ func mergeSort(nums []int) []int {
 	return merge(mergeSort(left), mergeSort(right))
 }
 
+func NextGreater(nums []int) []int {
+	length := len(nums)
+	smallStack := make([]int, 0)
+	res := make([]int, 0)
+	for i := length - 1; i > 0; i-- {
+		for len(smallStack) > 0 && nums[i] >= smallStack[len(smallStack)-1] {
+			smallStack = smallStack[:len(smallStack)-1]
+		}
+		if len(smallStack) == 0 {
+			res = append(res, 0)
+		} else {
+			res = append(res, smallStack[len(smallStack)-1])
+		}
+		smallStack = append(smallStack, nums[i])
+	}
+	return res
+}
+
 func merge(nums1 []int, nums2 []int) []int {
 	res := make([]int, 0, len(nums1)+len(nums2))
 	for len(nums1) > 0 && len(nums2) > 0 {
