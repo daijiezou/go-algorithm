@@ -1,4 +1,4 @@
-package _3_array
+package _2_array
 
 import "sort"
 

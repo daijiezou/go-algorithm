@@ -1,4 +1,4 @@
-package _2_data_structure
+package _1_listnode
 
 type MinPQ struct {
 	pq   []*ListNode

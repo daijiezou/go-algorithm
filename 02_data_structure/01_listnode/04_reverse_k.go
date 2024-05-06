@@ -1,4 +1,4 @@
-package _2_data_structure
+package _1_listnode
 
 // 迭代的方式反转链表
 func reverse(head *ListNode) *ListNode {

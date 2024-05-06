@@ -1,4 +1,4 @@
-package _2_data_structure
+package _1_listnode
 
 // 把存在的重复元素全部去除
 func deleteDuplicates(head *ListNode) *ListNode {

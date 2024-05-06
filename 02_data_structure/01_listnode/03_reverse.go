@@ -1,4 +1,4 @@
-package _2_data_structure
+package _1_listnode
 
 // https://leetcode.cn/problems/reverse-linked-list/
 // 反转链表
