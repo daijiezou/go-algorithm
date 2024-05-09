@@ -164,6 +164,10 @@ func myMax(x, y int) int {
 	return x
 }
 
+/*
+	以下为个人尝试实现
+*/
+
 func mycoinChange(coins []int, amount int) int {
 	if amount < 0 {
 		return -1
@@ -205,11 +209,10 @@ func mydpNote(coins []int, amount int, note map[int]int) int {
 	}
 	if res == math.MaxInt32 {
 		note[amount] = -1
-		return -1
 	} else {
 		note[amount] = res
-		return res
 	}
+	return note[amount]
 }
 
 func mycoinChange2(coins []int, amount int) int {

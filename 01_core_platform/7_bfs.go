@@ -35,6 +35,11 @@ func minDepth(root *TreeNode) int {
 }
 
 // https://leetcode.cn/problems/open-the-lock/submissions/521528158/
+/*
+	锁的初始数字为 '0000' ，一个代表四个拨轮的数字的字符串。
+	列表 deadends 包含了一组死亡数字，一旦拨轮的数字和列表里的任何一个元素相同，这个锁将会被永久锁定，无法再被旋转。
+	字符串 target 代表可以解锁的数字，你需要给出解锁需要的最小旋转次数，如果无论如何不能解锁，返回 -1 。
+*/
 func openLock(deadends []string, target string) int {
 	visited := map[string]bool{}
 	for _, deadend := range deadends {
@@ -46,6 +51,7 @@ func openLock(deadends []string, target string) int {
 	visited["0000"] = true
 	var q []string
 	q = append(q, "0000")
+
 	step := 0
 	for len(q) > 0 {
 		sz := len(q)

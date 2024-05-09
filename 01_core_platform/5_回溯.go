@@ -15,7 +15,6 @@ func permute(nums []int) [][]int {
 	used := make([]bool, len(nums))
 
 	backtrack(nums, track, used, &res)
-	fmt.Println(res)
 	return res
 }
 

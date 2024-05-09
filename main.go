@@ -3,7 +3,6 @@ package main
 import (
 	"fmt"
 	"math"
-	"os"
 	"slices"
 )
 
@@ -20,24 +19,6 @@ func mergeSort(nums []int) []int {
 	left := nums[:length/2]
 	right := nums[length/2:]
 	return merge(mergeSort(left), mergeSort(right))
-}
-
-func NextGreater(nums []int) []int {
-	length := len(nums)
-	smallStack := make([]int, 0)
-	res := make([]int, 0)
-	for i := length - 1; i > 0; i-- {
-		for len(smallStack) > 0 && nums[i] >= smallStack[len(smallStack)-1] {
-			smallStack = smallStack[:len(smallStack)-1]
-		}
-		if len(smallStack) == 0 {
-			res = append(res, 0)
-		} else {
-			res = append(res, smallStack[len(smallStack)-1])
-		}
-		smallStack = append(smallStack, nums[i])
-	}
-	return res
 }
 
 func merge(nums1 []int, nums2 []int) []int {
@@ -62,10 +43,22 @@ func merge(nums1 []int, nums2 []int) []int {
 	return res
 }
 
-func do_exit() {
-	fmt.Println("try do some clear jobs")
-	fmt.Println("run done")
-	os.Exit(0)
+func NextGreater(nums []int) []int {
+	length := len(nums)
+	smallStack := make([]int, 0)
+	res := make([]int, 0)
+	for i := length - 1; i > 0; i-- {
+		for len(smallStack) > 0 && nums[i] >= smallStack[len(smallStack)-1] {
+			smallStack = smallStack[:len(smallStack)-1]
+		}
+		if len(smallStack) == 0 {
+			res = append(res, 0)
+		} else {
+			res = append(res, smallStack[len(smallStack)-1])
+		}
+		smallStack = append(smallStack, nums[i])
+	}
+	return res
 }
 
 func f1(s1 map[int]int) {
