@@ -118,3 +118,42 @@ func findAnagrams(s string, t string) []int {
 	}
 	return result
 }
+
+// 最长无重复子传
+func lengthOfLongestSubstring(s string) int {
+	if s == "" {
+		return 0
+	}
+	window := make(map[byte]int)
+	right := 0
+	left := 0
+	length := math.MinInt
+	for right < len(s) {
+		current := s[right]
+		right++
+		window[current]++
+		//if window[current] > 1 {
+		//	for s[left] != current {
+		//		window[s[left]]--
+		//		left++
+		//	}
+		//	window[s[left]]--
+		//	left++
+		//} else {
+		//	if right-left-1 > length {
+		//		length = right - left - 1
+		//	}
+		//}
+
+		for window[current] > 1 {
+			toDelete := s[left]
+			window[toDelete]--
+			left++
+		}
+
+		if right-left > length {
+			length = right - left
+		}
+	}
+	return length
+}
