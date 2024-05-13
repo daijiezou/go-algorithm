@@ -567,3 +567,36 @@ func countPrimes2(n int) int {
 	}
 	return count
 }
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
+	dummy := &ListNode{Val: -1}
+	p := dummy
+	addOne := 0
+	for l1 != nil || l2 != nil || addOne > 0 {
+		val := addOne
+		if l1 != nil {
+			val += l1.Val
+			l1 = l1.Next
+		}
+		if l2 != nil {
+			val += l2.Val
+			l2 = l2.Next
+		}
+		if val > 9 {
+			val = val - 10
+			addOne = 1
+		} else {
+			addOne = 0
+		}
+		node := &ListNode{Val: val}
+		p.Next = node
+		p = p.Next
+
+	}
+	return dummy.Next
+}
