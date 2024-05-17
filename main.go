@@ -4,10 +4,13 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"strings"
 )
 
 func main() {
-	fmt.Println(mergeSort([]int{2, 1, 2, 3, 4, 10, 11}))
+	//fmt.Println(mergeSort([]int{2, 1, 2, 3, 4, 10, 11}))
+	fmt.Println("   abc   ")
+	fmt.Println(strings.Trim("  abc   ", " "))
 }
 
 func mergeSort(nums []int) []int {
