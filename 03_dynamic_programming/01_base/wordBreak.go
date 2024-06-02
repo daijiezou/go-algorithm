@@ -2,6 +2,7 @@ package _1_base
 
 import (
 	"container/list"
+	"strings"
 )
 
 // https://leetcode.cn/problems/word-break/submissions/536513055/
@@ -39,16 +40,26 @@ func wordBreakDp(s string, i int, wordDict map[string]bool, memo map[int]int) bo
 
 // https://leetcode.cn/problems/word-break-ii/submissions/536524271/
 func wordBreak2(s string, wordDict []string) []string {
-	wordDictMap := make(map[string]bool)
-	for _, word := range wordDict {
-		wordDictMap[word] = true
-	}
-	memo := make([]*list.List, len(s))
-	var res []string
-	for e := wordBreak2Dp(s, 0, wordDictMap, memo).Front(); e != nil; e = e.Next() {
-		res = append(res, e.Value.(string))
-	}
+	res := make([]string, 0)
+	backTrack(s, wordDict, 0, &res, []string{})
 	return res
+}
+
+func backTrack(s string, wordDict []string, start int, res *[]string, track []string) {
+	if start == len(s) {
+		*res = append(*res, strings.Join(track, " "))
+		return
+	}
+	for _, word := range wordDict {
+		lenWord := len(word)
+		if start+lenWord <= len(s) && s[start:start+lenWord] == word {
+			// 选择
+			track = append(track, word)
+			backTrack(s, wordDict, start+lenWord, res, track)
+			// 撤销选择
+			track = track[:len(track)-1]
+		}
+	}
 }
 
 func wordBreak2Dp(s string, i int, wordDict map[string]bool, memo []*list.List) *list.List {
@@ -62,7 +73,11 @@ func wordBreak2Dp(s string, i int, wordDict map[string]bool, memo []*list.List) 
 	}
 	res := list.New()
 	for length := 1; i+length <= len(s); length++ {
+
+		// 取到这个下标开始的子串
 		sub := s[i : i+length]
+
+		// 如果这个子串在字典里，则递归调用找到字符串集合中剩下的组合
 		if wordDict[sub] {
 			tempRes := wordBreak2Dp(s, i+length, wordDict, memo)
 			for e := tempRes.Front(); e != nil; e = e.Next() {
