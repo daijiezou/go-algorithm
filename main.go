@@ -4,13 +4,9 @@ import (
 	"fmt"
 	"math"
 	"slices"
-	"strings"
 )
 
 func main() {
-	//fmt.Println(mergeSort([]int{2, 1, 2, 3, 4, 10, 11}))
-	fmt.Println("   abc   ")
-	fmt.Println(strings.Trim("  abc   ", " "))
 }
 
 func mergeSort(nums []int) []int {
@@ -62,14 +58,6 @@ func NextGreater(nums []int) []int {
 		smallStack = append(smallStack, nums[i])
 	}
 	return res
-}
-
-func f1(s1 map[int]int) {
-	s1[0] = 666
-}
-
-func f2(in [][]int) {
-	in[0][0] = 1
 }
 
 func minimumFuelCost(roads [][]int, seats int) int64 {

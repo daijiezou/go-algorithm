@@ -1,6 +1,8 @@
 package _1_base
 
-import "container/list"
+import (
+	"container/list"
+)
 
 // https://leetcode.cn/problems/word-break/submissions/536513055/
 func wordBreak(s string, wordDict []string) bool {
