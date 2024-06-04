@@ -27,6 +27,7 @@ func dp(matrix [][]int, i, j int, memo [][]int) int {
 	if i < 0 || j < 0 || i >= len(matrix) || j >= len(matrix[0]) {
 		return 99999
 	}
+	// 到第一行了
 	if i == 0 {
 		return matrix[i][j]
 	}
@@ -34,20 +35,6 @@ func dp(matrix [][]int, i, j int, memo [][]int) int {
 		return memo[i][j]
 	}
 	memo[i][j] = matrix[i][j] +
-		threeMin(dp(matrix, i-1, j-1, memo), dp(matrix, i-1, j, memo), dp(matrix, i-1, j+1, memo))
+		min(dp(matrix, i-1, j-1, memo), dp(matrix, i-1, j, memo), dp(matrix, i-1, j+1, memo))
 	return memo[i][j]
-}
-
-func threeMin(a int, b int, c int) int {
-	if a < b {
-		if a < c {
-			return a
-		} else {
-			return c
-		}
-	} else if b < c {
-		return b
-	} else {
-		return c
-	}
 }
