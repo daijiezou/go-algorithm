@@ -16,14 +16,14 @@ func minFallingPathSum(matrix [][]int) int {
 	}
 	// 终点可能在最后一行的任意一列
 	for j := 0; j < n; j++ {
-		minRes = min(dp(matrix, m-1, j, memo), minRes)
+		minRes = min(minFallingPathSumDp(matrix, m-1, j, memo), minRes)
 	}
 	return minRes
 }
 
 // 从第一行（matrix[0][..]）向下落，
-// 落到位置 matrix[i][j] 的最小路径和为 dp(matrix, i, j)。
-func dp(matrix [][]int, i, j int, memo [][]int) int {
+// 落到位置 matrix[i][j] 的最小路径和为 minFallingPathSumDp(matrix, i, j)。
+func minFallingPathSumDp(matrix [][]int, i, j int, memo [][]int) int {
 	if i < 0 || j < 0 || i >= len(matrix) || j >= len(matrix[0]) {
 		return 99999
 	}
@@ -35,6 +35,6 @@ func dp(matrix [][]int, i, j int, memo [][]int) int {
 		return memo[i][j]
 	}
 	memo[i][j] = matrix[i][j] +
-		min(dp(matrix, i-1, j-1, memo), dp(matrix, i-1, j, memo), dp(matrix, i-1, j+1, memo))
+		min(minFallingPathSumDp(matrix, i-1, j-1, memo), minFallingPathSumDp(matrix, i-1, j, memo), minFallingPathSumDp(matrix, i-1, j+1, memo))
 	return memo[i][j]
 }

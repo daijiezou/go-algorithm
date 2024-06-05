@@ -73,13 +73,6 @@ func lengthOfLIS2(nums []int) int {
 		} else {
 			piles++
 		}
-		//// 没找到合适的牌堆，新建一堆
-		//if left == piles {
-		//	piles++
-		//}
-		//// 把这张牌放到牌堆顶
-		//top[left] = poker
-
 	}
 	return piles
 }
@@ -110,14 +103,14 @@ func maxEnvelopes(envelopes [][]int) int {
 		}
 		//for j := 0; j < i; j++ {
 		//	if envelopes[j][1] < envelopes[i][1] {
-		//		dp[i] = max(dp[i], dp[j]+1)
+		//		minFallingPathSumDp[i] = max(minFallingPathSumDp[i], minFallingPathSumDp[j]+1)
 		//	}
 		//}
 	}
 	//maxRes := 1
 	//for i := 0; i < n; i++ {
-	//	if dp[i] > maxRes {
-	//		maxRes = dp[i]
+	//	if minFallingPathSumDp[i] > maxRes {
+	//		maxRes = minFallingPathSumDp[i]
 	//	}
 	//}
 	return len(nums)
