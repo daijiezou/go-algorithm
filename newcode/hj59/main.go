@@ -1,17 +1,20 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 )
 
 func main() {
-	reader := bufio.NewScanner(os.Stdin)
-	for reader.Scan() {
-		s := reader.Text()
-		checkPwd(s)
-	}
+	//reader := bufio.NewScanner(os.Stdin)
+	//for reader.Scan() {
+	//	s := reader.Text()
+	//	checkPwd(s)
+	//}
+	// https://www.hozen.site/archives/65/
+	var name string
+	var age int
+	fmt.Scan(&name, &age)
+	fmt.Printf("name: %s, age: %d\n", name, age)
 }
 
 func checkPwd(str1 string) {
