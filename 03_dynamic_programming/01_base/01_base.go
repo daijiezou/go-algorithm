@@ -57,8 +57,8 @@ func lengthOfLIS2(nums []int) int {
 		// 要处理的扑克票
 		poker := nums[i]
 		left := 0
-		right := piles - 1
-		for left <= right {
+		right := piles
+		for left < right {
 			mid := left + (right-left)/2
 			if poker == top[mid] {
 				right = mid

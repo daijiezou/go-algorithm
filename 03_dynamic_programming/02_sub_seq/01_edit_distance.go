@@ -22,6 +22,7 @@ func minDistance(s1 string, s2 string) int {
 }
 
 func minDistanceDp(s1 string, i int, s2 string, j int, memo [][]int) int {
+	// 返回index+1,则为剩余的操作数
 	if i < 0 {
 		return j + 1
 	}
