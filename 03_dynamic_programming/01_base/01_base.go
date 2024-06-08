@@ -12,9 +12,13 @@ func coinChange(coins []int, amount int) int {
 	for i := range dp {
 		dp[i] = -666
 	}
+
+	// base case
+	// amount=0时，需要0枚硬币
 	dp[0] = 0
 	for i := 1; i < len(dp); i++ {
 		for coin := range coins {
+			// amount<0时，无解
 			if i-coin < 0 {
 				continue
 			}
