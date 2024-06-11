@@ -1,9 +1,7 @@
 package main
 
 import (
-	"bufio"
 	"fmt"
-	"os"
 	"sort"
 	"strconv"
 	"strings"
@@ -94,19 +92,7 @@ func longestValidExpression(s string) int64 {
 }
 
 func main() {
-	var avg int
-	fmt.Scan(&avg)
-	scanner := bufio.NewScanner(os.Stdin)
-	nums := make([]string, 0)
-	for scanner.Scan() {
-		nums = strings.Split(scanner.Text(), ",")
 
-	}
-	numsInt := make([]int, len(nums))
-	for i := 0; i < len(nums); i++ {
-		numsInt[i], _ = strconv.Atoi(nums[i])
-	}
-	return
 }
 
 /*
@@ -185,4 +171,141 @@ func FromXiaoqu(nums []int) int {
 		}
 	}
 	return totalCount
+}
+
+// https://www.nowcoder.com/discuss/628594841575809024?sourceSSR=users
+// 最多几个直角三角形
+func countRightTriangles(lengths []int) int {
+	n := len(lengths)
+	count := 0
+	triangleSet := make(map[[3]int]struct{})
+	for i := 0; i < n-2; i++ {
+		for j := i + 1; j < n-1; j++ {
+			for k := j + 1; k < n; k++ {
+				a, b, c := lengths[i], lengths[j], lengths[k]
+				if isRightTriangle(a, b, c) {
+					triangle := [3]int{a, b, c}
+					if _, ok := triangleSet[triangle]; !ok {
+						triangleSet[triangle] = struct{}{}
+						count++
+					}
+				}
+			}
+		}
+	}
+
+	return count
+}
+
+func isRightTriangle(a, b, c int) bool {
+	// Check for a^2 + b^2 = c^2
+	return a*a+b*b == c*c
+}
+
+type ExcelCell struct {
+	Origin     string
+	startIndex int
+	referIndex int
+	output     string
+}
+
+// https://www.nowcoder.com/discuss/628538017472344064?sourceSSR=users
+func HandleExcel(cells []string) {
+	excelCells := make([]*ExcelCell, len(cells))
+	for i, cell := range cells {
+		excelCell := new(ExcelCell)
+		refIdx, startIndex := getIndex(cell)
+		excelCell.Origin = cell
+		excelCell.referIndex = refIdx
+		excelCell.startIndex = startIndex
+		if refIdx < 0 {
+			excelCell.output = cell
+		}
+		excelCells[i] = excelCell
+	}
+	res := ""
+	for i := 0; i < len(excelCells); i++ {
+		out := getOut(excelCells, i)
+		res += out
+		if i < len(excelCells)-1 {
+			res += ","
+		}
+	}
+	fmt.Println(res)
+}
+
+func getIndex(cell string) (int, int) {
+	idx := strings.Index(cell, "<")
+	if idx >= 0 {
+		u := cell[idx+1]
+		return int(u - 'A'), idx
+	} else {
+		return -1, idx
+	}
+}
+
+func getOut(cells []*ExcelCell, i int) (output string) {
+	if cells[i].referIndex != -1 {
+		res := getOut(cells, cells[i].referIndex)
+		cells[i].output = strings.Replace(cells[i].Origin, cells[i].Origin[cells[i].startIndex:cells[i].startIndex+3], res, 1)
+		cells[i].referIndex = -1
+		return cells[i].output
+	} else {
+		return cells[i].output
+	}
+}
+
+/*
+前缀和数组：构建 prefixSum 数组，用于快速计算任意子数组的和。在处理环形数组时，数组长度扩展为两倍，以便处理跨越数组末尾和起点的子数组。
+动态规划数组：dp[i][j] 表示从 i 到 j 子数组中，吃货能获得的最大披萨块总和。
+状态转移：
+对于长度为 1 的子数组，直接等于对应的披萨块大小。
+对于长度大于 1 的子数组，使用状态转移方程 dp[l][r] = totalSum - min(dp[l+1][r], dp[l][r-1])，其中 totalSum 是子数组的总和。这个方程考虑了吃货的最佳选择策略，以及馋嘴的最优选择策略。
+寻找最佳起点：由于披萨块是环形的，我们需要从每个可能的起点计算最大值，因此遍历所有起点 i 并计算 dp[i][i+n-1]，找到其中的最大值。
+*/
+func maxPizzaSum(pizzaSizes []int) int {
+	n := len(pizzaSizes)
+	if n == 1 {
+		return pizzaSizes[0]
+	}
+
+	// 构建前缀和数组
+	prefixSum := make([]int, 2*n+1)
+	for i := 1; i <= 2*n; i++ {
+		prefixSum[i] = prefixSum[i-1] + pizzaSizes[(i-1)%n]
+	}
+
+	// dp[i][j]表示从i到j这段内吃货能拿到的最大披萨块总和
+	dp := make([][]int, 2*n)
+	for i := range dp {
+		dp[i] = make([]int, 2*n)
+	}
+
+	// 枚举长度
+	for length := 1; length <= n; length++ {
+		// 枚举左端点
+		for l := 0; l < 2*n; l++ {
+			r := l + length - 1
+			if r >= 2*n {
+				continue
+			}
+			totalSum := prefixSum[r+1] - prefixSum[l]
+			if length == 1 {
+				// 对于长度为 1 的子数组，直接等于对应的披萨块大小。
+				dp[l][r] = pizzaSizes[l%n]
+			} else {
+				// 使用状态转移方程 dp[l][r] = totalSum - min(dp[l+1][r], dp[l][r-1])，
+				// 其中 totalSum 是子数组的总和。这个方程考虑了吃货的最佳选择策略，以及馋嘴的最优选择策略。
+				dp[l][r] = totalSum - min(dp[l+1][r], dp[l][r-1])
+			}
+		}
+	}
+
+	// 寻找最大值
+	maxSum := 0
+	for i := 0; i < n; i++ {
+		maxSum = max(maxSum, dp[i][i+n-1])
+	}
+
+	return maxSum
 }

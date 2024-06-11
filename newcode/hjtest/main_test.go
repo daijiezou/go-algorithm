@@ -132,3 +132,82 @@ func TestFromXiaoqu(t *testing.T) {
 		})
 	}
 }
+
+func Test_nonRecursiveDFS(t *testing.T) {
+	type args struct {
+		lengths []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				lengths: []int{7, 3, 4, 5, 6, 5, 12, 13},
+			},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countRightTriangles(tt.args.lengths); got != tt.want {
+				t.Errorf("nonRecursiveDFS() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestHandleExcel(t *testing.T) {
+	type args struct {
+		cells []string
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "case1",
+			args: args{
+				cells: []string{"1", "2<A>00"},
+			},
+		},
+		{
+			name: "case2",
+			args: args{
+				cells: []string{"<F>", "2<A>00", "3<B>00", "4<A>00", "5<B>00", "3"},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			HandleExcel(tt.args.cells)
+		})
+	}
+}
+
+func Test_maxPizzaSum(t *testing.T) {
+	type args struct {
+		pizzaSizes []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				pizzaSizes: []int{8, 2, 10, 5, 7},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxPizzaSum(tt.args.pizzaSizes); got != tt.want {
+				t.Errorf("maxPizzaSum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
