@@ -1,8 +1,12 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
+	"os"
+	"sort"
 	"strconv"
+	"strings"
 	"unicode"
 )
 
@@ -90,6 +94,95 @@ func longestValidExpression(s string) int64 {
 }
 
 func main() {
-	s := "a+1--23*45-+67*89b"
-	fmt.Println(longestValidExpression(s)) // 示例输出
+	var avg int
+	fmt.Scan(&avg)
+	scanner := bufio.NewScanner(os.Stdin)
+	nums := make([]string, 0)
+	for scanner.Scan() {
+		nums = strings.Split(scanner.Text(), ",")
+
+	}
+	numsInt := make([]int, len(nums))
+	for i := 0; i < len(nums); i++ {
+		numsInt[i], _ = strconv.Atoi(nums[i])
+	}
+	return
+}
+
+/*
+// https://www.nowcoder.com/discuss/626731698809479168?sourceSSR=users
+查找接口成功率最优时间段
+找出平均值小于等于minAverageLost的最长时间段，输出数组下标对，格式{beginIndex}-{endIndx}(下标从0开始)，
+如果同时存在多个最长时间段，则输出多个下标对且下标对之间使用空格(” “)拼接，多个下标对按下标从小到大排序。
+*/
+func Get(nums []int, avg float64) []string {
+	left := 0
+	right := 0
+	windowSum := 0
+	resultMap := make(map[int]string)
+	for right < len(nums) {
+		current := nums[right]
+		right++
+		windowSum += current
+		windowAvg := float64(windowSum) / float64(right-left)
+		if windowAvg <= avg && (right-left > 1) {
+			resultMap[left] = strconv.Itoa(left) + "-" + strconv.Itoa(right-1)
+		}
+		for windowAvg > avg && left < right {
+			windowSum -= nums[left]
+			left++
+		}
+
+	}
+	res := make([]string, 0, len(resultMap))
+	resKey := make([]int, 0, len(resultMap))
+	for k, _ := range resultMap {
+		resKey = append(resKey, k)
+	}
+	sort.Ints(resKey)
+	for _, k := range resKey {
+		res = append(res, resultMap[k])
+	}
+	return res
+}
+
+type MyMap struct {
+	key   int
+	count int
+	next  *MyMap
+}
+
+func FromXiaoqu(nums []int) int {
+	maps := make(map[int]*MyMap)
+	for _, num := range nums {
+		if mymap, ok := maps[num]; ok {
+			for mymap.next != nil {
+				mymap = mymap.next
+			}
+			if mymap.count >= num {
+				mymap.next = &MyMap{
+					key:   num,
+					count: 1,
+					next:  nil,
+				}
+			} else {
+				mymap.count++
+			}
+		} else {
+			maps[num] = &MyMap{
+				key:   num,
+				count: 1,
+				next:  nil,
+			}
+		}
+	}
+	totalCount := 0
+	for _, mymap := range maps {
+		totalCount += mymap.key + 1
+		for mymap.next != nil {
+			mymap = mymap.next
+			totalCount += mymap.key + 1
+		}
+	}
+	return totalCount
 }
