@@ -97,7 +97,7 @@ func CoordinateShift() {
 	fmt.Println(x + "," + y)
 }
 
-// 华为机试雨花石问题
+// 雨花石问题
 func Yuhuashi(nums []int) int {
 	totalSum := 0
 	for i := 0; i < len(nums); i++ {
@@ -178,7 +178,7 @@ func LongestExpression(s string) int64 {
 	if startIndex == -1 {
 		return 0
 	}
-	fmt.Println(startIndex, maxLength)
+	fmt.Println(s[startIndex : startIndex+maxLength])
 	return evaluateExpression(s[startIndex : startIndex+maxLength])
 }
 

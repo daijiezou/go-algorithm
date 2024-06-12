@@ -3,6 +3,9 @@ package main
 import (
 	"fmt"
 	"sort"
+	"strconv"
+	"strings"
+	"unicode"
 )
 
 // https://www.nowcoder.com/discuss/564543169094799360?sourceSSR=users
@@ -222,6 +225,29 @@ func maxTasks(tasks []Task) int {
 	return count
 }
 
+func maxTask2(tasks []Task) int {
+	// 按照任务的结束时间进行排序
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].start < tasks[j].start
+	})
+
+	// Initialize a map to keep track of the days
+	days := make(map[int]bool)
+
+	// Try to fit each task into the earliest possible day
+	maxTaskCnt := 0
+	for _, task := range tasks {
+		for day := task.start; day <= task.end; day++ {
+			if !days[day] {
+				days[day] = true
+				maxTaskCnt++
+				break
+			}
+		}
+	}
+	return maxTaskCnt
+}
+
 func maxBananas(numbers []int, n int) int {
 	length := len(numbers)
 	var maxSum int
@@ -238,4 +264,89 @@ func maxBananas(numbers []int, n int) int {
 		}
 	}
 	return maxSum
+}
+
+type CharCount struct {
+	char  rune
+	count int
+}
+
+func summarize(s string) string {
+	// 去除字符串中的非字母符号
+	var cleaned strings.Builder
+	for _, char := range s {
+		if unicode.IsLetter(char) {
+			cleaned.WriteRune(char)
+		}
+	}
+	s = cleaned.String()
+
+	s = strings.ToLower(s) // 将输入字符串转换为小写
+	runes := []rune(s)     // 将字符串转换为 Unicode 字符数组
+	var summary []string   // 创建空的摘要字符串数组
+
+	i := 0
+	for i < len(runes) {
+		count := 1
+		j := i + 1
+		for j < len(runes) && runes[i] == runes[j] {
+			count++
+			j++
+		}
+
+		if count > 1 { // 如果字符连续出现超过1次
+			summary = append(summary, fmt.Sprintf("%c%d", runes[i], count)) // 添加字符及其连续出现次数到摘要数组
+			i = j
+		} else { // 如果字符不连续出现
+			nextCount := strings.Count(s[j:], string(runes[i]))                 // 计算该字符在后续字符串中出现的次数
+			summary = append(summary, fmt.Sprintf("%c%d", runes[i], nextCount)) // 添加字符及其后续出现次数到摘要数组
+			i++
+		}
+	}
+
+	sort.Slice(summary, func(i, j int) bool { // 对摘要数组进行排序
+		if len(summary[i]) == len(summary[j]) {
+			return summary[i] < summary[j]
+		}
+		return len(summary[i]) > len(summary[j])
+	})
+
+	return strings.Join(summary, "") // 将排序后的摘要数组连接成摘要字符串并返回
+}
+
+func countLuckyNumbers(k, n, m int) int {
+	// 将十进制的 k 转换为 m 进制的字符串
+	kStr := strconv.FormatInt(int64(k), m)
+
+	// 计算幸运数字在 kStr 中的出现次数
+	count := 0
+	for _, digit := range kStr {
+		if int(digit-'0') == n {
+			count++
+		}
+	}
+
+	return count
+}
+
+type Task2 struct {
+	SLA, Value int
+}
+
+func getMaxValue(tasks []Task2, T int) int {
+	// 根据任务的价值（积分）进行排序，降序
+	sort.Slice(tasks, func(i, j int) bool {
+		return tasks[i].Value > tasks[j].Value
+	})
+
+	timeUsed := 0
+	totalValue := 0
+	for _, task := range tasks {
+		if timeUsed < T && timeUsed < task.SLA {
+			totalValue += task.Value
+			timeUsed++
+		}
+	}
+
+	return totalValue
 }

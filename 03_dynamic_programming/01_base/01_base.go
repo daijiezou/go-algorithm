@@ -81,6 +81,21 @@ func lengthOfLIS2(nums []int) int {
 	return piles
 }
 
+func lengthOfLIS3(nums []int) int {
+	top := make([]int, 0, len(nums))
+	for i := 0; i < len(nums); i++ {
+		// 要处理的扑克票
+		poker := nums[i]
+		left := sort.SearchInts(top, poker)
+		if left < len(top) {
+			top[left] = poker
+		} else {
+			top = append(top, poker)
+		}
+	}
+	return len(top)
+}
+
 // https://leetcode.cn/problems/russian-doll-envelopes/
 func maxEnvelopes(envelopes [][]int) int {
 	// 先按照weight升序
@@ -92,11 +107,7 @@ func maxEnvelopes(envelopes [][]int) int {
 				envelopes[i][1] > envelopes[j][1])
 	})
 	n := len(envelopes)
-	dp := make([]int, n)
-	for i := range dp {
-		dp[i] = 1
-	}
-	nums := make([]int, n)
+	nums := make([]int, 0, n)
 	for i := 0; i < n; i++ {
 		poker := envelopes[i][1]
 		left := sort.SearchInts(nums, poker)
@@ -105,17 +116,6 @@ func maxEnvelopes(envelopes [][]int) int {
 		} else {
 			nums = append(nums, poker)
 		}
-		//for j := 0; j < i; j++ {
-		//	if envelopes[j][1] < envelopes[i][1] {
-		//		minFallingPathSumDp[i] = max(minFallingPathSumDp[i], minFallingPathSumDp[j]+1)
-		//	}
-		//}
 	}
-	//maxRes := 1
-	//for i := 0; i < n; i++ {
-	//	if minFallingPathSumDp[i] > maxRes {
-	//		maxRes = minFallingPathSumDp[i]
-	//	}
-	//}
 	return len(nums)
 }

@@ -126,7 +126,7 @@ func Test_maxTasks(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := maxTasks(tt.args.tasks); got != tt.want {
+			if got := maxTask2(tt.args.tasks); got != tt.want {
 				t.Errorf("maxTasks() = %v, want %v", got, tt.want)
 			}
 		})
@@ -156,6 +156,114 @@ func Test_maxBananas(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxBananas(tt.args.numbers, tt.args.N); got != tt.want {
 				t.Errorf("maxBananas() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_summarizeString(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "case1",
+			args: args{
+				s: "aabbcc",
+			},
+			want: "a2b2c2",
+		},
+		{
+			name: "case2",
+			args: args{
+				s: "bAaAcBb",
+			},
+			want: "a3b2b2c0",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := summarize(tt.args.s); got != tt.want {
+				t.Errorf("summarizeString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_countLuckyNumbers(t *testing.T) {
+	type args struct {
+		k int
+		n int
+		m int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				k: 10,
+				n: 2,
+				m: 4,
+			},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countLuckyNumbers(tt.args.k, tt.args.n, tt.args.m); got != tt.want {
+				t.Errorf("countLuckyNumbers() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getMaxValue(t *testing.T) {
+	type args struct {
+		tasks []Task2
+		T     int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				tasks: []Task2{
+					{
+						SLA:   1,
+						Value: 2,
+					},
+					{
+						SLA:   1,
+						Value: 3,
+					},
+					{
+						SLA:   1,
+						Value: 4,
+					},
+					{
+						SLA:   1,
+						Value: 5,
+					},
+				},
+				T: 3,
+			},
+			want: 5,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getMaxValue(tt.args.tasks, tt.args.T); got != tt.want {
+				t.Errorf("getMaxValue() = %v, want %v", got, tt.want)
 			}
 		})
 	}

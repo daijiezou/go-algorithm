@@ -8,42 +8,12 @@ import (
 	"unicode"
 )
 
-func isOperator(c rune) bool {
-	return c == '+' || c == '-' || c == '*'
+func main() {
+
 }
 
-func evaluateExpression(expr string) (int64, error) {
-	var result, current int64
-	var operator rune = '+'
-	for i := 0; i < len(expr); {
-		if unicode.IsDigit(rune(expr[i])) {
-			start := i
-			for i < len(expr) && unicode.IsDigit(rune(expr[i])) {
-				i++
-			}
-			num, err := strconv.ParseInt(expr[start:i], 10, 64)
-			if err != nil {
-				return 0, err
-			}
-			switch operator {
-			case '+':
-				result += current
-				current = num
-			case '-':
-				result += current
-				current = -num
-			case '*':
-				current *= num
-			}
-		} else if isOperator(rune(expr[i])) {
-			operator = rune(expr[i])
-			i++
-		} else {
-			return 0, fmt.Errorf("invalid character in expression")
-		}
-	}
-	result += current
-	return result, nil
+func isOperator(c rune) bool {
+	return c == '+' || c == '-' || c == '*'
 }
 
 func longestValidExpression(s string) int64 {
@@ -91,8 +61,38 @@ func longestValidExpression(s string) int64 {
 	return result
 }
 
-func main() {
-
+func evaluateExpression(expr string) (int64, error) {
+	var result, current int64
+	var operator rune = '+'
+	for i := 0; i < len(expr); {
+		if unicode.IsDigit(rune(expr[i])) {
+			start := i
+			for i < len(expr) && unicode.IsDigit(rune(expr[i])) {
+				i++
+			}
+			num, err := strconv.ParseInt(expr[start:i], 10, 64)
+			if err != nil {
+				return 0, err
+			}
+			switch operator {
+			case '+':
+				result += current
+				current = num
+			case '-':
+				result += current
+				current = -num
+			case '*':
+				current *= num
+			}
+		} else if isOperator(rune(expr[i])) {
+			operator = rune(expr[i])
+			i++
+		} else {
+			return 0, fmt.Errorf("invalid character in expression")
+		}
+	}
+	result += current
+	return result, nil
 }
 
 /*
@@ -236,6 +236,7 @@ func HandleExcel(cells []string) {
 
 func getIndex(cell string) (int, int) {
 	idx := strings.Index(cell, "<")
+	// shuo
 	if idx >= 0 {
 		u := cell[idx+1]
 		return int(u - 'A'), idx
