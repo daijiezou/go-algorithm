@@ -266,11 +266,6 @@ func maxBananas(numbers []int, n int) int {
 	return maxSum
 }
 
-type CharCount struct {
-	char  rune
-	count int
-}
-
 func summarize(s string) string {
 	// 去除字符串中的非字母符号
 	var cleaned strings.Builder
