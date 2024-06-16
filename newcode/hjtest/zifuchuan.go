@@ -195,40 +195,10 @@ type Task struct {
 }
 
 // https://www.nowcoder.com/discuss/599560893734690816?sourceSSR=users
-/*
-任务排序：我们按照任务的结束时间对任务进行排序。这样可以尽量早地完成任务，从而空出更多的时间给后续任务。
-遍历任务：对于每一个任务，如果它的开始时间比当前天数大，则可以处理该任务，并更新当前天数为任务的结束时间。
-调整条件：如果任务的开始时间小于或等于当前天数，但结束时间大于当前天数，则可以处理该任务，并将当前天数增加1。
-
-*/
-func maxTasks(tasks []Task) int {
-	// 按照任务的结束时间进行排序
-	sort.Slice(tasks, func(i, j int) bool {
-		return tasks[i].end < tasks[j].end
-	})
-
-	count := 0
-	currentDay := 0
-
-	// 遍历任务
-	for _, task := range tasks {
-		// 如果当前任务可以在 currentDay 处理
-		if task.start > currentDay {
-			count++
-			currentDay = task.end
-		} else if task.start <= currentDay && task.end > currentDay {
-			count++
-			currentDay++
-		}
-	}
-
-	return count
-}
-
 func maxTask2(tasks []Task) int {
 	// 按照任务的结束时间进行排序
 	sort.Slice(tasks, func(i, j int) bool {
-		return tasks[i].start < tasks[j].start
+		return tasks[i].end < tasks[j].end
 	})
 
 	// Initialize a map to keep track of the days
