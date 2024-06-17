@@ -1,4 +1,4 @@
-package _1_base
+package _1base
 
 func numDistinct(s string, t string) int {
 	m := len(s)

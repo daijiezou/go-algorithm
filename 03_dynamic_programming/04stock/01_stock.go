@@ -1,4 +1,4 @@
-package _4_stock
+package _4stock
 
 import "math"
 

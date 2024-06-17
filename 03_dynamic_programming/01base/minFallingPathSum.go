@@ -1,4 +1,4 @@
-package _1_base
+package _1base
 
 import "math"
 

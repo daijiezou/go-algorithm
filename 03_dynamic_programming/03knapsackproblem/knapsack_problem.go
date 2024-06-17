@@ -1,4 +1,4 @@
-package _3_knapsackproblem
+package _3knapsackproblem
 
 import "fmt"
 
