@@ -94,3 +94,44 @@ func videoStitching(clips [][]int, T int) int {
 	}
 	return -1
 }
+
+func jump(nums []int) int {
+	memo := make([]int, len(nums))
+	for i := range memo {
+		memo[i] = len(nums)
+	}
+	return jumpdp(nums, 0, memo)
+}
+
+// dp的定义是从dp[i] 从i开始跳到终点，需要几步
+func jumpdp(nums []int, p int, memo []int) int {
+	n := len(nums)
+	if p >= len(memo)-1 {
+		return 0
+	}
+	if memo[p] != n {
+		return memo[p]
+	}
+	steps := nums[p]
+	for i := 1; i <= steps && p+i < n; i++ {
+		subproblem := jumpdp(nums, p+i, memo)
+		// 取其中最小的作为最终结果
+		memo[p] = min(memo[p], subproblem+1)
+	}
+	return memo[p]
+}
+
+// i 和 end 标记了可以选择的跳跃步数，
+// farthest 标记了所有选择 [i..end] 中能够跳到的最远距离，jumps 记录了跳跃次数。
+func jump2(nums []int) int {
+	n := len(nums)
+	end, farthest, jumps := 0, 0, 0
+	for i := 0; i < n-1; i++ {
+		farthest = max(farthest, nums[i]+i)
+		if end == i {
+			jumps++
+			end = farthest
+		}
+	}
+	return jumps
+}
