@@ -108,6 +108,7 @@ func solveSudokuBackTrack(
 		if solveSudokuBackTrack(board, row, col+1, n) {
 			return true
 		}
+		// 取消选择
 		board[row][col] = '.'
 	}
 	// 穷举完 1~9，依然没有找到可行解，此路不通

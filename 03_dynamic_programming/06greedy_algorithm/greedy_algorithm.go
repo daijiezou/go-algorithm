@@ -69,10 +69,6 @@ func videoStitching(clips [][]int, T int) int {
 		return 0
 	}
 	sort.Slice(clips, func(i, j int) bool {
-		// 如果起点相同则按照结束时间的倒序排
-		//if clips[i][0] == clips[j][0] {
-		//	return clips[i][1] > clips[j][1]
-		//}
 		return clips[i][0] < clips[j][0]
 	})
 	// 记录选择的短视频个数
