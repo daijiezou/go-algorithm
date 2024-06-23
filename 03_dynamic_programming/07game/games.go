@@ -3,13 +3,19 @@ package _7game
 import "math"
 
 // https://leetcode.cn/problems/minimum-path-sum/
+// 最短路径
 func minPathSum(grid [][]int) int {
 	m := len(grid)
 	n := len(grid[0])
+
+	// dp数组定义为到从0,0到到i，j所需的最短路径为dp[i][j]
 	dp := make([][]int, m)
 	for i := 0; i < m; i++ {
 		dp[i] = make([]int, n)
 	}
+
+	// 初始化baseCase
+	// 第一行和第一列只能走直线
 	dp[0][0] = grid[0][0]
 	for i := 1; i < m; i++ {
 		dp[i][0] = dp[i-1][0] + grid[i][0]
