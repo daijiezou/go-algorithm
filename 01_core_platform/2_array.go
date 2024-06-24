@@ -27,6 +27,7 @@ func removeElement(nums []int, val int) int {
 	return slow
 }
 
+// 移动0
 func moveZeroes(nums []int) {
 	length := len(nums)
 	slow := 0
@@ -126,5 +127,7 @@ func getlongestPalindrome(s string, left int, right int) string {
 			break
 		}
 	}
+	// 上面多减了一个left得加回来
+	// 因为本身就是左闭右开，所以right多加了一个是正好的
 	return s[left+1 : right]
 }
