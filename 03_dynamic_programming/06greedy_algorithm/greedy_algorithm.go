@@ -12,13 +12,46 @@ import (
 给定两个整数数组 gas 和 cost ，如果你可以按顺序绕环路行驶一周，则返回出发时加油站的编号，否则返回 -1 。如果存在解，则 保证 它是 唯一 的。
 */
 
+// https://leetcode.cn/problems/gas-station/description/
+func canCompleteCircuit(gas []int, cost []int) int {
+	n := len(gas)
+	minGas := 10000000
+	minIndex := 0
+	curGas := 0
+	for i := 0; i < n; i++ {
+		curGas = curGas + gas[i] - cost[i]
+		if curGas < minGas {
+			// 经过第 i 个站点后，使 sum 到达新低
+			// 所以站点 i + 1 就是最低点（起点）
+			minGas = curGas
+			minIndex = i + 1
+		}
+	}
+	if curGas < 0 {
+		return -1
+	}
+	//for i := minIndex; i < n+minIndex; i++ {
+	//	curGas = curGas + gas[i%n] - cost[i%n]
+	//	if curGas < 0 {
+	//		return -1
+	//	}
+	//}
+	return minIndex % n
+
+}
+
 /*
+
 1、从区间集合 intvs 中选择一个区间 x，这个 x 是在当前所有区间中结束最早的（end 最小）。
 2、把所有与 x 区间相交的区间从区间集合 intvs 中删除。
 3、重复步骤 1 和 2，直到 intvs 为空为止。之前选出的那些 x 就是最大不相交子集
 */
 
 // https://leetcode.cn/problems/non-overlapping-intervals/submissions/539972480/
+/*
+给定一个区间的集合 intervals ，其中 intervals[i] = [starti, endi] 。
+返回 需要移除区间的最小数量，使剩余区间互不重叠 。
+*/
 func eraseOverlapIntervals(intvs [][]int) int {
 	n := len(intvs)
 	if n < 1 {
@@ -26,6 +59,7 @@ func eraseOverlapIntervals(intvs [][]int) int {
 	}
 	sort.Slice(intvs, func(i, j int) bool {
 		// 按照结束时间来排序
+		// 结束的时间越早，排在越前面
 		return intvs[i][1] < intvs[j][1]
 	})
 	total := 1
@@ -54,7 +88,7 @@ func findMinArrowShots(intvs [][]int) int {
 	endTime := intvs[0][1]
 	for i := 1; i < n; i++ {
 		// 判断startTime是否大于前一个结束时间的endTime
-		// note 与上面问题的差别就在于这里是 > 而不是 >=
+		// note:与上面问题的差别就在于这里是 > 而不是 >=
 		if intvs[i][0] > endTime {
 			endTime = intvs[i][1]
 			total++

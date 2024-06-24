@@ -11,20 +11,20 @@ package _2_queueAndStack
 func NextGreaterElement(nums []int) []int {
 	length := len(nums)
 	res := make([]int, length)
-	s := make([]int, 0)
+	stack := make([]int, 0)
 	// 倒着往栈里放
 	for i := length - 1; i >= 0; i-- {
 		// 删掉 nums[i] 后面较小的元素
-		for len(s) > 0 && s[len(s)-1] <= nums[i] {
-			s = s[:len(s)-1]
+		for len(stack) > 0 && stack[len(stack)-1] <= nums[i] {
+			stack = stack[:len(stack)-1]
 		}
 		// 现在栈顶就是 nums[i] 后面的更大元素
-		if len(s) == 0 {
+		if len(stack) == 0 {
 			res[i] = 0
 		} else {
-			res[i] = s[len(s)-1]
+			res[i] = stack[len(stack)-1]
 		}
-		s = append(s, nums[i])
+		stack = append(stack, nums[i])
 	}
 	return res
 }
