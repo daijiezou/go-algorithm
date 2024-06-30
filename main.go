@@ -20,6 +20,30 @@ func mergeSort(nums []int) []int {
 	return merge(mergeSort(left), mergeSort(right))
 }
 
+func lengthOfLIS(nums []int) int {
+	length := len(nums)
+	dp := make([]int, length)
+	for i := 0; i < length; i++ {
+		// 初始化最小的长度为1
+		dp[i] = 1
+	}
+	// dp数组定义为以dp[i],为结尾的最长递增子数组的值
+	for i := 1; i < length; i++ {
+		for j := 0; j < i; j++ {
+			if nums[i] > nums[j] {
+				dp[i] = max(dp[i], dp[j]+1)
+			}
+		}
+	}
+	maxRes := 0
+	for i := 0; i < length; i++ {
+		if dp[i] > maxRes {
+			maxRes = dp[i]
+		}
+	}
+	return maxRes
+}
+
 func merge(nums1 []int, nums2 []int) []int {
 	res := make([]int, 0, len(nums1)+len(nums2))
 	for len(nums1) > 0 && len(nums2) > 0 {
