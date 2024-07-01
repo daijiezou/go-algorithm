@@ -1,4 +1,4 @@
-package fenzhi
+package classic
 
 import "strconv"
 
