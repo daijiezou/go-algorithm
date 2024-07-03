@@ -21,3 +21,56 @@ func maxArea(height []int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/trapping-rain-water/
+
+/*
+water[i] = min(
+
+	# 左边最高的柱子
+	max(height[0..i]),
+	# 右边最高的柱子
+	max(height[i..end])
+
+) - height[i]
+*/
+func trap(height []int) int {
+	length := len(height)
+	leftMax := make([]int, length)
+	rightMax := make([]int, length)
+	leftMax[0] = height[0]
+	rightMax[length-1] = height[length-1]
+	for i := 1; i < length; i++ {
+		leftMax[i] = max(leftMax[i-1], height[i])
+	}
+	for i := length - 2; i >= 0; i-- {
+		rightMax[i] = max(rightMax[i+1], height[i])
+	}
+	res := 0
+	for i := 1; i < length-1; i++ {
+		minHeight := min(leftMax[i], rightMax[i])
+		res += minHeight - height[i]
+	}
+	return res
+}
+
+func trap2(height []int) int {
+	left, right := 0, len(height)-1
+	l_max, r_max := 0, 0
+
+	res := 0
+	for left < right {
+		l_max = max(l_max, height[left])
+		r_max = max(r_max, height[right])
+
+		if l_max < r_max {
+			res += l_max - height[left]
+
+			left++
+		} else {
+			res += r_max - height[right]
+			right--
+		}
+	}
+	return res
+}
