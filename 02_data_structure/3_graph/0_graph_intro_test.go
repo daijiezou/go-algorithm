@@ -73,8 +73,9 @@ func Test_canFinish1(t *testing.T) {
 			name: "case1",
 			args: args{
 				numCourses:    20,
-				prerequisites: [][]int{[0,10],[3,18],[5,5],[6,11],[11,14],[13,1],[15,1],[17,4]},
+				prerequisites: [][]int{{0, 10}, {3, 18}, {5, 5}, {6, 11}, {11, 14}, {13, 1}, {15, 1}, {17, 4}},
 			},
+			want: false,
 		},
 	}
 	for _, tt := range tests {

@@ -46,7 +46,11 @@ func canFinish(numCourses int, prerequisites [][]int) bool {
 	visited := make([]bool, numCourses)
 	path := make([]bool, numCourses)
 	hasCycle := false
-	canFinishTr(graph, 0, visited, path, &hasCycle)
+	for i := 0; i < numCourses; i++ {
+		// 遍历图中的所有节点
+		canFinishTr(graph, i, visited, path, &hasCycle)
+	}
+
 	return !hasCycle
 }
 
@@ -54,6 +58,7 @@ func canFinishTr(graph [][]int, s int, visited []bool, path []bool, hasCycle *bo
 	if path[s] {
 		// 发现环！！！
 		*hasCycle = true
+		return
 	}
 	if visited[s] || *hasCycle {
 		return
