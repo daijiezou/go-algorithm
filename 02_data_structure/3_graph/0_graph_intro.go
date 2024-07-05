@@ -9,10 +9,11 @@ var matrix [][]bool
 
 /*
 图论中特有的度（degree）的概念，在无向图中，「度」就是每个节点相连的边的条数。
-由于有向图的边有方向，所以有向图中每个节点「度」被细分为入度（indegree）和出度（outdegree），比如下图：
+由于有向图的边有方向，所以有向图中每个节点「度」被细分为入度（indegree）和出度（outdegree）
 */
 
 // https://leetcode.cn/problems/all-paths-from-source-to-target/
+// 纪录从七点到终点的所有路径
 func allPathsSourceTarget(graph [][]int) [][]int {
 	// 记录所有路径
 	res := [][]int{}
@@ -29,7 +30,7 @@ func traverse(graph [][]int, start int, path *[]int, res *[][]int) {
 		temp := make([]int, len(*path))
 		copy(temp, *path)
 		*res = append(*res, temp)
-		// 从路径移出节点 s
+		// note:从路径移出节点 s
 		*path = (*path)[:len(*path)-1]
 		return
 	}
@@ -75,13 +76,94 @@ func canFinishTr(graph [][]int, s int, visited []bool, path []bool, hasCycle *bo
 }
 
 func buildGraph(n int, prerequisites [][]int) [][]int {
-	graph := make([][]int, n)
+	newGraph := make([][]int, n)
 	for i := 0; i < n; i++ {
-		graph[i] = make([]int, 0, 2)
+		newGraph[i] = make([]int, 0, 2)
 	}
 	for i := 0; i < len(prerequisites); i++ {
-		from, to := prerequisites[i][1], prerequisites[i][0]
-		graph[from] = append(graph[from], to)
+		edge := prerequisites[i]
+		from, to := edge[1], edge[0]
+		newGraph[from] = append(newGraph[from], to)
 	}
-	return graph
+	return newGraph
+}
+
+// [{1,0}]
+// 要学习课程1，先得学习课程0
+func canFinishBFS(numCourses int, prerequisites [][]int) bool {
+	// graph记录的是被依赖的情况
+	graph := buildGraph(numCourses, prerequisites)
+	inDegree := make([]int, numCourses)
+	for _, edge := range prerequisites {
+		_, to := edge[1], edge[0] //
+		// 纪录需要先修课程的数量
+		inDegree[to]++
+	}
+	// 根据入度初始化队列中的节点，和环检测算法相同
+	queue := make([]int, 0)
+	for i, val := range inDegree {
+		if val == 0 {
+			queue = append(queue, i)
+		}
+	}
+	count := 0
+	for len(queue) > 0 {
+		count++
+		cur := queue[0]
+		queue = queue[1:]
+		for _, next := range graph[cur] {
+
+			//next是依赖cur的
+			inDegree[next]--
+
+			// 如果next的所有依赖都以完成，则加入队列
+			if inDegree[next] == 0 {
+				queue = append(queue, next)
+			}
+		}
+	}
+	// 如果所有节点都被遍历过，说明不成环
+	return count == numCourses
+}
+
+// https://leetcode.cn/problems/course-schedule-ii/description/
+func findOrder(numCourses int, prerequisites [][]int) []int {
+	// graph记录的是被依赖的情况
+	graph := buildGraph(numCourses, prerequisites)
+	inDegree := make([]int, numCourses)
+	for _, edge := range prerequisites {
+		_, to := edge[1], edge[0] //
+		// 纪录需要先修课程的数量
+		inDegree[to]++
+	}
+	// 根据入度初始化队列中的节点，和环检测算法相同
+	queue := make([]int, 0)
+	for i, val := range inDegree {
+		if val == 0 {
+			queue = append(queue, i)
+		}
+	}
+	count := 0
+	res := make([]int, 0)
+	for len(queue) > 0 {
+		count++
+		cur := queue[0]
+		res = append(res, cur)
+		queue = queue[1:]
+		for _, next := range graph[cur] {
+
+			//next是依赖cur的
+			inDegree[next]--
+
+			// 如果next的所有依赖都以完成，则加入队列
+			if inDegree[next] == 0 {
+				queue = append(queue, next)
+			}
+		}
+	}
+	// 如果所有节点都被遍历过，说明不成环
+	if len(res) != numCourses {
+		return []int{}
+	}
+	return res
 }
