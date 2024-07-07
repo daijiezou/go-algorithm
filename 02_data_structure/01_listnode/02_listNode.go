@@ -1,6 +1,7 @@
 package _1_listnode
 
 // 把存在的重复元素全部去除
+// https://leetcode.cn/problems/remove-duplicates-from-sorted-list-ii/
 func deleteDuplicates(head *ListNode) *ListNode {
 	dummy := &ListNode{Val: -1}
 	p := dummy

@@ -5,6 +5,28 @@ type MinPQ struct {
 	size int
 }
 
+func (mpq *MinPQ) Len() int {
+	return len(mpq.pq)
+}
+
+func (mpq *MinPQ) Less(i, j int) bool {
+	return mpq.pq[i].Val < mpq.pq[j].Val
+}
+
+func (mpq *MinPQ) Swap(i, j int) {
+	mpq.pq[i], mpq.pq[j] = mpq.pq[j], mpq.pq[i]
+}
+
+func (mpq *MinPQ) Push(x any) {
+	mpq.pq = append(mpq.pq, x.(*ListNode))
+}
+
+func (mpq *MinPQ) Pop() any {
+	x := mpq.pq[len(mpq.pq)-1]
+	mpq.pq = mpq.pq[:len(mpq.pq)-1]
+	return x
+}
+
 func NewMinPQ() *MinPQ {
 	return &MinPQ{
 		pq:   make([]*ListNode, 1),

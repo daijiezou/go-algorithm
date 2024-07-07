@@ -1,12 +1,19 @@
 package _1_listnode
 
+import "container/heap"
+
 type ListNode struct {
 	Val  int
 	Next *ListNode
 }
 
 // 单链表的分解
+// https://leetcode.cn/problems/partition-list/description/
+/*
+给你一个链表的头节点 head 和一个特定值 x ，请你对链表进行分隔，使得所有 小于 x 的节点都出现在 大于或等于 x 的节点之前。
 
+你应当 保留 两个分区中每个节点的初始相对位置。
+*/
 func partition(head *ListNode, x int) *ListNode {
 	dummy1 := &ListNode{Val: -1}
 	dummy2 := &ListNode{Val: -1}
@@ -22,6 +29,10 @@ func partition(head *ListNode, x int) *ListNode {
 			p2.Next = head
 			p2 = p2.Next
 		}
+		/*
+			果我们需要把原链表的节点接到新链表上，
+			而不是 new 新节点来组成新链表的话，那么断开节点和原链表之间的链接可能是必要的。
+		*/
 		temp := head.Next
 		head.Next = nil
 		head = temp
@@ -126,20 +137,25 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	if len(lists) == 0 {
 		return nil
 	}
-	pq := NewMinPQ()
-	for _, listNode := range lists {
-		if listNode != nil {
-			pq.insert(listNode)
+
+	pq := MinPQ{pq: []*ListNode{}}
+
+	heap.Init(&pq)
+	// 将 k 个链表的头结点加入最小堆
+	for _, head := range lists {
+		if head != nil {
+			heap.Push(&pq, head)
 		}
 	}
+
 	dummy := &ListNode{Val: -1}
 	cur := dummy
-	for pq.size > 0 {
-		node := pq.pop()
+	for pq.Len() > 0 {
+		node := heap.Pop(&pq).(*ListNode)
 		cur.Next = node
 		cur = cur.Next
 		if node.Next != nil {
-			pq.insert(node.Next)
+			heap.Push(&pq, node.Next)
 		}
 	}
 	return dummy.Next
