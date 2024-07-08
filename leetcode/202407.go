@@ -41,3 +41,22 @@ func checkGood(board [][]byte, rMove int, cMove int, color byte, dx, dy int) boo
 	}
 	return false
 }
+
+// https://leetcode.cn/problems/find-pivot-index/description/?envType=daily-question&envId=2024-07-08
+func pivotIndex(nums []int) int {
+	length := len(nums)
+	presum := make([]int, length+1)
+
+	for i := 1; i < length+1; i++ {
+		presum[i] = presum[i-1] + nums[i-1]
+	}
+	for i := 1; i < length+1; i++ {
+		// 计算 nums[i-1] 左侧和右侧的元素和
+		left := presum[i-1]
+		right := presum[length] - presum[i]
+		if left == right {
+			return i
+		}
+	}
+	return -1
+}

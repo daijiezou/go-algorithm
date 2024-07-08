@@ -29,12 +29,12 @@ func isPalindrome(head *ListNode) bool {
 }
 
 // 使用后续遍历的方式来判断是否是回文链表
-func isPalindromeTraverse(right *ListNode) bool {
-	if right == nil {
+func isPalindromeTraverse(head *ListNode) bool {
+	if head == nil {
 		return true
 	}
-	res := isPalindromeTraverse(right.Next)
-	res = res && isPalindromeleft.Val == right.Val
+	res := isPalindromeTraverse(head.Next)
+	res = res && isPalindromeleft.Val == head.Val
 	isPalindromeleft = isPalindromeleft.Next
 	return res
 }

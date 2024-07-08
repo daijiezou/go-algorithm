@@ -138,9 +138,9 @@ func mergeKLists(lists []*ListNode) *ListNode {
 		return nil
 	}
 
-	pq := MinPQ{pq: []*ListNode{}}
+	pq := ListNodeHeap{}
 
-	heap.Init(&pq)
+	heap.Init(pq)
 	// 将 k 个链表的头结点加入最小堆
 	for _, head := range lists {
 		if head != nil {
@@ -160,3 +160,5 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	}
 	return dummy.Next
 }
+
+// 链表排序，给
