@@ -58,27 +58,25 @@ func deleteDuplicatesUnsortedTest(head *ListNode) *ListNode {
 
 // 链表排序
 func sortListTest(head *ListNode) *ListNode {
-	return mergeSort(head, nil)
+	return mergeSort(head)
 }
 
-func mergeSort(head *ListNode, tail *ListNode) *ListNode {
-	if head == nil {
-		return head
-	}
-	// 只有一个节点了
-	if head.Next == tail {
-		head.Next = nil
+func mergeSort(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
 		return head
 	}
 	// 找到链表中点进行切分
 	slow, fast := head, head
-	for fast != tail && fast.Next != tail {
+	for fast.Next != nil && fast.Next.Next != nil {
 		slow = slow.Next
 		fast = fast.Next.Next
 	}
 	mid := slow
-	left := mergeSort(head, mid)
-	right := mergeSort(mid, tail)
+	// 断开链表
+	midNext := mid.Next
+	mid.Next = nil
+	left := mergeSort(head)
+	right := mergeSort(midNext)
 	return merge(left, right)
 }
 
