@@ -28,17 +28,6 @@ func isPalindrome(head *ListNode) bool {
 	return true
 }
 
-// 使用后续遍历的方式来判断是否是回文链表
-func isPalindromeTraverse(head *ListNode) bool {
-	if head == nil {
-		return true
-	}
-	res := isPalindromeTraverse(head.Next)
-	res = res && isPalindromeleft.Val == head.Val
-	isPalindromeleft = isPalindromeleft.Next
-	return res
-}
-
 func myReverse(head *ListNode) *ListNode {
 	var pre, cur, next *ListNode
 	pre, cur, next = nil, head, head
@@ -49,4 +38,25 @@ func myReverse(head *ListNode) *ListNode {
 		cur = next
 	}
 	return pre
+}
+
+// 使用后续遍历的方式来判断是否是回文链表
+func isPalindromeTraverse(head *ListNode) bool {
+	left := head
+	res := true
+	var traverse func(head *ListNode)
+	traverse = func(head *ListNode) {
+		if head == nil {
+			return
+		}
+		traverse(head.Next)
+		// 后序
+		if left.Val != head.Val {
+			res = false
+			return
+		}
+		left = left.Next
+	}
+	traverse(head)
+	return res
 }

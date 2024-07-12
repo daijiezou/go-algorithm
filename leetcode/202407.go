@@ -1,5 +1,7 @@
 package leetcode
 
+import "sort"
+
 // https://leetcode.cn/problems/check-if-move-is-legal/
 func checkMove(board [][]byte, rMove int, cMove int, color byte) bool {
 	// 从y轴正方向开始遍历
@@ -59,4 +61,66 @@ func pivotIndex(nums []int) int {
 		}
 	}
 	return -1
+}
+
+// https://leetcode.cn/problems/count-the-number-of-incremovable-subarrays-i/?envType=daily-question&envId=2024-07-10
+// 找到有几个递增子数组
+func incremovableSubarrayCount(nums []int) int {
+	current := []int{}
+	count := 0
+	currentIndex := make([]bool, len(nums))
+	incremovableSubarrayCountBacktack(nums, 0, current, currentIndex, &count)
+	return count + 1
+}
+
+func incremovableSubarrayCountBacktack(nums []int, start int, zijihe []int, index []bool, count *int) {
+	for i := start; i < len(nums); i++ {
+		zijihe = append(zijihe, nums[i])
+		index[i] = true
+		// 判断是否为递增子数组
+		if heckIncremovable(index, zijihe) {
+			*count++
+		}
+		incremovableSubarrayCountBacktack(nums, i+1, zijihe, index, count)
+		zijihe = zijihe[:len(zijihe)-1]
+		index[i] = false
+	}
+}
+
+func heckIncremovable(index []bool, nums []int) bool {
+	if len(nums) == len(index) {
+		return false
+	}
+	leftIndex := make([]int, 0)
+	for i := 0; i < len(index); i++ {
+		if !index[i] {
+			leftIndex = append(leftIndex, i)
+		}
+	}
+
+	// 判断index是否连续
+	for i := 0; i < len(leftIndex)-1; i++ {
+		if leftIndex[i]+1 != leftIndex[i+1] {
+			return false
+		}
+	}
+	if len(nums) == 1 {
+		return true
+	}
+	length := len(nums)
+	for i := 0; i < length-1; i++ {
+		if nums[i] >= nums[i+1] {
+			return false
+		}
+	}
+
+	return true
+}
+
+func numberGame(nums []int) []int {
+	sort.Ints(nums)
+	for i := 0; i < len(nums); i += 2 {
+		nums[i], nums[i+1] = nums[i+1], nums[i]
+	}
+	return nums
 }
