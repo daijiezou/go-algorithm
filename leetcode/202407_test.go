@@ -34,3 +34,29 @@ func Test_incremovableSubarrayCount(t *testing.T) {
 		})
 	}
 }
+
+func Test_canSortArray(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				nums: []int{8, 4, 2, 30, 15},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := canSortArray(tt.args.nums); got != tt.want {
+				t.Errorf("canSortArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

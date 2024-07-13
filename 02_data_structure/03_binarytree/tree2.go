@@ -52,3 +52,28 @@ func flatten(root *TreeNode) {
 	}
 	p.Right = right
 }
+
+func buildTree(preorder []int, inorder []int) *TreeNode {
+	return build(preorder, 0, len(preorder)-1, inorder, 0, len(inorder)-1)
+}
+
+func build(preorder []int, preStart, preEnd int, inorder []int, inorderStart, inorderEnd int) *TreeNode {
+	if preStart > preEnd {
+		return nil
+	}
+
+	root := &TreeNode{Val: preorder[preStart]}
+	index := inorder[inorderStart]
+	for i := inorderStart; i <= inorderEnd; i++ {
+		if inorder[i] == root.Val {
+			index = i
+			break
+		}
+	}
+	//左子树的节点个数
+	leftLength := index - inorderStart
+
+	root.Left = build(preorder, preStart+1, preStart+leftLength, inorder, inorderStart, inorderStart+leftLength-1)
+	root.Right = build(preorder, preStart+1+leftLength, preEnd, inorder, index+1, inorderEnd)
+	return root
+}

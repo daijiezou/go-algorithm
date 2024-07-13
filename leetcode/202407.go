@@ -1,6 +1,11 @@
 package leetcode
 
-import "sort"
+import (
+	"math/bits"
+	"sort"
+	"strconv"
+	"strings"
+)
 
 // https://leetcode.cn/problems/check-if-move-is-legal/
 func checkMove(board [][]byte, rMove int, cMove int, color byte) bool {
@@ -123,4 +128,84 @@ func numberGame(nums []int) []int {
 		nums[i], nums[i+1] = nums[i+1], nums[i]
 	}
 	return nums
+}
+
+// https://leetcode.cn/problems/find-if-array-can-be-sorted/description/?envType=daily-question&envId=2024-07-13
+func canSortArray(nums []int) bool {
+	oneCount := make([]int, len(nums))
+	for i := 0; i < len(nums); i++ {
+		res := strconv.FormatInt(int64(nums[i]), 2)
+		oneCount[i] = strings.Count(res, "1")
+	}
+	temp := make([][2]int, 0)
+	left, right := 0, 0
+	for right < len(nums) {
+		if oneCount[right] == oneCount[left] {
+			right++
+			if right < len(nums) && oneCount[right] != oneCount[left] {
+				temp = append(temp, [2]int{left, right})
+			}
+		} else {
+			left++
+		}
+	}
+	temp = append(temp, [2]int{left, right})
+	numMax, _ := getNumsMaxAndMin(nums, temp[0])
+	for i := 1; i < len(temp); i++ {
+		tempMax, tempMin := getNumsMaxAndMin(nums, temp[i])
+		if tempMin < numMax {
+			return false
+		}
+		numMax = tempMax
+	}
+	return true
+}
+
+func getNumsMaxAndMin(nums []int, index2 [2]int) (max, min int) {
+
+	left := index2[0]
+	right := index2[1]
+	numMax := nums[left]
+	numMin := nums[left]
+	for i := left + 1; i < right; i++ {
+		if nums[i] > numMax {
+			numMax = nums[i]
+		}
+		if nums[i] < numMin {
+			numMin = nums[i]
+		}
+	}
+	return numMax, numMin
+}
+
+// https://leetcode.cn/problems/find-if-array-can-be-sorted/description/?envType=daily-question&envId=2024-07-13
+func canSortArray2(nums []int) bool {
+	//当前组的最大值
+	currentGroupMax := 0
+
+	// 当前1的个数
+	latestOneCnt := 0
+
+	// 上一组的最大值
+	lastGroupMax := 0
+	for i := 0; i < len(nums); i++ {
+		if bits.OnesCount(uint(nums[i])) == latestOneCnt {
+			currentGroupMax = max(currentGroupMax, nums[i])
+		} else {
+			// 更新最新的1的个数
+			latestOneCnt = bits.OnesCount(uint(nums[i]))
+
+			// 将当前组的最大值赋予上一组
+			lastGroupMax = currentGroupMax
+
+			// 更新当前组的最大值
+			currentGroupMax = nums[i]
+		}
+
+		// 后面组的每个都必须大于上个组的最大值，否则无法排序
+		if nums[i] < lastGroupMax {
+			return false
+		}
+	}
+	return true
 }
