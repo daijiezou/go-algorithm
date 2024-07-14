@@ -209,3 +209,29 @@ func canSortArray2(nums []int) bool {
 	}
 	return true
 }
+
+// https://leetcode.cn/problems/max-increase-to-keep-city-skyline/?envType=daily-question&envId=2024-07-14
+func maxIncreaseKeepingSkyline(grid [][]int) int {
+	// 找到每一个点所在行列的最大值，
+	// 这个最多比这个点所在的行列最大值要小
+	m := len(grid)
+	n := len(grid[0])
+	hangMax := make([]int, m)
+	lieMax := make([]int, n)
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			hangMax[i] = max(hangMax[i], grid[i][j])
+			lieMax[j] = max(lieMax[j], grid[i][j])
+		}
+	}
+	totalCount := 0
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			minHeight := min(hangMax[i], lieMax[j])
+			if grid[i][j] < minHeight {
+				totalCount += minHeight - grid[i][j]
+			}
+		}
+	}
+	return totalCount
+}
