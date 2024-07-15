@@ -235,3 +235,19 @@ func maxIncreaseKeepingSkyline(grid [][]int) int {
 	}
 	return totalCount
 }
+
+// https://leetcode.cn/problems/accounts-merge/
+func accountsMerge(accounts [][]string) [][]string {
+	emailId := make(map[string]int)
+	emailName := make(map[string]string)
+	for i := 0; i < len(accounts); i++ {
+		name := accounts[i][0]
+		for j := 1; j < len(accounts[i]); j++ {
+			if _, ok := emailId[accounts[i][j]]; !ok {
+				emailId[accounts[i][j]] = i
+				emailName[accounts[i][j]] = name
+			}
+		}
+	}
+
+}
