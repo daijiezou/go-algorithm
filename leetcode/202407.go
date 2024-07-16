@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"fmt"
 	"math/bits"
 	"sort"
 	"strconv"
@@ -236,6 +237,52 @@ func maxIncreaseKeepingSkyline(grid [][]int) int {
 	return totalCount
 }
 
+type UF struct {
+	// 记录连通分量
+	Count int
+	// 节点 x 的父节点是 Parent[x]
+	Parent []int
+}
+
+// NewUF /* 构造函数，n 为图的节点总数 */
+func NewUF(n int) *UF {
+	// 一开始互不连通
+	uf := &UF{Count: n, Parent: make([]int, n)}
+	// 父节点指针初始指向自己
+	for i := 0; i < n; i++ {
+		uf.Parent[i] = i
+	}
+	return uf
+}
+func (uf *UF) find(x int) int {
+	// 根节点的 Parent[x] == x
+	for uf.Parent[x] != x {
+		uf.Parent[x] = uf.find(uf.Parent[x])
+	}
+	return uf.Parent[x]
+}
+
+/* 返回当前的连通分量个数 */
+func (uf *UF) count() int {
+	return uf.Count
+}
+
+func (uf *UF) union(p int, q int) {
+	rootP := uf.find(p)
+	rootQ := uf.find(q)
+	if rootP == rootQ {
+		return
+	}
+	uf.Parent[rootP] = rootQ
+	uf.Count--
+}
+
+func (uf *UF) connected(p int, q int) bool {
+	rootP := uf.find(p)
+	rootQ := uf.find(q)
+	return rootP == rootQ
+}
+
 // https://leetcode.cn/problems/accounts-merge/
 func accountsMerge(accounts [][]string) [][]string {
 	emailId := make(map[string]int)
@@ -249,5 +296,26 @@ func accountsMerge(accounts [][]string) [][]string {
 			}
 		}
 	}
+	uf := NewUF(len(emailId))
+	fmt.Println(uf)
+	for _, account := range accounts {
+		firstIndex := emailId[account[1]]
+		for _, email := range account[2:] {
+			uf.union(firstIndex, emailId[email])
+		}
+	}
+	fmt.Println(uf)
+	resMap := make(map[int][]string)
+	for email, index := range emailId {
+		index = uf.find(index)
+		resMap[index] = append(resMap[index], email)
+	}
 
+	res := make([][]string, 0)
+	for _, emails := range resMap {
+		sort.Strings(emails)
+		account := append([]string{emailName[emails[0]]}, emails...)
+		res = append(res, account)
+	}
+	return res
 }

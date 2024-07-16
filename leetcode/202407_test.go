@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_incremovableSubarrayCount(t *testing.T) {
 	type args struct {
@@ -87,6 +90,36 @@ func Test_maxIncreaseKeepingSkyline(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxIncreaseKeepingSkyline(tt.args.grid); got != tt.want {
 				t.Errorf("maxIncreaseKeepingSkyline() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_accountsMerge(t *testing.T) {
+	type args struct {
+		accounts [][]string
+	}
+	tests := []struct {
+		name string
+		args args
+		want [][]string
+	}{
+		{
+			name: "case 1",
+			args: args{
+				accounts: [][]string{
+					{"John", "johnsmith@mail.com", "john_newyork@mail.com"},
+					{"John", "johnsmith@mail.com", "john00@mail.com"},
+					{"Mary", "mary@mail.com"},
+					{"John", "johnnybravo@mail.com"},
+				},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := accountsMerge(tt.args.accounts); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("accountsMerge() = %v, want %v", got, tt.want)
 			}
 		})
 	}
