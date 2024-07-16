@@ -1,7 +1,6 @@
 package leetcode
 
 import (
-	"fmt"
 	"math/bits"
 	"sort"
 	"strconv"
@@ -256,7 +255,7 @@ func NewUF(n int) *UF {
 }
 func (uf *UF) find(x int) int {
 	// 根节点的 Parent[x] == x
-	for uf.Parent[x] != x {
+	if uf.Parent[x] != x {
 		uf.Parent[x] = uf.find(uf.Parent[x])
 	}
 	return uf.Parent[x]
@@ -273,7 +272,7 @@ func (uf *UF) union(p int, q int) {
 	if rootP == rootQ {
 		return
 	}
-	uf.Parent[rootP] = rootQ
+	uf.Parent[rootQ] = rootP
 	uf.Count--
 }
 
@@ -290,6 +289,7 @@ func accountsMerge(accounts [][]string) [][]string {
 	for i := 0; i < len(accounts); i++ {
 		name := accounts[i][0]
 		for j := 1; j < len(accounts[i]); j++ {
+			// 在这里只纪录第一次出现的emailName，相当于做了一次去重
 			if _, ok := emailId[accounts[i][j]]; !ok {
 				emailId[accounts[i][j]] = i
 				emailName[accounts[i][j]] = name
@@ -297,20 +297,19 @@ func accountsMerge(accounts [][]string) [][]string {
 		}
 	}
 	uf := NewUF(len(emailId))
-	fmt.Println(uf)
+
 	for _, account := range accounts {
 		firstIndex := emailId[account[1]]
 		for _, email := range account[2:] {
 			uf.union(firstIndex, emailId[email])
 		}
 	}
-	fmt.Println(uf)
+
 	resMap := make(map[int][]string)
 	for email, index := range emailId {
-		index = uf.find(index)
-		resMap[index] = append(resMap[index], email)
+		parent := uf.find(index)
+		resMap[parent] = append(resMap[parent], email)
 	}
-
 	res := make([][]string, 0)
 	for _, emails := range resMap {
 		sort.Strings(emails)
