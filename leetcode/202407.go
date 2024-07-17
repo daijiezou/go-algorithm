@@ -298,6 +298,7 @@ func accountsMerge(accounts [][]string) [][]string {
 	}
 	uf := NewUF(len(emailId))
 
+	// 同一个账户下的邮箱先将他们连接起来
 	for _, account := range accounts {
 		firstIndex := emailId[account[1]]
 		for _, email := range account[2:] {
@@ -310,6 +311,7 @@ func accountsMerge(accounts [][]string) [][]string {
 		parent := uf.find(index)
 		resMap[parent] = append(resMap[parent], email)
 	}
+
 	res := make([][]string, 0)
 	for _, emails := range resMap {
 		sort.Strings(emails)

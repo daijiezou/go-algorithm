@@ -1,5 +1,7 @@
 package __graph
 
+import "fmt"
+
 // 并查集
 type UFI interface {
 	// 将 p 和 q 连接
@@ -33,10 +35,10 @@ func NewUF(n int) *UF {
 /* 返回某个节点 x 的根节点 */
 func (uf *UF) find(x int) int {
 	// 根节点的 parent[x] == x
-	for uf.parent[x] != x {
+	if uf.parent[x] != x {
 		uf.parent[x] = uf.find(uf.parent[x])
 	}
-	return x
+	return uf.parent[x]
 }
 
 /* 返回当前的连通分量个数 */
@@ -58,4 +60,27 @@ func (uf *UF) connected(p int, q int) bool {
 	rootP := uf.find(p)
 	rootQ := uf.find(q)
 	return rootP == rootQ
+}
+
+// https://leetcode.cn/problems/satisfiability-of-equality-equations/
+func equationsPossible(equations []string) bool {
+	// 26个英文字母
+	uf := NewUF(26)
+	for _, x := range equations {
+		if x[1] == '=' {
+			uf.union(int(x[0]-'a'), int(x[3]-'a'))
+		}
+	}
+	fmt.Println(uf)
+	for _, x := range equations {
+		if x[1] == '!' {
+			fmt.Println(uf.find(int(x[0] - 'a')))
+			fmt.Println(uf.find(int(x[3] - 'a')))
+			fmt.Println(uf.connected(int(x[0]-'a'), int(x[3]-'a')))
+			if uf.connected(int(x[0]-'a'), int(x[3]-'a')) {
+				return false
+			}
+		}
+	}
+	return true
 }
