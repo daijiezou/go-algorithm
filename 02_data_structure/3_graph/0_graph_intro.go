@@ -12,6 +12,21 @@ var matrix [][]bool
 由于有向图的边有方向，所以有向图中每个节点「度」被细分为入度（indegree）和出度（outdegree）
 */
 
+// 图遍历框架
+/*var visited map[int]bool
+
+func traverse(graph *Graph, v int) {
+	// 防止走回头路进入死循环
+	if visited[v] {
+		return
+	}
+	// 前序遍历位置，标记节点 v 已访问
+	visited[v] = true
+	for _, neighbor := range graph.Neighbors(v) {
+		traverse(graph, neighbor)
+	}
+}*/
+
 // https://leetcode.cn/problems/all-paths-from-source-to-target/
 // 纪录从起点到终点的所有路径
 func allPathsSourceTarget(graph [][]int) [][]int {
