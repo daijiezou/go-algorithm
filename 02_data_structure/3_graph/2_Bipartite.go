@@ -5,6 +5,8 @@ func isBipartite(graph [][]int) bool {
 	colors := make([]bool, len(graph))
 	visited := make([]bool, len(graph))
 	flag := true
+
+	// 因为所有的图并不一定是全部相邻的，所以得每个都作为起点来遍历一遍
 	for i := 0; i < len(graph); i++ {
 		isBipartiteTransve(graph, colors, visited, &flag, i)
 	}
