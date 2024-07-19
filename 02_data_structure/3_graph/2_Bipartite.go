@@ -9,6 +9,7 @@ func isBipartite(graph [][]int) bool {
 	// 因为所有的图并不一定是全部相邻的，所以得每个都作为起点来遍历一遍
 	for i := 0; i < len(graph); i++ {
 		isBipartiteDFS(graph, colors, visited, &flag, i)
+		
 	}
 	return flag
 }
