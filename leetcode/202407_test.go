@@ -124,3 +124,55 @@ func Test_accountsMerge(t *testing.T) {
 		})
 	}
 }
+
+func Test_permutation(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "case 1",
+			args: args{
+				n: 3,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			permutation(tt.args.n)
+		})
+	}
+}
+
+func Test_minimumMoves(t *testing.T) {
+	type args struct {
+		grid [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				grid: [][]int{
+					{0, 2, 0},
+					{3, 0, 0},
+					{3, 1, 0},
+				},
+			},
+			want: 8,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumMoves(tt.args.grid); got != tt.want {
+				t.Errorf("minimumMoves() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

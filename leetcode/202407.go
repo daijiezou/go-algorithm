@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"math"
 	"math/bits"
 	"sort"
 	"strconv"
@@ -317,6 +318,105 @@ func accountsMerge(accounts [][]string) [][]string {
 		sort.Strings(emails)
 		account := append([]string{emailName[emails[0]]}, emails...)
 		res = append(res, account)
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/minimum-moves-to-spread-stones-over-grid/description/
+func minimumMoves(grid [][]int) int {
+	zero := make([][2]int, 0)
+	more := make([][2]int, 0)
+	for i := 0; i < len(grid); i++ {
+		for j := 0; j < len(grid[i]); j++ {
+			if grid[i][j] == 0 {
+				zero = append(zero, [2]int{i, j})
+			}
+			if grid[i][j] > 1 {
+				for k := 2; k <= grid[i][j]; k++ {
+					more = append(more, [2]int{i, j})
+				}
+			}
+		}
+	}
+	length := len(zero)
+	res := permutation(length)
+	ans := math.MaxInt32
+	for i := 0; i < len(res); i++ {
+		step := 0
+		for j := 0; j < len(res[i]); j++ {
+			// more的排列
+			moreOrder := res[i][j]
+			step += manhadunDIstance(more[moreOrder], zero[j])
+		}
+		if step < ans {
+			ans = step
+		}
+	}
+	return ans
+}
+
+func permutation(n int) [][]int {
+	res := make([][]int, 0)
+
+	used := make([]bool, n)
+	permutationBacktrck(n, &res, []int{}, used)
+	return res
+}
+
+func permutationBacktrck(n int, res *[][]int, list []int, used []bool) {
+	if len(list) == n {
+		temp := make([]int, len(list))
+		copy(temp, list)
+		*res = append(*res, temp)
+	}
+	for i := 0; i < n; i++ {
+		if used[i] {
+			continue
+		}
+		// 做选择
+		used[i] = true
+		list = append(list, i)
+		permutationBacktrck(n, res, list, used)
+		list = list[:len(list)-1]
+		used[i] = false
+		//取消选择
+	}
+}
+
+func manhadunDIstance(from [2]int, to [2]int) int {
+	var step int
+	x1, y1 := from[0], from[1]
+	x2, y2 := to[0], to[1]
+	if x1 > x2 {
+		step += (x1 - x2)
+	} else {
+		step += (x2 - x1)
+	}
+	if y1 > y2 {
+		step += (y1 - y2)
+	} else {
+		step += (y2 - y1)
+	}
+	return step
+}
+
+// https://leetcode.cn/problems/maximum-subarray-sum-with-one-deletion/description/
+func maximumSum(arr []int) int {
+	dp := make([][]int, len(arr))
+	for i := 0; i < len(arr); i++ {
+		dp[i] = make([]int, 2)
+		dp[i][0] = math.MinInt32
+		dp[i][1] = math.MinInt32
+	}
+	dp[0][0] = arr[0]
+	dp[0][1] = 0
+	res := arr[0]
+	for i := 1; i < len(arr); i++ {
+		// 不执行删除
+		dp[i][0] = max(dp[i-1][0]+arr[i], arr[i])
+		// 删除一次
+		dp[i][1] = max(dp[i-1][0], dp[i-1][1]+arr[i])
+		res = max(res, dp[i][1], dp[i][0])
 	}
 	return res
 }

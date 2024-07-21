@@ -45,9 +45,6 @@ func minDistanceDp(s1 string, i int, s2 string, j int, memo [][]int) int {
 }
 
 func longestPalindromeSubseq(s string) int {
-	//if len(s) <= 1 {
-	//	return len(s)
-	//}
 	m := len(s)
 	memo := make([][]int, m)
 	for i := 0; i < m; i++ {
