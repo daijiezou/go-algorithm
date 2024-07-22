@@ -98,6 +98,7 @@ func findMinArrowShots(intvs [][]int) int {
 }
 
 // https://labuladong.online/algo/frequency-interview/cut-video/#%E6%80%9D%E8%B7%AF%E5%88%86%E6%9E%90
+// 使用最少的视频数量来剪辑
 func videoStitching(clips [][]int, T int) int {
 	if T == 0 {
 		return 0

@@ -420,3 +420,56 @@ func maximumSum(arr []int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/detonate-the-maximum-bombs/description/?envType=daily-question&envId=2024-07-22
+// 引爆最多的炸弹
+
+func maximumDetonation(bombs [][]int) int {
+	length := len(bombs)
+	graph := make([][]int, length)
+	for i := 0; i < length; i++ {
+		graph[i] = make([]int, 0)
+	}
+	for i := 0; i < length; i++ {
+		for j := 0; j < length; j++ {
+			if j == i {
+				continue
+			}
+			if connect(bombs, i, j) {
+				graph[i] = append(graph[i], j)
+			}
+		}
+	}
+	res := 0
+	for i := 0; i < len(graph); i++ {
+		visited := make([]bool, length)
+		queue := []int{i}
+		total := 0
+		visited[i] = true
+		for len(queue) > 0 {
+			current := queue[0]
+			queue = queue[1:]
+			total++
+			for j := 0; j < len(graph[current]); j++ {
+				if !visited[graph[current][j]] {
+					queue = append(queue, graph[current][j])
+					visited[graph[current][j]] = true
+				}
+			}
+		}
+		res = max(res, total)
+	}
+
+	return res
+}
+
+func connect(bombs [][]int, x, y int) bool {
+	originX := bombs[x][0]
+	originY := bombs[x][1]
+	r := bombs[x][2]
+	targetX := bombs[y][0]
+	targetY := bombs[y][1]
+	x1 := targetX - originX
+	y1 := targetY - originY
+	return r*r >= (x1*x1)+(y1*y1)
+}
