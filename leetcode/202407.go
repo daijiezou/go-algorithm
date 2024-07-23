@@ -3,6 +3,7 @@ package leetcode
 import (
 	"math"
 	"math/bits"
+	"slices"
 	"sort"
 	"strconv"
 	"strings"
@@ -487,12 +488,53 @@ func sumOfPowers(nums []int, k int) int {
 
 func sumOfPowersBacktack(nums []int, tack []int, k int, start int, used []bool, total *int) {
 	if len(tack) == k {
-		//power := tack[1] - tack[0]
-		//*total += power
+		minEnergy := math.MaxInt64
+		for i := 0; i < k; i++ {
+			for j := i + 1; j < k; j++ {
+				diff := abs(nums[tack[i]] - nums[tack[j]])
+				if diff < minEnergy {
+					minEnergy = diff
+				}
+			}
+		}
+		*total += minEnergy
 	}
 	for i := start; i < len(nums); i++ {
 		tack = append(tack, i)
 		sumOfPowersBacktack(nums, tack, k, i+1, used, total)
 		tack = tack[:len(tack)-1]
 	}
+}
+
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func sumOfPowers2(nums []int, k int) int {
+	const mod int = 1e9 + 7
+	slices.Sort(nums)
+	memo, inf := map[string]int{}, math.MaxInt/2
+	var dfs func(int, int, int, int) int
+	// rest == 还需要选的元素数量, pre == 上一个元素的值, mn == 当前方案的最小值
+	dfs = func(i, rest, pre, mn int) int {
+		if i+1 < rest { // 剩下的元素不够选择了
+			return 0
+		}
+		if rest == 0 {
+			return mn
+		}
+		key := strconv.Itoa(i) + "#" + strconv.Itoa(rest) + "#" + strconv.Itoa(pre) + "#" + strconv.Itoa(mn)
+		if v, ok := memo[key]; ok {
+			return v
+		}
+		option1 := dfs(i-1, rest, pre, mn) % mod                         // 不选当前的数
+		option2 := dfs(i-1, rest-1, nums[i], min(mn, pre-nums[i])) % mod // 选择当前的数
+		ans := (option1 + option2) % mod
+		memo[key] = ans
+		return memo[key]
+	}
+	return dfs(len(nums)-1, k, inf, inf)
 }
