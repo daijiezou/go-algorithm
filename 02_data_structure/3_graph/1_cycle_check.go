@@ -7,6 +7,22 @@ package __graph
 例如，先修课程对 [0, 1] 表示：想要学习课程 0 ，你需要先完成课程 1 。
 请你判断是否可能完成所有课程的学习？如果可以，返回 true ；否则，返回 false 。
 */
+
+func buildGraph(n int, prerequisites [][]int) [][]int {
+	newGraph := make([][]int, n)
+	for i := 0; i < n; i++ {
+		newGraph[i] = make([]int, 0, 2)
+	}
+	for i := 0; i < len(prerequisites); i++ {
+		// [1,0] 表示要想学习课程1，必须先学习课程0
+		// 用图来表示，就是有有一条从0到1的路径
+		edge := prerequisites[i]
+		from, to := edge[1], edge[0]
+		newGraph[from] = append(newGraph[from], to)
+	}
+	return newGraph
+}
+
 func canFinish(numCourses int, prerequisites [][]int) bool {
 	graph := buildGraph(numCourses, prerequisites)
 	visited := make([]bool, numCourses)
@@ -39,21 +55,6 @@ func canFinishTr(graph [][]int, s int, visited []bool, path []bool, hasCycle *bo
 	}
 	// 节点 s 遍历完成
 	path[s] = false
-}
-
-func buildGraph(n int, prerequisites [][]int) [][]int {
-	newGraph := make([][]int, n)
-	for i := 0; i < n; i++ {
-		newGraph[i] = make([]int, 0, 2)
-	}
-	for i := 0; i < len(prerequisites); i++ {
-		// [1,0] 表示要想学习课程1，必须先学习课程0
-		// 用图来表示，就是有有一条从0到1的路径
-		edge := prerequisites[i]
-		from, to := edge[1], edge[0]
-		newGraph[from] = append(newGraph[from], to)
-	}
-	return newGraph
 }
 
 // [{1,0}]
