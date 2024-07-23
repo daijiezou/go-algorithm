@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"fmt"
 	"math"
 	"math/bits"
 	"sort"
@@ -472,4 +473,30 @@ func connect(bombs [][]int, x, y int) bool {
 	x1 := targetX - originX
 	y1 := targetY - originY
 	return r*r >= (x1*x1)+(y1*y1)
+}
+
+// https://leetcode.cn/problems/find-the-sum-of-subsequence-powers/
+
+func sumOfPowers(nums []int, k int) int {
+	sort.Ints(nums)
+	length := len(nums)
+	// 需要删除的元素个数
+	used := make([]bool, length)
+	tack := make([]int, 0)
+	var res int
+	sumOfPowersBacktack(nums, tack, k, 0, used, &res)
+	return res
+}
+
+func sumOfPowersBacktack(nums []int, tack []int, k int, start int, used []bool, total *int) {
+	if len(tack) == k {
+		power := tack[1] - tack[0]
+		*total += power
+		fmt.Println(tack)
+	}
+	for i := start; i < len(nums); i++ {
+		tack = append(tack, nums[i])
+		sumOfPowersBacktack(nums, tack, k, i+1, used, total)
+		tack = tack[:len(tack)-1]
+	}
 }
