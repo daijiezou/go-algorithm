@@ -45,6 +45,7 @@ func lengthOfLIS(nums []int) int {
 			}
 		}
 	}
+
 	maxLen := 0
 	for i := 0; i < len(dp); i++ {
 		if dp[i] > maxLen {

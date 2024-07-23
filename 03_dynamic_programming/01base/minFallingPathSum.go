@@ -2,6 +2,7 @@ package _1base
 
 import "math"
 
+// 最小下降距离
 func minFallingPathSum(matrix [][]int) int {
 	minRes := math.MaxInt32
 	m := len(matrix)

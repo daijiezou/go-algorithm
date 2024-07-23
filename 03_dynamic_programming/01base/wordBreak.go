@@ -91,9 +91,6 @@ func backTrack(s string, wordDict []string, start int, res *[]string, track []st
 	}
 }
 
-// 注意：go 代码由 chatGPT🤖 根据我的 java 代码翻译，旨在帮助不同背景的读者理解算法逻辑。
-// 本代码不保证正确性，仅供参考。如有疑惑，可以参照我写的 java 代码对比查看。
-
 func wordBreak2Dp(s string, wordDict []string) []string {
 	// 集合快速查询
 	wordSet := make(map[string]bool)
