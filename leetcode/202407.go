@@ -538,3 +538,24 @@ func sumOfPowers2(nums []int, k int) int {
 	}
 	return dfs(len(nums)-1, k, inf, inf)
 }
+
+// https://leetcode.cn/problems/relocate-marbles/
+func relocateMarbles(nums []int, moveFrom []int, moveTo []int) []int {
+	myMap := make(map[int]struct{}, len(nums))
+	for i := 0; i < len(nums); i++ {
+		myMap[nums[i]] = struct{}{}
+	}
+	length := len(moveFrom)
+	for i := 0; i < length; i++ {
+		if _, ok := myMap[moveFrom[i]]; ok {
+			delete(myMap, moveFrom[i])
+		}
+		myMap[moveTo[i]] = struct{}{}
+	}
+	res := make([]int, 0)
+	for i, _ := range myMap {
+		res = append(res, i)
+	}
+	sort.Ints(res)
+	return res
+}

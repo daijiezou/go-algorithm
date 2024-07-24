@@ -1,6 +1,6 @@
 package _1_core_platform
 
-// Subsets : The function mimics the method subsets in Java class
+// 在球的角度去想这个问题
 func subsets2(nums []int) [][]int {
 	var res [][]int
 	track := []int{}
