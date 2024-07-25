@@ -559,3 +559,68 @@ func relocateMarbles(nums []int, moveFrom []int, moveTo []int) []int {
 	sort.Ints(res)
 	return res
 }
+
+// https://leetcode.cn/problems/minimum-operations-to-make-a-special-number/description/
+/*
+给你一个下标从 0 开始的字符串 num ，表示一个非负整数。
+在一次操作中，您可以选择 num 的任意一位数字并将其删除。请注意，如果你删除 num 中的所有数字，则 num 变为 0。
+返回最少需要多少次操作可以使 num 变成特殊数字。
+如果整数 x 能被 25 整除，则该整数 x 被认为是特殊数字。
+*/
+func minimumOperations2(num string) int {
+	atoi, _ := strconv.Atoi(num)
+	if atoi%25 == 0 {
+		return 0
+	}
+
+	length := len(num)
+	dp := make([]int, length)
+	for i := 0; i < length; i++ {
+		if num[i] == '0' {
+			dp[i] = 1
+		}
+	}
+	res := length
+	for i := 1; i < length; i++ {
+		temp := num[i-1] + num[i]
+		atoi, _ = strconv.Atoi(string(temp))
+		if atoi%25 == 0 {
+			dp[i] = max(dp[i], dp[i-1]+1)
+		}
+		res = min(res, length-dp[i])
+	}
+	return res
+}
+
+func minimumOperations(num string) int {
+	atoi, _ := strconv.Atoi(num)
+	if atoi%25 == 0 {
+		return 0
+	}
+
+	length := len(num)
+	flag := false
+	for i := length - 1; i > 0; i-- {
+		minimumOperationsBackTrack(num, []byte{}, 0, i, &flag)
+		if flag {
+			return length - i
+		}
+	}
+	return length
+}
+
+func minimumOperationsBackTrack(num string, back []byte, start int, length int, flag *bool) {
+	if len(back) == length {
+		numStr := string(back)
+		atoi, _ := strconv.Atoi(numStr)
+		if atoi%25 == 0 {
+			*flag = true
+			return
+		}
+	}
+	for i := start; i < len(num); i++ {
+		back = append(back, num[i])
+		minimumOperationsBackTrack(num, back, i+1, length, flag)
+		back = back[:len(back)-1]
+	}
+}

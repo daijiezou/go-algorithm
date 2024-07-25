@@ -264,3 +264,36 @@ func Test_relocateMarbles(t *testing.T) {
 		})
 	}
 }
+
+func Test_minimumOperations(t *testing.T) {
+	type args struct {
+		num string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				num: "2245047",
+			},
+			want: 2,
+		},
+		{
+			name: "case 2",
+			args: args{
+				num: "10",
+			},
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumOperations2(tt.args.num); got != tt.want {
+				t.Errorf("minimumOperations() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
