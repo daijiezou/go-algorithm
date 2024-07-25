@@ -277,9 +277,9 @@ func Test_minimumOperations(t *testing.T) {
 		{
 			name: "case 1",
 			args: args{
-				num: "2245047",
+				num: "2908305",
 			},
-			want: 2,
+			want: 3,
 		},
 		{
 			name: "case 2",
@@ -287,6 +287,13 @@ func Test_minimumOperations(t *testing.T) {
 				num: "10",
 			},
 			want: 1,
+		},
+		{
+			name: "case 3",
+			args: args{
+				num: "50986431",
+			},
+			want: 6,
 		},
 	}
 	for _, tt := range tests {

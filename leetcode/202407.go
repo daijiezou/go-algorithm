@@ -574,20 +574,28 @@ func minimumOperations2(num string) int {
 	}
 
 	length := len(num)
-	dp := make([]int, length)
+	res := length
 	for i := 0; i < length; i++ {
 		if num[i] == '0' {
-			dp[i] = 1
+			res = length - 1
 		}
 	}
-	res := length
-	for i := 1; i < length; i++ {
-		temp := num[i-1] + num[i]
-		atoi, _ = strconv.Atoi(string(temp))
-		if atoi%25 == 0 {
-			dp[i] = max(dp[i], dp[i-1]+1)
+
+	for i := length - 1; i >= 1; i-- {
+		if num[i] != '0' && num[i] != '5' {
+			continue
 		}
-		res = min(res, length-dp[i])
+		for j := i - 1; j >= 0; j-- {
+			if length-j-2 > res {
+				break
+			}
+			temp := string(num[j]) + string(num[i])
+			atoi, _ = strconv.Atoi(temp)
+			if atoi%25 == 0 {
+				res = min(res, length-j-2)
+				break
+			}
+		}
 	}
 	return res
 }
