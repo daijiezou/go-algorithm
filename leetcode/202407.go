@@ -632,3 +632,12 @@ func minimumOperationsBackTrack(num string, back []byte, start int, length int, 
 		back = back[:len(back)-1]
 	}
 }
+
+func findValueOfPartition(nums []int) int {
+	sort.Ints(nums)
+	ans := math.MaxInt
+	for i := 0; i < len(nums)-1; i++ {
+		ans = min(ans, nums[i+1]-nums[i])
+	}
+	return ans
+}
