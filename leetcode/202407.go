@@ -633,6 +633,77 @@ func minimumOperationsBackTrack(num string, back []byte, start int, length int, 
 	}
 }
 
+// https://leetcode.cn/problems/lexicographically-smallest-string-after-operations-with-constraint/description/
+func getSmallestString(s string, k int) string {
+	s1 := []rune(s)
+	for i := 0; i < len(s); i++ {
+		dis := distance(s1[i], 'a')
+		if dis <= k {
+			s1[i] = 'a'
+			k -= dis
+		} else {
+			s1[i] = s1[i] - int32(k)
+			break
+		}
+	}
+	return string(s1)
+}
+func distance(s1, s2 rune) int {
+	if s2 > s1 {
+		return int(min(s2-s1, s2-s2+26))
+	} else {
+		return int(min(s1-s2, s2-s1+26))
+	}
+}
+
+// https://leetcode.cn/problems/falling-squares/
+
+func fallingSquares2(positions [][]int) []int {
+	length := len(positions)
+	ans := make([]int, 0, length)
+	height := make([]int, 1e8)
+	maxHeight := 0
+	for i := 0; i < length; i++ {
+		pos := positions[i]
+		xstart, xend := pos[0], pos[0]+pos[1]
+		preHeight := max(height[xstart+1], height[xend-1])
+		for j := xstart + 1; j <= xend-1; j++ {
+			preHeight = max(preHeight, height[j])
+		}
+		curHeight := preHeight + pos[1]
+		maxHeight = max(maxHeight, curHeight)
+		for j := xstart; j <= xend; j++ {
+			height[j] = curHeight
+		}
+
+		ans = append(ans, maxHeight)
+
+	}
+	return ans
+}
+
+func fallingSquares(positions [][]int) []int {
+	length := len(positions)
+	height := make([]int, length)
+	for i := 0; i < length; i++ {
+		pos := positions[i]
+		xStart, xEnd := pos[0], pos[0]+pos[1]-1
+		height[i] = pos[1]
+		for j := 0; j < i; j++ {
+			xStart2, xEnd2 := positions[j][0], positions[j][0]+positions[j][1]-1
+			// 保证线段重叠，一定能落在上一个方块的上面
+			if xEnd >= xStart2 && xEnd2 >= xStart {
+				height[i] = max(height[i], height[j]+pos[1])
+			}
+		}
+	}
+	for i := 1; i < length; i++ {
+		height[i] = max(height[i], height[i-1])
+	}
+
+	return height
+}
+
 func findValueOfPartition(nums []int) int {
 	sort.Ints(nums)
 	ans := math.MaxInt
