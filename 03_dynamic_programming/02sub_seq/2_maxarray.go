@@ -68,9 +68,11 @@ func longestCommonSubsequenceDP(s1 string, i int, s2 string, j int, memo [][]int
 	if memo[i][j] != -1 {
 		return memo[i][j]
 	}
+	// 当前字符一样的话，两个指针都往后移一位
 	if s1[i] == s2[j] {
 		memo[i][j] = 1 + longestCommonSubsequenceDP(s1, i+1, s2, j+1, memo)
 	} else {
+		// 当前字符不一样的话，两个分别往后移一位，取较大值
 		memo[i][j] = max(longestCommonSubsequenceDP(s1, i+1, s2, j, memo), longestCommonSubsequenceDP(s1, i, s2, j+1, memo))
 	}
 	return memo[i][j]
@@ -112,4 +114,61 @@ func minimumDeleteSumDP(s1 string, i int, s2 string, j int, memo [][]int) int {
 		memo[i][j] = min(minimumDeleteSumDP(s1, i+1, s2, j, memo)+int(s1[i]), minimumDeleteSumDP(s1, i, s2, j+1, memo)+int(s2[j]))
 	}
 	return memo[i][j]
+}
+
+func longestPalindromeSubseq2(s string) int {
+	n := len(s)
+	// dp 数组全部初始化为 0
+	// dp数组的含义是dp[i][j],代表s[i:j]的最长回文子序列
+	// 最终需要返回dp[0][n-1]
+	dp := make([][]int, n)
+	for i := 0; i < n; i++ {
+		dp[i] = make([]int, n)
+	}
+
+	// base case
+	for i := 0; i < n; i++ {
+		dp[i][i] = 1
+	}
+
+	for i := n - 1; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
+			// 状态转移方程
+			if s[i] == s[j] {
+				dp[i][j] = dp[i+1][j-1] + 2
+			} else {
+				dp[i][j] = max(dp[i+1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[0][n-1]
+}
+
+// 让字符串变成回文串的最小插入次数
+// https://leetcode.cn/problems/minimum-insertion-steps-to-make-a-string-palindrome/
+func minInsertions(s string) int {
+	// 对字符串 s[i..j]，最少需要进行 dp[i][j] 次插入才能变成回文串。
+	n := len(s)
+	dp := make([][]int, n)
+	for i := 0; i < n; i++ {
+		dp[i] = make([]int, n)
+	}
+
+	// base case
+	for i := 0; i < n; i++ {
+		dp[i][i] = 1
+	}
+	for i := n - 1; i >= 0; i-- {
+		for j := i + 1; j < n; j++ {
+			// 状态转移方程
+			if s[i] == s[j] {
+				dp[i][j] = dp[i+1][j-1]
+			} else {
+				// 可以选择从右边插入或者从左边插入
+				// 选择需要次数较少的插入次数
+				dp[i][j] = min(dp[i+1][j], dp[i][j-1]) + 1
+			}
+		}
+	}
+	return dp[0][n-1]
 }
