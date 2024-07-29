@@ -304,3 +304,32 @@ func Test_minimumOperations(t *testing.T) {
 		})
 	}
 }
+
+func Test_calPoints(t *testing.T) {
+	type args struct {
+		operations []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "case 1",
+			args: args{
+				operations: []string{
+					"5", "2", "C", "D", "+",
+				},
+			},
+			want: 30,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := calPoints(tt.args.operations); got != tt.want {
+				t.Errorf("calPoints() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

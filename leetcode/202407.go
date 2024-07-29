@@ -712,3 +712,31 @@ func findValueOfPartition(nums []int) int {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/baseball-game/
+func calPoints(operations []string) int {
+	nums := make([]int, 0, len(operations))
+	total := 0
+	for i := 0; i < len(operations); i++ {
+		op := operations[i]
+		switch op {
+		case "+":
+			length := len(nums)
+			num := nums[length-1] + nums[length-2]
+			nums = append(nums, num)
+		case "C":
+			nums = nums[:len(nums)-1]
+		case "D":
+			length := len(nums)
+			num := nums[length-1] * 2
+			nums = append(nums, num)
+		default:
+			num, _ := strconv.Atoi(op)
+			nums = append(nums, num)
+		}
+	}
+	for i := 0; i < len(nums); i++ {
+		total += nums[i]
+	}
+	return total
+}
