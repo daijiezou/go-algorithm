@@ -740,3 +740,42 @@ func calPoints(operations []string) int {
 	}
 	return total
 }
+
+// https://leetcode.cn/problems/double-modular-exponentiation/?envType=daily-question&envId=2024-07-30
+func getGoodIndices(variables [][]int, target int) []int {
+	ans := make([]int, 0, len(variables))
+	for i := 0; i < len(variables); i++ {
+		vari := variables[i]
+		a, b, c, m := vari[0], vari[1], vari[2], vari[3]
+		if target >= m {
+			continue
+		}
+		num := 1
+		for j := 0; j < b; j++ {
+			num = num * a
+			num = num % 10
+		}
+		num2 := 1
+		for j := 0; j < c; j++ {
+			num2 = num * num2
+			num2 = num2 % m
+		}
+		num2 = num2 % m
+		if num2 == target {
+			ans = append(ans, i)
+		}
+	}
+	return ans
+}
+
+func pow_mod(x, y, mod int) int {
+	res := 1
+	for y > 0 {
+		if (y & 1) == 1 {
+			res = res * x % mod
+		}
+		x = x * x % mod
+		y >>= 1
+	}
+	return res
+}

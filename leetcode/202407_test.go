@@ -333,3 +333,63 @@ func Test_calPoints(t *testing.T) {
 		})
 	}
 }
+
+func Test_getGoodIndices(t *testing.T) {
+	type args struct {
+		variables [][]int
+		target    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		// TODO: Add test cases.
+		{
+			name: "case 1",
+			args: args{
+				variables: [][]int{
+					{528, 818, 733, 438},
+				},
+				target: 256,
+			},
+			want: []int{0},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getGoodIndices(tt.args.variables, tt.args.target); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getGoodIndices() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_pow_mod(t *testing.T) {
+	type args struct {
+		x   int
+		y   int
+		mod int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				x:   2,
+				y:   11,
+				mod: 10,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := pow_mod(tt.args.x, tt.args.y, tt.args.mod); got != tt.want {
+				t.Errorf("pow_mod() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
