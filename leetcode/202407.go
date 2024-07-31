@@ -768,6 +768,7 @@ func getGoodIndices(variables [][]int, target int) []int {
 	return ans
 }
 
+// 快速幂算法
 func pow_mod(x, y, mod int) int {
 	res := 1
 	for y > 0 {
@@ -778,4 +779,21 @@ func pow_mod(x, y, mod int) int {
 		y >>= 1
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/minimum-rectangles-to-cover-points/description/
+func minRectanglesToCoverPoints(points [][]int, w int) int {
+	sort.Slice(points, func(i, j int) bool {
+		return points[i][0] < points[j][0]
+	})
+	ans := 1
+	x := points[0][0] + w
+	for i := 0; i < len(points); i++ {
+		if points[i][0] > x {
+			x = points[i][0] + w
+			ans++
+		}
+
+	}
+	return ans
 }

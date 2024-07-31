@@ -393,3 +393,33 @@ func Test_pow_mod(t *testing.T) {
 		})
 	}
 }
+
+func Test_minRectanglesToCoverPoints(t *testing.T) {
+	type args struct {
+		points [][]int
+		w      int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				points: [][]int{
+					{2, 1}, {1, 0}, {1, 4}, {1, 8}, {3, 5}, {4, 6},
+				},
+				w: 1,
+			},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minRectanglesToCoverPoints(tt.args.points, tt.args.w); got != tt.want {
+				t.Errorf("minRectanglesToCoverPoints() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
