@@ -818,18 +818,29 @@ func maxmiumScore(cards []int, cnt int) int {
 	if sum%2 == 0 {
 		return sum
 	}
+	nextOdd, nextEven := -1, -1
 	for i := cnt; i < len(cards); i++ {
+		if (nextOdd != -1) && (nextEven != -1) {
+			break
+		}
 		if cards[i]%2 == 0 {
-			if minODD != math.MaxInt32 {
-				ans = max(ans, sum-minODD+cards[i])
+			if nextEven == -1 {
+				nextEven = cards[i]
 			}
+
 		} else {
-			if minEven != math.MaxInt32 {
-				ans = max(ans, sum-minEven+cards[i])
+			if nextOdd == -1 {
+				nextOdd = cards[i]
 			}
+
 		}
 	}
-
+	if minEven != math.MinInt32 && nextOdd != -1 {
+		ans = max(ans, sum-minEven+nextOdd)
+	}
+	if minODD != math.MinInt32 && nextEven != -1 {
+		ans = max(ans, sum-minODD+nextEven)
+	}
 	return ans
 }
 

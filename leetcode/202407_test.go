@@ -443,11 +443,20 @@ func Test_maxmiumScore(t *testing.T) {
 			want: 18,
 		},
 		{
+			name: "case 4",
+			args: args{
+				cards: []int{7, 6, 4, 6},
+				cnt:   1,
+			},
+			want: 6,
+		},
+		{
 			name: "case 2",
 			args: args{
 				cards: []int{13, 12, 10, 19, 19, 4, 16, 10, 2, 9, 2, 13, 13, 15, 5, 19, 3, 13, 17, 4, 18, 19, 8, 1, 19, 18, 17, 14, 6, 9, 6, 11, 4},
 				cnt:   4,
 			},
+			want: 76,
 		},
 	}
 	for _, tt := range tests {
