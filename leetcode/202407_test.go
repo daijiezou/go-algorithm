@@ -423,3 +423,38 @@ func Test_minRectanglesToCoverPoints(t *testing.T) {
 		})
 	}
 }
+
+func Test_maxmiumScore(t *testing.T) {
+	type args struct {
+		cards []int
+		cnt   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				cards: []int{1, 2, 8, 9},
+				cnt:   3,
+			},
+			want: 18,
+		},
+		{
+			name: "case 2",
+			args: args{
+				cards: []int{13, 12, 10, 19, 19, 4, 16, 10, 2, 9, 2, 13, 13, 15, 5, 19, 3, 13, 17, 4, 18, 19, 8, 1, 19, 18, 17, 14, 6, 9, 6, 11, 4},
+				cnt:   4,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxmiumScore(tt.args.cards, tt.args.cnt); got != tt.want {
+				t.Errorf("maxmiumScore() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

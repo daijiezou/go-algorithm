@@ -797,3 +797,76 @@ func minRectanglesToCoverPoints(points [][]int, w int) int {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/uOAnQW/
+func maxmiumScore(cards []int, cnt int) int {
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[i] > cards[j]
+	})
+	ans := 0
+	sum := 0
+	minODD := math.MaxInt32
+	minEven := math.MaxInt32
+	for i := 0; i < cnt; i++ {
+		sum += cards[i]
+		if cards[i]%2 == 0 {
+			minEven = min(minEven, cards[i])
+		} else {
+			minODD = min(minODD, cards[i])
+		}
+	}
+	if sum%2 == 0 {
+		return sum
+	}
+	for i := cnt; i < len(cards); i++ {
+		if cards[i]%2 == 0 {
+			if minODD != math.MaxInt32 {
+				ans = max(ans, sum-minODD+cards[i])
+			}
+		} else {
+			if minEven != math.MaxInt32 {
+				ans = max(ans, sum-minEven+cards[i])
+			}
+		}
+	}
+
+	return ans
+}
+
+func maxmiumScore2(cards []int, cnt int) int {
+	sort.Slice(cards, func(i, j int) bool {
+		return cards[i] > cards[j]
+	})
+	ans := 0
+	back := make([]int, 0, cnt)
+	maxmiumScoreBacktrack(cards, back, 0, cnt, &ans, 0, math.MinInt32)
+	return ans
+}
+
+func maxmiumScoreBacktrack(cards []int, back []int, start int, cnt int, ans *int, sum int, minNum int) int {
+	if len(back) == cnt {
+		if sum%2 == 0 {
+			*ans = max(*ans, sum)
+			minNum = min(minNum, back[cnt-1])
+			return *ans
+		}
+	}
+	for i := start; i < len(cards); i++ {
+		if len(back)+len(cards)-start < cnt {
+			break
+		}
+		if cards[i] < minNum {
+			break
+		}
+		sum += cards[i]
+		back = append(back, cards[i])
+		ans1 := maxmiumScoreBacktrack(cards, back, i+1, cnt, ans, sum, minNum)
+		sum -= cards[i]
+		back = back[:len(back)-1]
+		ans2 := maxmiumScoreBacktrack(cards, back, i+1, cnt, ans, sum, minNum)
+		*ans = max(ans1, ans2)
+		break
+
+	}
+	return *ans
+}
