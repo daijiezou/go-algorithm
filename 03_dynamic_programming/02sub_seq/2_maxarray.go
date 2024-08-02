@@ -36,13 +36,15 @@ func maximumSum(arr []int) int {
 		dp[i][0] = math.MinInt32
 		dp[i][1] = math.MinInt32
 	}
+	// dp数组表示
 	dp[0][0] = arr[0]
 	dp[0][1] = 0
 	res := arr[0]
 	for i := 1; i < len(arr); i++ {
 		// 不执行删除
 		dp[i][0] = max(dp[i-1][0]+arr[i], arr[i])
-		// 删除一次
+
+		// 删除一次，取删除arr[i] 和不删除arr[i]之间的较大值
 		dp[i][1] = max(dp[i-1][0], dp[i-1][1]+arr[i])
 		res = max(res, dp[i][1], dp[i][0])
 	}
@@ -79,6 +81,7 @@ func longestCommonSubsequenceDP(s1 string, i int, s2 string, j int, memo [][]int
 }
 
 // https://leetcode.cn/problems/minimum-ascii-delete-sum-for-two-strings/description/
+// 给定两个字符串s1 和 s2，返回 使两个字符串相等所需删除字符的 ASCII 值的最小和 。
 func minimumDeleteSum(s1 string, s2 string) int {
 	memo := make([][]int, len(s1))
 	for i := 0; i < len(s1); i++ {
