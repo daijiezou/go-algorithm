@@ -82,3 +82,97 @@ func numberOfRightTriangles(grid [][]int) int64 {
 	}
 	return int64(ans)
 }
+
+type pointstru struct {
+	x, y  int
+	label byte
+}
+
+// https://leetcode.cn/problems/maximum-points-inside-the-square/description/
+func maxPointsInsideSquare(points [][]int, s string) int {
+	pointList := make([]pointstru, 0)
+	for i := 0; i < len(points); i++ {
+		if points[i][0] < 0 {
+			points[i][0] = -points[i][0]
+		}
+		if points[i][1] < 0 {
+			points[i][1] = -points[i][1]
+		}
+		pointList = append(pointList, pointstru{
+			x:     points[i][0],
+			y:     points[i][1],
+			label: s[i],
+		})
+	}
+	sort.Slice(pointList, func(i, j int) bool {
+		return max(pointList[i].x, pointList[i].y) < max(pointList[j].x, pointList[j].y)
+	})
+	mymap := make(map[byte]struct{})
+	count := 0
+	tempCnt := 0
+	startIndex := 0
+loop1:
+	for i := 0; i <= 1e9; i++ {
+		tempCnt = 0
+		if startIndex >= len(points) {
+			break loop1
+		}
+		for j := startIndex; j < len(pointList); j++ {
+			cur := pointList[j]
+			if cur.x > i || cur.y > i {
+				count += tempCnt
+				i = max(cur.x, cur.y) - 1
+				continue loop1
+			}
+			startIndex++
+			if _, ok := mymap[cur.label]; !ok {
+				mymap[cur.label] = struct{}{}
+				tempCnt++
+			} else {
+				break loop1
+			}
+		}
+		count += tempCnt
+	}
+	return count
+}
+
+func maxPointsInsideSquare2(points [][]int, s string) int {
+	// 维护每个字符的最小距离
+	min1 := make([]int, 26)
+	for i := 0; i < 26; i++ {
+		min1[i] = 1e10 + 1
+	}
+
+	// 维护所有字符的次小距离
+	var min2 int = 1e10 + 1
+	for i := 0; i < len(points); i++ {
+		x, y := points[i][0], points[i][1]
+		label := s[i] - 'a'
+		d := getd(x, y)
+		if d < min1[label] {
+			min2 = min(min2, min1[label])
+			min1[label] = d
+		} else {
+			min2 = min(min2, d)
+		}
+	}
+	count := 0
+	for i := 0; i < len(min1); i++ {
+		if min1[i] < min2 {
+			count++
+		}
+	}
+	return count
+}
+
+func getd(x, y int) int {
+	if x < 0 {
+		x = -x
+
+	}
+	if y < 0 {
+		y = -y
+	}
+	return max(x, y)
+}
