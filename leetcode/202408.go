@@ -176,3 +176,39 @@ func getd(x, y int) int {
 	}
 	return max(x, y)
 }
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+func isSubtree(root *TreeNode, subRoot *TreeNode) bool {
+
+	if isSame(root, subRoot) {
+		return true
+	}
+	if root == nil {
+		return subRoot == nil
+	}
+	return isSubtree(root.Left, subRoot) || isSubtree(root.Right, subRoot)
+}
+
+func isSame(t1, t2 *TreeNode) bool {
+	if t1 == nil && t2 == nil {
+		return true
+	}
+	if t1 == nil || t2 == nil {
+		return false
+	}
+	if t1.Val != t2.Val {
+		return false
+	}
+	if t1.Left == nil && t2.Left != nil {
+		return false
+	}
+	if t1.Right == nil && t2.Right != nil {
+		return false
+	}
+	return isSame(t1.Left, t2.Left) && isSame(t1.Right, t2.Right)
+}
