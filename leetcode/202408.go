@@ -3,6 +3,7 @@ package leetcode
 import (
 	"math"
 	"sort"
+	"strconv"
 )
 
 // 20040801
@@ -211,4 +212,24 @@ func isSame(t1, t2 *TreeNode) bool {
 		return false
 	}
 	return isSame(t1.Left, t2.Left) && isSame(t1.Right, t2.Right)
+}
+
+func findIntegers(n int) int {
+	nstr := strconv.FormatInt(int64(n), 2)
+
+	length := len(nstr) - 1
+	cnt := 0
+	for i := 2; i <= length; i++ {
+		cnt += getCnt(length, i)
+	}
+	return n + 1 - cnt
+}
+
+func getCnt(n, sub int) int {
+	cnt := 0
+	for sub > n {
+		cnt += n - sub + 1
+		n--
+	}
+	return cnt
 }
