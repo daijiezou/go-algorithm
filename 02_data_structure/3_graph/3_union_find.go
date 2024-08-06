@@ -1,7 +1,5 @@
 package __graph
 
-import "fmt"
-
 // 并查集
 type UFI interface {
 	// 将 p 和 q 连接
@@ -66,21 +64,60 @@ func (uf *UF) connected(p int, q int) bool {
 func equationsPossible(equations []string) bool {
 	// 26个英文字母
 	uf := NewUF(26)
+
+	// 将等号两边的字母联通起来
 	for _, x := range equations {
 		if x[1] == '=' {
 			uf.union(int(x[0]-'a'), int(x[3]-'a'))
 		}
+
 	}
-	fmt.Println(uf)
 	for _, x := range equations {
 		if x[1] == '!' {
-			fmt.Println(uf.find(int(x[0] - 'a')))
-			fmt.Println(uf.find(int(x[3] - 'a')))
-			fmt.Println(uf.connected(int(x[0]-'a'), int(x[3]-'a')))
 			if uf.connected(int(x[0]-'a'), int(x[3]-'a')) {
 				return false
 			}
 		}
 	}
 	return true
+}
+
+func equationsPossible2(equations []string) bool {
+	// 26个英文字母
+	parent := make([]int, 26)
+	for i := 0; i < 26; i++ {
+		// 一开始每个人的父节点都是自己
+		parent[i] = i
+	}
+
+	// 将等号两边的字母联通起来
+	for _, x := range equations {
+		if x[1] == '=' {
+			union(parent, int(x[0]-'a'), int(x[3]-'a'))
+		}
+
+	}
+	for _, x := range equations {
+		if x[1] == '!' {
+			pRoot := find(parent, int(x[0]-'a'))
+			qRoot := find(parent, int(x[3]-'a'))
+			if pRoot == qRoot {
+				return false
+			}
+		}
+	}
+	return true
+}
+
+func union(parent []int, p int, q int) {
+	pRoot := find(parent, p)
+	qRoot := find(parent, q)
+	parent[pRoot] = qRoot
+}
+
+func find(parent []int, q int) int {
+	if parent[q] != q {
+		parent[q] = find(parent, parent[q])
+	}
+	return parent[q]
 }
