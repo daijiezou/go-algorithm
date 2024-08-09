@@ -233,3 +233,30 @@ func getCnt(n, sub int) int {
 	}
 	return cnt
 }
+
+// https://leetcode.cn/problems/find-all-possible-stable-binary-arrays-i/
+func numberOfStableArrays(zero int, one int, limit int) int {
+	return 0
+}
+
+func addedInteger(nums1 []int, nums2 []int) int {
+	sort.Ints(nums1)
+	sort.Ints(nums2)
+	length := len(nums1)
+	if length == 0 {
+		return 0
+	}
+	return nums1[0] - nums2[0]
+}
+
+func minimumAddedInteger(nums1 []int, nums2 []int) int {
+	sort.Ints(nums1)
+	sort.Ints(nums2)
+	n1 := len(nums1)
+	n2 := len(nums2)
+	minSub := math.MaxInt32
+	for i := 0; i < n2; i++ {
+		sub := nums1[i] - nums2[i]
+
+	}
+}
