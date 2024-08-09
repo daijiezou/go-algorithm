@@ -293,6 +293,10 @@ func minimumAddedIntegerBackTack(nums1 []int, nums2 []int, back []int, start int
 	}
 }
 
+/*
+由于只能移除两个元素，所以 nums1
+的前三小元素必定有一个是保留下来的，我们可以枚举保留下来的最小元素是 nums
+*/
 func minimumAddedInteger2(nums1 []int, nums2 []int) int {
 	sort.Ints(nums1)
 	sort.Ints(nums2)
