@@ -249,14 +249,66 @@ func addedInteger(nums1 []int, nums2 []int) int {
 	return nums1[0] - nums2[0]
 }
 
+// https://leetcode.cn/problems/find-the-integer-added-to-array-ii/
 func minimumAddedInteger(nums1 []int, nums2 []int) int {
 	sort.Ints(nums1)
 	sort.Ints(nums2)
-	n1 := len(nums1)
-	n2 := len(nums2)
-	minSub := math.MaxInt32
-	for i := 0; i < n2; i++ {
-		sub := nums1[i] - nums2[i]
+	back := make([]int, 0)
+	res := math.MaxInt32
+	diff := make([]int, len(nums2)-1)
+	for i := 1; i < len(nums2); i++ {
+		diff[i-1] = nums2[i] - nums2[i-1]
+	}
+
+	minimumAddedIntegerBackTack(nums1, nums2, back, 0, diff, &res)
+	return res
+}
+
+func minimumAddedIntegerBackTack(nums1 []int, nums2 []int, back []int, start int, diff []int, res *int) {
+	if len(back) == len(nums2) {
+		sub := nums2[0] - back[0]
+		*res = min(*res, sub)
+		return
+	}
+
+	for i := start; i < len(nums1); i++ {
+		if len(back)+len(nums1)-start < len(nums2) {
+			return
+		}
+		if len(back)+1 > len(nums2) {
+			return
+		}
+		if len(back) >= 1 {
+			if nums1[i]-back[len(back)-1] < diff[len(back)-1] {
+				continue
+			}
+			if nums1[i]-back[len(back)-1] > diff[len(back)-1] {
+				return
+			}
+		}
+		back = append(back, nums1[i])
+		minimumAddedIntegerBackTack(nums1, nums2, back, i+1, diff, res)
+		back = back[:len(back)-1]
+		minimumAddedIntegerBackTack(nums1, nums2, back, i+1, diff, res)
+	}
+}
+
+func minimumAddedInteger2(nums1 []int, nums2 []int) int {
+	sort.Ints(nums1)
+	sort.Ints(nums2)
+	for i := 2; i >= 0; i-- {
+		x := nums2[0] - nums1[i]
+		j := 0
+		for _, v := range nums1[i:] {
+			if nums2[j] == v+x {
+				j++
+				// nums2 是 {nums1[i] + x} 的子序列
+				if j == len(nums2) {
+					return x
+				}
+			}
+		}
 
 	}
+	return nums2[0] - nums1[0]
 }

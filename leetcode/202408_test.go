@@ -108,3 +108,39 @@ func Test_findIntegers(t *testing.T) {
 		})
 	}
 }
+
+func Test_minimumAddedInteger(t *testing.T) {
+	type args struct {
+		nums1 []int
+		nums2 []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				nums1: []int{4, 20, 16, 12, 8},
+				nums2: []int{14, 18, 10},
+			},
+			want: -2,
+		},
+		{
+			name: "case 2",
+			args: args{
+				nums1: []int{4, 6, 3, 1, 4, 2, 10, 9, 5},
+				nums2: []int{5, 10, 3, 2, 6, 1, 9},
+			},
+			want: 0,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumAddedInteger2(tt.args.nums1, tt.args.nums2); got != tt.want {
+				t.Errorf("minimumAddedInteger() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
