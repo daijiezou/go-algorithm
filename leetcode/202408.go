@@ -316,3 +316,43 @@ func minimumAddedInteger2(nums1 []int, nums2 []int) int {
 	}
 	return nums2[0] - nums1[0]
 }
+
+func maxUncrossedLines(nums1 []int, nums2 []int) int {
+	m := len(nums1)
+	n := len(nums2)
+	//dp := make([][]int, m)
+	//for i := 0; i < m; i++ {
+	//	dp[i] = make([]int, n)
+	//}
+	memo := make([][]int, m)
+	for i := 0; i < m; i++ {
+		memo[i] = make([]int, n)
+		for j := 0; j < n; j++ {
+			memo[i][j] = -1
+		}
+	}
+	return maxUncrossedLinesDp(memo, 0, 0, nums1, nums2)
+}
+
+func maxUncrossedLinesDp(memo [][]int, i, j int, nums1 []int, nums2 []int) int {
+	if i == len(nums1) {
+		return 0
+	}
+	if j == len(nums2) {
+		return 0
+	}
+	if memo[i][j] != -1 {
+		return memo[i][j]
+	}
+	if nums1[i] == nums2[j] {
+		option1 := maxUncrossedLinesDp(memo, i+1, j, nums1, nums2)
+		option2 := maxUncrossedLinesDp(memo, i, j+1, nums1, nums2)
+		option3 := maxUncrossedLinesDp(memo, i+1, j+1, nums1, nums2) + 1
+		memo[i][j] = max(option1, option2, option3)
+	} else {
+		option1 := maxUncrossedLinesDp(memo, i+1, j, nums1, nums2)
+		option2 := maxUncrossedLinesDp(memo, i, j+1, nums1, nums2)
+		memo[i][j] = max(option1, option2)
+	}
+	return memo[i][j]
+}
