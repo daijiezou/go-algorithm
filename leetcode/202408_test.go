@@ -174,8 +174,36 @@ func Test_maxUncrossedLines(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := maxUncrossedLines(tt.args.nums1, tt.args.nums2); got != tt.want {
+			if got := maxUncrossedLines2(tt.args.nums1, tt.args.nums2); got != tt.want {
 				t.Errorf("maxUncrossedLines() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMagicDict(t *testing.T) {
+	type args struct {
+		req1 []string
+		req2 string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				req1: []string{"hello", "leetcode"},
+				req2: "hhllo",
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := MagicDict(tt.args.req1, tt.args.req2); got != tt.want {
+				t.Errorf("MagicDict() = %v, want %v", got, tt.want)
 			}
 		})
 	}

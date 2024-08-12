@@ -356,3 +356,70 @@ func maxUncrossedLinesDp(memo [][]int, i, j int, nums1 []int, nums2 []int) int {
 	}
 	return memo[i][j]
 }
+
+func maxUncrossedLines2(nums1 []int, nums2 []int) int {
+	m := len(nums1)
+	n := len(nums2)
+	dp := make([][]int, m+1)
+	for i := 0; i < m+1; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			if nums1[i-1] == nums2[j-1] {
+				dp[i][j] = dp[i-1][j-1] + 1
+			} else {
+				dp[i][j] = max(dp[i-1][j], dp[i][j-1])
+			}
+		}
+	}
+	return dp[m][n]
+}
+
+// https://leetcode.cn/problems/implement-magic-dictionary/description/
+type MagicDictionary struct {
+	v map[int][]string
+}
+
+func Constructor() MagicDictionary {
+	v := make(map[int][]string, 100)
+	return MagicDictionary{
+		v: v,
+	}
+}
+
+func (this *MagicDictionary) BuildDict(dictionary []string) {
+	for _, word := range dictionary {
+		n := len(word)
+		if _, ok := this.v[n]; ok {
+			this.v[n] = append(this.v[n], word)
+		} else {
+			this.v[n] = []string{word}
+		}
+	}
+}
+
+func (this *MagicDictionary) Search(searchWord string) bool {
+	n := len(searchWord)
+	if _, ok := this.v[n]; !ok {
+		return false
+	}
+	for _, word := range this.v[n] {
+		diff := 0
+		for i := 0; i < n; i++ {
+			if word[i] != searchWord[i] {
+				diff++
+			}
+		}
+		if diff == 1 {
+			return true
+		}
+	}
+	return false
+}
+
+func MagicDict(req1 []string, req2 string) bool {
+	m := Constructor()
+	m.BuildDict(req1)
+	return m.Search(req2)
+}
