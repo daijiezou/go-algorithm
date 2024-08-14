@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_numberOfRightTriangles(t *testing.T) {
 	type args struct {
@@ -204,6 +207,42 @@ func TestMagicDict(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := MagicDict(tt.args.req1, tt.args.req2); got != tt.want {
 				t.Errorf("MagicDict() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_isArraySpecial2(t *testing.T) {
+	type args struct {
+		nums    []int
+		queries [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				nums:    []int{1, 1},
+				queries: [][]int{{0, 1}},
+			},
+			want: []bool{false},
+		},
+		{
+			name: "case 2",
+			args: args{
+				nums:    []int{2, 8, 10, 9},
+				queries: [][]int{{1, 3}},
+			},
+			want: []bool{false},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isArraySpecial2(tt.args.nums, tt.args.queries); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("isArraySpecial2() = %v, want %v", got, tt.want)
 			}
 		})
 	}

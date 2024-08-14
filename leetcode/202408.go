@@ -423,3 +423,45 @@ func MagicDict(req1 []string, req2 string) bool {
 	m.BuildDict(req1)
 	return m.Search(req2)
 }
+
+// https://leetcode.cn/problems/special-array-i/description/
+func arraySpecial(nums []int) bool {
+	if len(nums) == 1 {
+		return true
+	}
+	for i := 1; i < len(nums); i++ {
+		if nums[i]%2 == nums[i-1]%2 {
+			return false
+		}
+	}
+	return true
+}
+
+func isArraySpecial2(nums []int, queries [][]int) []bool {
+	preSpe := make([]int, 0, len(nums)+1)
+	for i := 0; i < len(nums); i++ {
+		for j := i + 1; j < len(nums); j++ {
+			if !arraySpecial(nums[i : j+1]) {
+				preSpe = append(preSpe, j-1)
+				i = j - 1
+				break
+			}
+		}
+	}
+	res := make([]bool, 0, len(queries))
+loop1:
+	for i := 0; i < len(queries); i++ {
+		start, end := queries[i][0], queries[i][1]
+		if start == end {
+			res = append(res, false)
+		}
+		for j := 0; j < len(preSpe); j++ {
+			if start < preSpe[j] && end > preSpe[j] {
+				res = append(res, false)
+				continue loop1
+			}
+		}
+		res = append(res, true)
+	}
+	return res
+}
