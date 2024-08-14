@@ -439,13 +439,9 @@ func arraySpecial(nums []int) bool {
 
 func isArraySpecial2(nums []int, queries [][]int) []bool {
 	preSpe := make([]int, 0, len(nums)+1)
-	for i := 0; i < len(nums); i++ {
-		for j := i + 1; j < len(nums); j++ {
-			if !arraySpecial(nums[i : j+1]) {
-				preSpe = append(preSpe, j-1)
-				i = j - 1
-				break
-			}
+	for i := 0; i < len(nums)-1; i++ {
+		if nums[i]%2 == nums[i+1]%2 {
+			preSpe = append(preSpe, i)
 		}
 	}
 	res := make([]bool, 0, len(queries))
@@ -454,9 +450,10 @@ loop1:
 		start, end := queries[i][0], queries[i][1]
 		if start == end {
 			res = append(res, false)
+			continue loop1
 		}
 		for j := 0; j < len(preSpe); j++ {
-			if start < preSpe[j] && end > preSpe[j] {
+			if start <= preSpe[j] && end > preSpe[j] {
 				res = append(res, false)
 				continue loop1
 			}
