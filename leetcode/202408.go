@@ -437,28 +437,62 @@ func arraySpecial(nums []int) bool {
 	return true
 }
 
+// https://leetcode.cn/problems/special-array-ii/description/
 func isArraySpecial2(nums []int, queries [][]int) []bool {
-	preSpe := make([]int, 0, len(nums)+1)
-	for i := 0; i < len(nums)-1; i++ {
-		if nums[i]%2 == nums[i+1]%2 {
-			preSpe = append(preSpe, i)
+	preSpe := make([]int, len(nums))
+	for i := 1; i < len(nums); i++ {
+		preSpe[i] = preSpe[i-1]
+		if nums[i]%2 == nums[i-1]%2 {
+			preSpe[i]++
 		}
 	}
-	res := make([]bool, 0, len(queries))
-loop1:
+	res := make([]bool, len(queries))
 	for i := 0; i < len(queries); i++ {
 		start, end := queries[i][0], queries[i][1]
-		if start == end {
-			res = append(res, false)
-			continue loop1
-		}
-		for j := 0; j < len(preSpe); j++ {
-			if start <= preSpe[j] && end > preSpe[j] {
-				res = append(res, false)
-				continue loop1
-			}
-		}
-		res = append(res, true)
+		res[i] = preSpe[start] == preSpe[end]
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/maximum-difference-score-in-a-grid/
+func maxScore(grid [][]int) int {
+	m := len(grid)
+	n := len(grid[0])
+	dp := make([][]int, m+1)
+	for i := 0; i < m+1; i++ {
+		dp[i] = make([]int, n+1)
+		// 第一列初始化为最小
+		dp[i][0] = math.MaxInt32
+		dp[0][1] = math.MaxInt32
+	}
+	return ans
+}
+
+func maxScoreDp(i, j int, grid [][]int, move int) int {
+	if i == len(grid) && j == len(grid[0]) {
+		if move > 0 {
+			return 0
+		} else {
+			return math.MinInt32
+		}
+
+	}
+	right := math.MinInt32
+	if move > 0 {
+
+	} else {
+		for i < len(grid)-1 {
+			op := maxScoreDp(i+1, j, grid, move+1) + grid[i+1][j] - grid[i][j]
+			right = max(right, op)
+			i++
+		}
+	}
+
+	down := math.MinInt32
+	for j < len(grid[0])-1 {
+		op := maxScoreDp(i, j+1, grid, move+1) + grid[i][j+1] - grid[i][j]
+		down = max(down, op)
+		j++
+	}
+	return max(right, down)
 }
