@@ -458,41 +458,22 @@ func isArraySpecial2(nums []int, queries [][]int) []bool {
 func maxScore(grid [][]int) int {
 	m := len(grid)
 	n := len(grid[0])
-	dp := make([][]int, m+1)
+	minGrid := make([][]int, m+1)
 	for i := 0; i < m+1; i++ {
-		dp[i] = make([]int, n+1)
+		minGrid[i] = make([]int, n+1)
 		// 第一列初始化为最小
-		dp[i][0] = math.MaxInt32
-		dp[0][1] = math.MaxInt32
+		minGrid[i][0] = math.MaxInt32
+	}
+	for i := 0; i < n+1; i++ {
+		minGrid[0][i] = math.MaxInt32
+	}
+	ans := math.MinInt32
+	for i := 1; i < m+1; i++ {
+		for j := 1; j < n+1; j++ {
+			preMin := min(minGrid[i-1][j], minGrid[i][j-1])
+			ans = max(ans, grid[i-1][j-1]-preMin)
+			minGrid[i][j] = min(preMin, grid[i-1][j-1])
+		}
 	}
 	return ans
-}
-
-func maxScoreDp(i, j int, grid [][]int, move int) int {
-	if i == len(grid) && j == len(grid[0]) {
-		if move > 0 {
-			return 0
-		} else {
-			return math.MinInt32
-		}
-
-	}
-	right := math.MinInt32
-	if move > 0 {
-
-	} else {
-		for i < len(grid)-1 {
-			op := maxScoreDp(i+1, j, grid, move+1) + grid[i+1][j] - grid[i][j]
-			right = max(right, op)
-			i++
-		}
-	}
-
-	down := math.MinInt32
-	for j < len(grid[0])-1 {
-		op := maxScoreDp(i, j+1, grid, move+1) + grid[i][j+1] - grid[i][j]
-		down = max(down, op)
-		j++
-	}
-	return max(right, down)
 }
