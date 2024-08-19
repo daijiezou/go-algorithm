@@ -477,3 +477,73 @@ func maxScore(grid [][]int) int {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/minimum-number-of-operations-to-make-word-k-periodic/description/
+
+func minimumOperationsToMakeKPeriodic(word string, k int) int {
+	numberCnt := make(map[string]int)
+	maxCnt := 1
+	total := len(word) / k
+	for i := 0; i < len(word); i += k {
+		if _, ok := numberCnt[word[i:i+k]]; ok {
+			numberCnt[word[i:i+k]]++
+			maxCnt = max(maxCnt, numberCnt[word[i:i+k]])
+		} else {
+			numberCnt[word[i:i+k]] = 1
+		}
+	}
+	return total - maxCnt
+}
+
+func checkRecord1(s string) bool {
+	aCount := 0
+	lCount := 0
+	for i := 0; i < len(s); i++ {
+		if s[i] == 'A' {
+			aCount++
+			if aCount == 2 {
+				return false
+			}
+		}
+		if s[i] == 'L' {
+			lCount++
+			if lCount == 3 {
+				return false
+			}
+		} else {
+			lCount = 0
+		}
+	}
+	return true
+}
+
+const mod = 1e9 + 7
+const mx int = 1e5 + 1
+
+var memo [mx][2][3]int
+
+// https://leetcode.cn/problems/student-attendance-record-ii/
+func checkRecord(n int) (ans int) {
+	//j表示有前面有几个L
+	//k表示有几个连续的k
+	return checkRecordDP(n, 0, 0)
+}
+
+func checkRecordDP(i, j, k int) int {
+	if i == 0 {
+		return 1
+	}
+	p := &memo[i][j][k]
+	if *p != 0 {
+		return *p
+	}
+	res := checkRecordDP(i-1, j, 0)
+	if j == 0 {
+		res += checkRecordDP(i-1, j+1, 0)
+	}
+	if k < 2 {
+		res += checkRecordDP(i-1, j, k+1)
+	}
+	*p = res % mod
+	return *p
+}

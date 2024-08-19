@@ -78,3 +78,33 @@ func robRange(nums []int, start, end int) int {
 	}
 	return dp[start]
 }
+
+type TreeNode struct {
+	Val   int
+	Left  *TreeNode
+	Right *TreeNode
+}
+
+func rob3(root *TreeNode) int {
+	memo := make(map[*TreeNode]int)
+	return rob3DP(root, memo)
+}
+
+func rob3DP(root *TreeNode, memo map[*TreeNode]int) int {
+	if root == nil {
+		return 0
+	}
+	if memo[root] != 0 {
+		return memo[root]
+	}
+	doit := root.Val
+	if root.Left != nil {
+		doit += rob3DP(root.Left.Right, memo) + rob3DP(root.Left.Left, memo)
+	}
+	if root.Right != nil {
+		doit += rob3DP(root.Right.Right, memo) + rob3DP(root.Right.Left, memo)
+	}
+	nodo := rob3DP(root.Left, memo) + rob3DP(root.Right, memo)
+	memo[root] = max(doit, nodo)
+	return memo[root]
+}

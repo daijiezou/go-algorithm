@@ -286,3 +286,64 @@ func Test_maxScore(t *testing.T) {
 		})
 	}
 }
+
+func Test_minimumOperationsToMakeKPeriodic(t *testing.T) {
+	type args struct {
+		word string
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				word: "leetcoleet",
+				k:    2,
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumOperationsToMakeKPeriodic(tt.args.word, tt.args.k); got != tt.want {
+				t.Errorf("minimumOperationsToMakeKPeriodic() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_checkRecord(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				n: 10101,
+			},
+			want: 183236316,
+		},
+		{
+			name: "case 2",
+			args: args{
+				n: 3,
+			},
+			want: 19,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := checkRecord(tt.args.n); got != tt.want {
+				t.Errorf("checkRecord() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
