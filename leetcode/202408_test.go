@@ -347,3 +347,62 @@ func Test_checkRecord(t *testing.T) {
 		})
 	}
 }
+
+func Test_jump(t *testing.T) {
+	type args struct {
+		j int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				j: 2,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := jump(tt.args.j); got != tt.want {
+				t.Errorf("jump() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_waysToReachStair(t *testing.T) {
+	type args struct {
+		k int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				k: 0,
+			},
+			want: 2,
+		},
+		{
+			name: "case 2",
+			args: args{
+				k: 1,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := waysToReachStair(tt.args.k); got != tt.want {
+				t.Errorf("waysToReachStair() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

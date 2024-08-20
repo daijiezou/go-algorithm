@@ -547,3 +547,51 @@ func checkRecordDP(i, j, k int) int {
 	*p = res % mod
 	return *p
 }
+
+type args struct {
+	s       int
+	j       int
+	preDown bool
+}
+
+// https://leetcode.cn/problems/find-number-of-ways-to-reach-the-k-th-stair/description/
+func waysToReachStair(k int) int {
+	memo := make(map[args]int)
+	return waysToReachStairDP(1, k, 0, false, memo)
+}
+
+func waysToReachStairDP(s, k, j int, preDown bool, memo map[args]int) int {
+	// 无法到达终点
+	if s > k+1 {
+		return 0
+	}
+	p := args{
+		s:       s,
+		j:       j,
+		preDown: preDown,
+	}
+	if v, ok := memo[p]; ok {
+		return v
+	}
+	res := waysToReachStairDP(s+jump(j), k, j+1, false, memo)
+	if s != 0 && !preDown {
+		res += waysToReachStairDP(s-1, k, j, true, memo)
+	}
+	if s == k {
+		res++
+	}
+	memo[p] = res
+	return res
+
+}
+
+func jump(j int) int {
+	if j == 0 {
+		return 1
+	}
+	res := 1
+	for i := j; i > 0; i-- {
+		res *= 2
+	}
+	return res
+}
