@@ -595,3 +595,22 @@ func jump(j int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/minimum-array-end/
+// 给你两个整数 n 和 x 。你需要构造一个长度为 n 的 正整数 数组 nums ，
+// 对于所有 0 <= i < n - 1 ，满足 nums[i + 1] 大于 nums[i] ，并且数组 nums 中所有元素的按位 AND 运算结果为 x 。
+// 返回 nums[n - 1] 可能的 最小 值。
+func minEnd(n int, x int) int64 {
+	i, j := 0, 0
+	n--
+	for n>>j > 0 {
+		if x>>i&1 == 0 {
+			// 空位填入 n 的第 j 个比特值
+			// 相当于把j的比特值，插入到x的二进制中的为0的位中
+			x |= (n >> j & 1) << i
+			j++
+		}
+		i++
+	}
+	return int64(x)
+}
