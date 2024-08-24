@@ -614,3 +614,28 @@ func minEnd(n int, x int) int64 {
 	}
 	return int64(x)
 }
+
+func findPermutationDifference(s string, t string) int {
+	sMap := make(map[byte]int, len(s))
+	tMap := make(map[byte]int, len(t))
+	for i := 0; i < len(s); i++ {
+		sMap[s[i]] = i
+	}
+	for i := 0; i < len(t); i++ {
+		tMap[t[i]] = i
+	}
+	res := 0
+	for i := 0; i < len(s); i++ {
+		i1 := sMap[s[i]]
+		i2 := tMap[s[i]]
+		res += myabs(i1, i2)
+	}
+	return res
+}
+
+func myabs(a, b int) int {
+	if a > b {
+		return a - b
+	}
+	return b - a
+}
