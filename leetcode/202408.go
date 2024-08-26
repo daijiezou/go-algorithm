@@ -700,23 +700,19 @@ func getImportance(employees []*Employee, id int) int {
 	total := 0
 	queue := []int{id}
 	n := len(employees)
+	// 创建hashMap优化查询速度
+	empMap := make(map[int]*Employee, n)
+	for i := 0; i < n; i++ {
+		empMap[employees[i].Id] = employees[i]
+	}
 	for len(queue) > 0 {
 		curID := queue[0]
 		queue = queue[1:]
-		emp := getEmployee(curID, n, employees)
+		emp := empMap[curID]
 		if emp != nil {
 			total += emp.Importance
 			queue = append(queue, emp.Subordinates...)
 		}
 	}
 	return total
-}
-
-func getEmployee(id int, n int, employees []*Employee) *Employee {
-	for i := 0; i < n; i++ {
-		if employees[i].Id == id {
-			return employees[i]
-		}
-	}
-	return nil
 }
