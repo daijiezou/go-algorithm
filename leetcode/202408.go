@@ -639,3 +639,84 @@ func myabs(a, b int) int {
 	}
 	return b - a
 }
+
+func canPartitionKSubsets(nums []int, k int) bool {
+	sum := 0
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		sum += nums[i]
+	}
+	if sum%k != 0 {
+		return false
+	}
+	target := sum / k
+	sort.Ints(nums)
+	if nums[n-1] > target {
+		return false
+	}
+	now := 0
+	used := 0
+	memo := make(map[int]bool)
+	return backTrack(nums, 0, target, now, k, used, memo)
+}
+
+func backTrack(nums []int, start int, target int, cur int, k int, used int, memo map[int]bool) bool {
+	if k == 0 {
+		return true
+	}
+	if target == cur {
+		res := backTrack(nums, 0, target, 0, k-1, used, memo)
+		memo[used] = res
+		return memo[used]
+	}
+	if _, ok := memo[used]; ok {
+		return memo[used]
+	}
+	for i := start; i < len(nums); i++ {
+		if (used>>i)&1 == 1 {
+			continue
+		}
+		if cur+nums[i] > target {
+			continue
+		}
+		used |= 1 << i
+		cur += nums[i]
+		if backTrack(nums, start+1, target, cur, k, used, memo) {
+			return true
+		}
+		used ^= 1 << i
+		cur -= nums[i]
+	}
+	return false
+}
+
+type Employee struct {
+	Id           int
+	Importance   int
+	Subordinates []int
+}
+
+func getImportance(employees []*Employee, id int) int {
+	total := 0
+	queue := []int{id}
+	n := len(employees)
+	for len(queue) > 0 {
+		curID := queue[0]
+		queue = queue[1:]
+		emp := getEmployee(curID, n, employees)
+		if emp != nil {
+			total += emp.Importance
+			queue = append(queue, emp.Subordinates...)
+		}
+	}
+	return total
+}
+
+func getEmployee(id int, n int, employees []*Employee) *Employee {
+	for i := 0; i < n; i++ {
+		if employees[i].Id == id {
+			return employees[i]
+		}
+	}
+	return nil
+}
