@@ -8,6 +8,8 @@ import (
 
 func main() {
 	fmt.Println(1e9)
+	list := []int{1, 2, 3}
+	fmt.Println(list[2:3])
 }
 
 func mergeSort(nums []int) []int {

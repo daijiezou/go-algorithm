@@ -486,3 +486,62 @@ func Test_getImportance(t *testing.T) {
 		})
 	}
 }
+
+func Test_checkBalance(t *testing.T) {
+	type args struct {
+		sByte []byte
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				sByte: []byte{'a', 'b', 'c', 'd', 'e', 'e'},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := checkBalance(tt.args.sByte); got != tt.want {
+				t.Errorf("checkBalance() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minimumSubstringsInPartition(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				s: "abababaccddb",
+			},
+			want: 2,
+		},
+		{
+			name: "case 2",
+			args: args{
+				s: "fabccddg",
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumSubstringsInPartition(tt.args.s); got != tt.want {
+				t.Errorf("minimumSubstringsInPartition() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

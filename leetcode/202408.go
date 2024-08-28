@@ -716,3 +716,56 @@ func getImportance(employees []*Employee, id int) int {
 	}
 	return total
 }
+
+// https://leetcode.cn/problems/minimum-substring-partition-of-equal-character-frequency/
+func minimumSubstringsInPartition(s string) int {
+	memo := make(map[int]int)
+	return minimumSubstringsInPartitionDP(s, len(s)-1, memo)
+}
+
+func minimumSubstringsInPartitionDP(sByte string, start int, memo map[int]int) int {
+	if start < 0 {
+		return 0
+	}
+	// 之前计算过
+	if memo[start] != 0 {
+		return memo[start]
+	}
+	res := math.MaxInt
+	cnt := [26]int{}
+	k, maxCnt := 0, 0
+	for i := start; i >= 0; i-- {
+		b := sByte[i] - 'a'
+		if cnt[b] == 0 {
+			k++
+		}
+		cnt[b]++
+		maxCnt = max(maxCnt, cnt[b])
+		//设子串中有 k 种字母，字母出现次数的最大值为 maxCnt。
+		//子串是平衡的，当且仅当子串长度 i−j+1 等于 k⋅maxCnt。
+		if start-i+1 == k*maxCnt {
+			res = min(res, minimumSubstringsInPartitionDP(sByte, i-1, memo)+1)
+		}
+	}
+	memo[start] = res
+	return res
+}
+
+func checkBalance(sByte []byte) bool {
+	letterMap := make(map[byte]int, 26)
+	for i := 0; i < len(sByte); i++ {
+		letterMap[sByte[i]]++
+	}
+	count := 0
+	for _, v := range letterMap {
+		if v != 0 {
+			if count == 0 {
+				count = v
+			}
+			if v != count {
+				return false
+			}
+		}
+	}
+	return true
+}
