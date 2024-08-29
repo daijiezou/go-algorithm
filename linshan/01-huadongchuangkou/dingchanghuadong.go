@@ -143,3 +143,64 @@ func findMaxAverage2(nums []int, k int) float64 {
 	}
 	return float64(maxTotal) / float64(k)
 }
+
+// https://leetcode.cn/problems/number-of-sub-arrays-of-size-k-and-average-greater-than-or-equal-to-threshold/
+func numOfSubarrays(arr []int, k int, threshold int) int {
+	total := k * threshold
+	windowSum := 0
+	res := 0
+	for i := 0; i < len(arr); i++ {
+		windowSum += arr[i]
+		if i < k-1 {
+			continue
+		}
+		if windowSum >= total {
+			res++
+		}
+		windowSum -= arr[i-k+1]
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/k-radius-subarray-averages/
+func getAverages(nums []int, k int) []int {
+	n := len(nums)
+	res := make([]int, n)
+	for i := 0; i < n; i++ {
+		res[i] = -1
+	}
+	length := k*2 + 1
+	if length > n {
+		return res
+	}
+	windowSum := 0
+	for i := 0; i < n; i++ {
+		windowSum += nums[i]
+		if i < length-1 {
+			continue
+		}
+		avg := windowSum / length
+		res[i-k] = avg
+		windowSum -= nums[i-length+1]
+	}
+	return res
+}
+
+func minimumRecolors(blocks string, k int) int {
+	res := len(blocks)
+	n := len(blocks)
+	cur := 0
+	for i := 0; i < n; i++ {
+		if blocks[i] == 'W' {
+			cur++
+		}
+		if i < k-1 {
+			continue
+		}
+		res = min(res, cur)
+		if blocks[i-k+1] == 'W' {
+			cur--
+		}
+	}
+	return res
+}

@@ -769,3 +769,25 @@ func checkBalance(sByte []byte) bool {
 	}
 	return true
 }
+
+func satisfiesConditions(grid [][]int) bool {
+	m := len(grid)
+	n := len(grid[0])
+
+	// 检查第一行相邻是否不同
+	for i := 0; i < n-1; i++ {
+		if grid[0][i] == grid[0][i+1] {
+			return false
+		}
+	}
+
+	// 检查每一列是否相同
+	for i := 0; i < n; i++ {
+		for j := 1; j < m; j++ {
+			if grid[j][i] != grid[j-1][i] {
+				return false
+			}
+		}
+	}
+	return true
+}
