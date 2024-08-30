@@ -791,3 +791,21 @@ func satisfiesConditions(grid [][]int) bool {
 	}
 	return true
 }
+
+// https://leetcode.cn/problems/sum-of-digit-differences-of-all-pairs/
+func sumDigitDifferences(nums []int) int64 {
+	res := int64(0)
+	n := len(nums)
+	m := len(strconv.Itoa(nums[0]))
+	for i := 0; i < m; i++ {
+		cnt := make([]int, 10)
+		for j := 0; j < n; j++ {
+			cnt[nums[j]%10]++
+			nums[j] = nums[j] / 10
+		}
+		for j := 0; j < 10; j++ {
+			res += int64(n-cnt[j]) * int64(cnt[j])
+		}
+	}
+	return res / 2
+}
