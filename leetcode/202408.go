@@ -809,3 +809,66 @@ func sumDigitDifferences(nums []int) int64 {
 	}
 	return res / 2
 }
+
+func canMakeSquare(grid [][]byte) bool {
+	var wCnt int
+	for i := 0; i <= 1; i++ {
+		for j := 0; j <= 1; j++ {
+			wCnt = 0
+			if grid[i][j] == 'W' {
+				wCnt++
+			}
+			if grid[i+1][j] == 'W' {
+				wCnt++
+			}
+			if grid[i][j+1] == 'W' {
+				wCnt++
+			}
+			if grid[i+1][j+1] == 'W' {
+				wCnt++
+			}
+			if wCnt != 2 {
+				return true
+			}
+		}
+
+	}
+	return false
+}
+
+func busyStudent(startTime []int, endTime []int, queryTime int) int {
+	n := len(startTime)
+	res := 0
+	for i := 0; i < n; i++ {
+		if startTime[i] <= queryTime && queryTime <= endTime[i] {
+			res++
+		}
+	}
+	return res
+}
+
+func maxConsecutiveAnswers(answerKey string, k int) int {
+	n := len(answerKey)
+	left, right := 0, 0
+	maxConsecutive := 0
+	countT := 0
+	countF := 0
+	for right < n {
+		if answerKey[right] == 'T' {
+			countT++
+		} else {
+			countF++
+		}
+		right++
+		for countT > k && countF > k {
+			if answerKey[left] == 'T' {
+				countT--
+			} else {
+				countF--
+			}
+			left++
+		}
+		maxConsecutive = max(maxConsecutive, right-left)
+	}
+	return maxConsecutive
+}

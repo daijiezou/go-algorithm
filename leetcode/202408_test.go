@@ -571,3 +571,33 @@ func Test_sumDigitDifferences(t *testing.T) {
 		})
 	}
 }
+
+func Test_canMakeSquare(t *testing.T) {
+	type args struct {
+		grid [][]byte
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				grid: [][]byte{
+					{'B', 'B', 'B'},
+					{'B', 'W', 'W'},
+					{'B', 'B', 'B'},
+				},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := canMakeSquare(tt.args.grid); got != tt.want {
+				t.Errorf("canMakeSquare() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
