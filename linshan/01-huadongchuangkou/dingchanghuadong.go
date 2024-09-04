@@ -245,7 +245,6 @@ func decrypt(code []int, k int) []int {
 /*
 如果能够满足下述两个条件之一，则认为第 i 位学生将会保持开心：
 这位学生被选中，并且被选中的学生人数 严格大于 nums[i] 。
-
 这位学生没有被选中，并且被选中的学生人数 严格小于 nums[i] 。
 */
 func countWays(nums []int) int {
@@ -256,11 +255,15 @@ func countWays(nums []int) int {
 	if nums[0] > 0 {
 		res++
 	}
-	for i := 1; i <= n; i++ {
-		if nums[i-1] < i && i < nums[i] {
+	for i := 1; i < n; i++ {
+		// i代表被选中的人数
+
+		if nums[i-1] < i && // 被选中的学生人数 严格大于 nums[i]
+			i < nums[i] { // 被选中的学生人数 严格小于 nums[i]
 			res++
 		}
 	}
+
 	// 0 <= nums[i] < nums.length
 	// 一定可以都选
 	return res + 1

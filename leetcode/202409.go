@@ -1,5 +1,7 @@
 package leetcode
 
+import "sort"
+
 func busyStudent(startTime []int, endTime []int, queryTime int) int {
 	n := len(startTime)
 	res := 0
@@ -71,4 +73,31 @@ func maxStrength(nums []int) int64 {
 	} else {
 		return res / int64(nums[minIndex])
 	}
+}
+
+/*
+如果能够满足下述两个条件之一，则认为第 i 位学生将会保持开心：
+这位学生被选中，并且被选中的学生人数 严格大于 nums[i] 。
+这位学生没有被选中，并且被选中的学生人数 严格小于 nums[i] 。
+*/
+func countWays(nums []int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	res := 0
+	// 可以都不选
+	if nums[0] > 0 {
+		res++
+	}
+	for i := 1; i < n; i++ {
+		// i代表被选中的人数
+
+		if nums[i-1] < i && // 被选中的学生人数 严格大于 nums[i]
+			i < nums[i] { // 被选中的学生人数 严格小于 nums[i]
+			res++
+		}
+	}
+
+	// 0 <= nums[i] < nums.length
+	// 一定可以都选
+	return res + 1
 }
