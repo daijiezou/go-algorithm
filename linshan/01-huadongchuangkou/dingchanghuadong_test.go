@@ -87,3 +87,36 @@ func Test_findMaxAverage(t *testing.T) {
 		})
 	}
 }
+
+func Test_countWays(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "test1",
+			args: args{
+				nums: []int{1, 1},
+			},
+			want: 2,
+		},
+		{
+			name: "test2",
+			args: args{
+				nums: []int{6, 0, 3, 3, 6, 7, 2, 7},
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countWays(tt.args.nums); got != tt.want {
+				t.Errorf("countWays() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -204,3 +204,64 @@ func minimumRecolors(blocks string, k int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/defuse-the-bomb/
+/*
+
+你有一个炸弹需要拆除，时间紧迫！你的情报员会给你一个长度为 n 的 循环 数组 code 以及一个密钥 k 。
+为了获得正确的密码，你需要替换掉每一个数字。所有数字会 同时 被替换。
+如果 k > 0 ，将第 i 个数字用 接下来 k 个数字之和替换。
+如果 k < 0 ，将第 i 个数字用 之前 k 个数字之和替换。
+如果 k == 0 ，将第 i 个数字用 0 替换。
+*/
+func decrypt(code []int, k int) []int {
+	n := len(code)
+	res := make([]int, n)
+	if k == 0 {
+
+		return res
+	}
+	code = append(code, code...)
+
+	l, r := 1, k+1
+	if k < 0 {
+		l, r = n+k, n
+	}
+	// 算出第一个数的解码后的值
+	sum := 0
+	for _, v := range code[l:r] {
+		sum += v
+	}
+	for i := 0; i < n; i++ {
+		res[i] = sum
+		sum += code[r]
+		sum -= code[l]
+		r++
+		l++
+	}
+	return res
+}
+
+/*
+如果能够满足下述两个条件之一，则认为第 i 位学生将会保持开心：
+这位学生被选中，并且被选中的学生人数 严格大于 nums[i] 。
+
+这位学生没有被选中，并且被选中的学生人数 严格小于 nums[i] 。
+*/
+func countWays(nums []int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	res := 0
+	// 可以都不选
+	if nums[0] > 0 {
+		res++
+	}
+	for i := 1; i <= n; i++ {
+		if nums[i-1] < i && i < nums[i] {
+			res++
+		}
+	}
+	// 0 <= nums[i] < nums.length
+	// 一定可以都选
+	return res + 1
+}
