@@ -101,3 +101,24 @@ func countWays(nums []int) int {
 	// 一定可以都选
 	return res + 1
 }
+
+/*
+https://leetcode.cn/problems/clear-digits/description/
+删除 第一个数字字符 以及它左边 最近 的 非数字 字符。
+返回删除所有数字字符以后剩下的字符串。
+*/
+func clearDigits(s string) string {
+	res := []byte{}
+	for i := 0; i < len(s); i++ {
+		if s[i] >= '0' && s[i] <= '9' {
+			if len(res) > 0 {
+				res = res[:len(res)-1]
+			}
+		} else {
+			res = append(res, s[i])
+		}
+	}
+
+	return string(res)
+
+}

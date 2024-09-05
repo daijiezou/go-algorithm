@@ -242,29 +242,97 @@ func decrypt(code []int, k int) []int {
 	return res
 }
 
-/*
-如果能够满足下述两个条件之一，则认为第 i 位学生将会保持开心：
-这位学生被选中，并且被选中的学生人数 严格大于 nums[i] 。
-这位学生没有被选中，并且被选中的学生人数 严格小于 nums[i] 。
-*/
-func countWays(nums []int) int {
-	sort.Ints(nums)
-	n := len(nums)
-	res := 0
-	// 可以都不选
-	if nums[0] > 0 {
-		res++
-	}
-	for i := 1; i < n; i++ {
-		// i代表被选中的人数
-
-		if nums[i-1] < i && // 被选中的学生人数 严格大于 nums[i]
-			i < nums[i] { // 被选中的学生人数 严格小于 nums[i]
-			res++
+// https://leetcode.cn/problems/grumpy-bookstore-owner/
+func maxSatisfied(customers []int, grumpy []int, minutes int) int {
+	maxCrease := 0
+	sum := 0
+	left, right := 0, 0
+	crease := 0
+	for ; right < len(customers); right++ {
+		if grumpy[right] == 0 {
+			sum += customers[right]
 		}
+		if grumpy[right] == 1 {
+			crease += customers[right]
+		}
+		if right < minutes-1 { // 窗口长度不足 minutes
+			continue
+		}
+		maxCrease = max(maxCrease, crease)
+		if grumpy[left] == 1 {
+			crease -= customers[left]
+		}
+		left++
 	}
+	return maxCrease + sum
+}
 
-	// 0 <= nums[i] < nums.length
-	// 一定可以都选
-	return res + 1
+func maxSum(nums []int, m int, k int) int64 {
+	left := 0
+	var sum int
+	count := map[int]int{}
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		count[nums[i]]++
+		sum += nums[i]
+		if i < k-1 {
+			continue
+		}
+		if len(count) >= m {
+			res = max(res, sum)
+		}
+		sum -= nums[left]
+		count[nums[left]]--
+		if count[nums[left]] == 0 {
+			delete(count, nums[left])
+		}
+		left++
+	}
+	return int64(res)
+}
+
+func maximumSubarraySum(nums []int, k int) int64 {
+	left := 0
+	var sum int
+	count := map[int]int{}
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		count[nums[i]]++
+		sum += nums[i]
+		if i < k-1 {
+			continue
+		}
+		if len(count) == k {
+			res = max(res, sum)
+		}
+		sum -= nums[left]
+		count[nums[left]]--
+		if count[nums[left]] == 0 {
+			delete(count, nums[left])
+		}
+		left++
+	}
+	return int64(res)
+}
+
+func maxScore(cardPoints []int, k int) int {
+	count := len(cardPoints) - k
+	leftSum := 0
+	sum := 0
+	minLeftSum := math.MaxInt64
+	left := 0
+	for i := 0; i < len(cardPoints); i++ {
+		sum += cardPoints[i]
+		leftSum += cardPoints[i]
+		if i < count-1 {
+			continue
+		}
+		minLeftSum = min(minLeftSum, leftSum)
+		leftSum -= cardPoints[left]
+		left++
+	}
+	if count == 0 {
+		minLeftSum = 0
+	}
+	return sum - minLeftSum
 }

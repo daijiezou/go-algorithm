@@ -88,9 +88,11 @@ func Test_findMaxAverage(t *testing.T) {
 	}
 }
 
-func Test_countWays(t *testing.T) {
+func Test_maxSatisfied(t *testing.T) {
 	type args struct {
-		nums []int
+		customers []int
+		grumpy    []int
+		minutes   int
 	}
 	tests := []struct {
 		name string
@@ -100,22 +102,47 @@ func Test_countWays(t *testing.T) {
 		{
 			name: "test1",
 			args: args{
-				nums: []int{1, 1},
+				customers: []int{1, 0, 1, 2, 1, 1, 7, 5},
+				grumpy:    []int{0, 1, 0, 1, 0, 1, 0, 1},
+				minutes:   3,
 			},
-			want: 2,
+			want: 16,
 		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxSatisfied(tt.args.customers, tt.args.grumpy, tt.args.minutes); got != tt.want {
+				t.Errorf("maxSatisfied() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxSum(t *testing.T) {
+	type args struct {
+		nums []int
+		m    int
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
 		{
-			name: "test2",
+			name: "test1",
 			args: args{
-				nums: []int{6, 0, 3, 3, 6, 7, 2, 7},
+				nums: []int{1, 2, 2},
+				m:    2,
+				k:    2,
 			},
 			want: 3,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := countWays(tt.args.nums); got != tt.want {
-				t.Errorf("countWays() = %v, want %v", got, tt.want)
+			if got := maxSum(tt.args.nums, tt.args.m, tt.args.k); got != tt.want {
+				t.Errorf("maxSum() = %v, want %v", got, tt.want)
 			}
 		})
 	}
