@@ -336,3 +336,79 @@ func maxScore(cardPoints []int, k int) int {
 	}
 	return sum - minLeftSum
 }
+
+func maxFreq(s string, maxLetters int, minSize int, maxSize int) int {
+	left := 0
+	count := map[byte]int{}
+	res := 0
+	ansCount := map[string]int{}
+	for i := 0; i < len(s); i++ {
+		count[s[i]]++
+		if i < minSize-1 {
+			continue
+		}
+		for i-left+1 > maxSize {
+			count[s[left]]--
+			if count[s[left]] == 0 {
+				delete(count, s[left])
+			}
+			left++
+		}
+		for len(count) > maxLetters && i-left+1 > minSize {
+			count[s[left]]--
+			if count[s[left]] == 0 {
+				delete(count, s[left])
+			}
+			left++
+		}
+		if len(count) <= maxLetters {
+			ansCount[s[left:i+1]]++
+			for i-left+1 > minSize {
+				count[s[left]]--
+				if count[s[left]] == 0 {
+					delete(count, s[left])
+				}
+				left++
+				ansCount[s[left:i+1]]++
+			}
+		}
+	}
+	for _, v := range ansCount {
+		if v > res {
+			res = v
+		}
+	}
+	return res
+}
+
+/*
+优化
+假设字符串 T 在给定的字符串 S 中出现的次数为 k，那么 T 的任意一个子串出现的次数至少也为 k，即 T 的任意一个子串在 S 中出现的次数不会少于 T 本身。这样我们就可以断定，在所有满足条件且出现次数最多的的字符串中，一定有一个的长度恰好为 minSize。
+*/
+
+func maxFreq2(s string, maxLetters int, minSize int, maxSize int) int {
+	left := 0
+	count := map[byte]int{}
+	res := 0
+	ansCount := map[string]int{}
+	for i := 0; i < len(s); i++ {
+		count[s[i]]++
+		if i < minSize-1 {
+			continue
+		}
+		if len(count) <= maxLetters {
+			ansCount[s[left:i+1]]++
+		}
+		count[s[left]]--
+		if count[s[left]] == 0 {
+			delete(count, s[left])
+		}
+		left++
+	}
+	for _, v := range ansCount {
+		if v > res {
+			res = v
+		}
+	}
+	return res
+}

@@ -118,7 +118,35 @@ func clearDigits(s string) string {
 			res = append(res, s[i])
 		}
 	}
-
 	return string(res)
+}
 
+func maximumLength(nums []int, k int) int {
+	// dp[i][j] 来表示以 nums[i] 结尾组成的最长合法序列中有 j 个数字与其在序列中的后一个数字不相等。
+	//其中 i 的取值为 nums 的长度，j 不超过 k。初始时，有 dp[i][0]=1。
+	n := len(nums)
+	dp := make([][]int, n)
+	for i := 0; i < n; i++ {
+		dp[i] = make([]int, k+1)
+		for j := 0; j <= k; j++ {
+			dp[i][j] = -1
+		}
+	}
+	ans := 0
+	for i := 0; i < n; i++ {
+		dp[i][0] = 1
+		for l := 0; l <= k; l++ {
+			for j := 0; j < i; j++ {
+				add := 0
+				if nums[i] != nums[j] {
+					add = 1
+				}
+				if l-add >= 0 && dp[j][l-add] != -1 {
+					dp[i][l] = max(dp[i][l], dp[j][l-add]+1)
+				}
+			}
+			ans = max(ans, dp[i][l])
+		}
+	}
+	return ans
 }
