@@ -412,3 +412,33 @@ func maxFreq2(s string, maxLetters int, minSize int, maxSize int) int {
 	}
 	return res
 }
+
+/*
+什么是第 x 小的数？
+设它是 num，那么 <num 的数有 <x 个，≤num 的数有 ≥x 个，就说明 num 是第 x 小的数。
+*/
+
+// https://leetcode.cn/problems/sliding-subarray-beauty/description/
+func getSubarrayBeauty(nums []int, k int, x int) []int {
+	const bias = 50
+	cnt := [bias*2 + 1]int{}
+	// 先统计k-1个数
+	for _, num := range nums[:k-1] {
+		cnt[num+bias]++
+	}
+	ans := make([]int, len(nums)-k+1)
+	for i, num := range nums[k-1:] {
+		cnt[num+bias]++ // 进入窗口（保证窗口有恰好 k 个数）
+		left := x
+		for j, c := range cnt[:bias] { // 暴力枚举负数范围 [-50,-1]
+			left -= c
+			if left <= 0 { // 找到美丽值
+				ans[i] = j - bias
+				break
+			}
+		}
+		cnt[nums[i]+bias]-- // 离开窗口
+	}
+	return ans
+
+}

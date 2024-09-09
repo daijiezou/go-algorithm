@@ -150,3 +150,50 @@ func maximumLength(nums []int, k int) int {
 	}
 	return ans
 }
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+// https://leetcode.cn/problems/merge-nodes-in-between-zeros/description/
+func mergeNodes(head *ListNode) *ListNode {
+	dummy := &ListNode{
+		Val:  -1,
+		Next: nil,
+	}
+	p := dummy
+	curNum := 0
+	head = head.Next
+	for head != nil {
+		curNum += head.Val
+		if head.Val == 0 {
+			p.Next = &ListNode{
+				Val:  curNum,
+				Next: nil,
+			}
+			p = p.Next
+			curNum = 0
+		}
+		head = head.Next
+
+	}
+	return dummy.Next
+}
+
+func mergeNodes2(head *ListNode) *ListNode {
+	tail := head
+	cur := head.Next
+	for cur.Next != nil {
+		if cur.Val != 0 {
+			tail.Val += cur.Val
+		} else {
+			tail = tail.Next
+			tail.Val = 0
+		}
+		cur = cur.Next
+
+	}
+	tail.Next = nil
+	return head
+}
