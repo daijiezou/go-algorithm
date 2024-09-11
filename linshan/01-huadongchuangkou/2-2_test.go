@@ -30,3 +30,31 @@ func Test_smallestRange(t *testing.T) {
 		})
 	}
 }
+
+func Test_checkInclusion(t *testing.T) {
+	type args struct {
+		t string
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "case 1",
+			args: args{
+				t: "ABC",
+				s: "ADOBECODEBANC",
+			},
+			want: "BANC",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minWindow(tt.args.t, tt.args.s); got != tt.want {
+				t.Errorf("minWindow() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

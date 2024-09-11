@@ -43,6 +43,44 @@ func findLengthOfShortestSubarray(arr []int) int {
 	return ans
 }
 
+// 给你一个字符串 s 、一个字符串 t 。
+// 返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
+func minWindow(s string, t string) string {
+	// 用map存t的字符
+	need := make(map[byte]int, len(t))
+	window := make(map[byte]int)
+	for i := 0; i < len(t); i++ {
+		need[t[i]]++
+	}
+
+	left, right := 0, 0
+	valid := 0
+	res := s
+	flag := false
+	for right < len(s) {
+		window[s[right]]++
+		if window[s[right]] == need[s[right]] {
+			valid++
+		}
+		for valid == len(need) {
+			flag = true
+			if right-left+1 < len(res) {
+				res = s[left : right+1]
+			}
+			window[s[left]]--
+			if window[s[left]] < need[s[left]] {
+				valid--
+			}
+			left++
+		}
+		right++
+	}
+	if flag {
+		return res
+	}
+	return ""
+}
+
 // https://leetcode.cn/problems/smallest-range-covering-elements-from-k-lists/
 func smallestRange(nums [][]int) []int {
 	size := len(nums)
