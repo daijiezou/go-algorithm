@@ -21,6 +21,7 @@ func minSubArrayLen(target int, nums []int) int {
 }
 
 // https://leetcode.cn/problems/shortest-subarray-to-be-removed-to-make-array-sorted/
+// 1574. 删除最短的子数组使剩余数组有序
 func findLengthOfShortestSubarray(arr []int) int {
 	n := len(arr)
 	right := n - 1
@@ -40,4 +41,45 @@ func findLengthOfShortestSubarray(arr []int) int {
 		ans = min(right-left-1, ans) // 删除arr[left+1:right]
 	}
 	return ans
+}
+
+// https://leetcode.cn/problems/smallest-range-covering-elements-from-k-lists/
+func smallestRange(nums [][]int) []int {
+	size := len(nums)
+	// 纪录一个数字在哪些组里有
+	indices := make(map[int][]int)
+	xMin, XMax := math.MaxInt32, math.MinInt32
+	for i := 0; i < size; i++ {
+		for _, v := range nums[i] {
+			indices[v] = append(indices[v], i)
+			xMin = min(v, xMin)
+			XMax = max(v, XMax)
+		}
+	}
+	left, right := xMin, xMin-1
+	bestLeft, bestRight := xMin, XMax
+	freq := make(map[int]int)
+	for right < XMax {
+		right++
+		// 该数字至少在一个组内，计算该数字在几个组内
+		if len(indices[right]) > 0 {
+			for _, i := range indices[right] {
+				freq[i]++
+			}
+			for len(freq) == size {
+				// 更新答案
+				if right-left < bestRight-bestLeft {
+					bestLeft, bestRight = left, right
+				}
+				for _, i := range indices[left] {
+					freq[i]--
+					if freq[i] == 0 {
+						delete(freq, i)
+					}
+					left++
+				}
+			}
+		}
+	}
+	return []int{bestLeft, bestRight}
 }

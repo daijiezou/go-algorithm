@@ -197,3 +197,17 @@ func mergeNodes2(head *ListNode) *ListNode {
 	tail.Next = nil
 	return head
 }
+
+func maximizeWin(prizePositions []int, k int) int {
+	n := len(prizePositions)
+	mx := make([]int, n+1)
+	ans, left := 0, 0
+	for right, p := range prizePositions {
+		for p-prizePositions[left] > k {
+			left++
+		}
+		ans = max(ans, right-left+1+mx[left])
+		mx[right+1] = max(mx[right], right-left+1)
+	}
+	return ans
+}
