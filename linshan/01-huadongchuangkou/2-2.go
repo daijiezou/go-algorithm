@@ -56,11 +56,10 @@ func smallestRange(nums [][]int) []int {
 			XMax = max(v, XMax)
 		}
 	}
-	left, right := xMin, xMin-1
+	left, right := xMin, xMin
 	bestLeft, bestRight := xMin, XMax
 	freq := make(map[int]int)
-	for right < XMax {
-		right++
+	for right <= XMax {
 		// 该数字至少在一个组内，计算该数字在几个组内
 		if len(indices[right]) > 0 {
 			for _, i := range indices[right] {
@@ -76,10 +75,11 @@ func smallestRange(nums [][]int) []int {
 					if freq[i] == 0 {
 						delete(freq, i)
 					}
-					left++
 				}
+				left++
 			}
 		}
+		right++
 	}
 	return []int{bestLeft, bestRight}
 }
