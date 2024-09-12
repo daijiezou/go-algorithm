@@ -1,6 +1,8 @@
 package leetcode
 
-import "sort"
+import (
+	"sort"
+)
 
 func busyStudent(startTime []int, endTime []int, queryTime int) int {
 	n := len(startTime)
@@ -210,4 +212,29 @@ func maximizeWin(prizePositions []int, k int) int {
 		mx[right+1] = max(mx[right], right-left+1)
 	}
 	return ans
+}
+
+// https://leetcode.cn/problems/find-the-maximum-number-of-marked-indices/?envType=daily-question&envId=2024-09-12
+func maxNumOfMarkedIndices(nums []int) (res int) {
+	sort.Ints(nums)
+	n := len(nums)
+	left, right := n-1, n-1
+	myMap := map[int]struct{}{}
+
+	for left >= 0 && right >= 0 {
+		for 2*nums[left] > nums[right] && left >= 0 {
+			left--
+		}
+		if _, ok := myMap[right]; ok {
+			right--
+			continue
+		}
+		if nums[left]*2 <= nums[right] {
+			right--
+			res += 2
+			myMap[left] = struct{}{}
+		}
+		left--
+	}
+	return res
 }
