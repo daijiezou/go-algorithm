@@ -218,23 +218,13 @@ func maximizeWin(prizePositions []int, k int) int {
 func maxNumOfMarkedIndices(nums []int) (res int) {
 	sort.Ints(nums)
 	n := len(nums)
-	left, right := n-1, n-1
-	myMap := map[int]struct{}{}
-
-	for left >= 0 && right >= 0 {
-		for 2*nums[left] > nums[right] && left >= 0 {
-			left--
-		}
-		if _, ok := myMap[right]; ok {
-			right--
-			continue
-		}
-		if nums[left]*2 <= nums[right] {
-			right--
+	left, right := 0, (n+1)/2
+	for right < n {
+		if 2*nums[left] <= nums[right] {
 			res += 2
-			myMap[left] = struct{}{}
+			left++
 		}
-		left--
+		right++
 	}
 	return res
 }
