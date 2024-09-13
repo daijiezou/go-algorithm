@@ -57,6 +57,15 @@ func Test_maximumRobots(t *testing.T) {
 			},
 			want: 0,
 		},
+		{
+			name: "case 3",
+			args: args{
+				chargeTimes:  []int{11, 12, 74, 67, 37, 87, 42, 34, 18, 90, 36, 28, 34, 20},
+				runningCosts: []int{18, 98, 2, 84, 7, 57, 54, 65, 59, 91, 7, 23, 94, 20},
+				budget:       937,
+			},
+			want: 4,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {

@@ -1,7 +1,6 @@
 package leetcode
 
 import (
-	"fmt"
 	"sort"
 )
 
@@ -238,16 +237,17 @@ func maximumRobots(chargeTimes []int, runningCosts []int, budget int64) int {
 	sum := 0
 	for right < n {
 		sum += runningCosts[right]
-		fmt.Println(left, right+1)
 		cMax := getMax(chargeTimes[left : right+1])
 		curCost = cMax + sum*(right-left+1)
-		for int64(curCost) > budget && left <= right {
-			left++
+		for int64(curCost) > budget && left < right {
 			sum -= runningCosts[left]
+			left++
 			cMax = getMax(chargeTimes[left : right+1])
 			curCost = cMax + sum*(right-left+1)
 		}
-		res = max(res, right-left+1)
+		if int64(curCost) <= budget {
+			res = max(res, right-left+1)
+		}
 		right++
 	}
 	return res
