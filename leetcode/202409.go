@@ -229,34 +229,32 @@ func maxNumOfMarkedIndices(nums []int) (res int) {
 	return res
 }
 
-func maximumRobots(chargeTimes []int, runningCosts []int, budget int64) int {
-	curCost := 0
-	res := 0
-	left, right := 0, 0
-	n := len(chargeTimes)
-	sum := 0
-	for right < n {
-		sum += runningCosts[right]
-		cMax := getMax(chargeTimes[left : right+1])
-		curCost = cMax + sum*(right-left+1)
-		for int64(curCost) > budget && left < right {
-			sum -= runningCosts[left]
-			left++
-			cMax = getMax(chargeTimes[left : right+1])
-			curCost = cMax + sum*(right-left+1)
+func maximumRobots(chargeTimes []int, runningCosts []int, budget int64) (ans int) {
+	// 使用单调栈
+	q := []int{}
+	sum := int64(0)
+	left := 0
+	for right, t := range chargeTimes {
+		// 1. 入
+		for len(q) > 0 && t >= chargeTimes[q[len(q)-1]] {
+			// 弹出队尾比即将入队小的值，此时队首为最大值
+			q = q[:len(q)-1]
 		}
-		if int64(curCost) <= budget {
-			res = max(res, right-left+1)
-		}
-		right++
-	}
-	return res
-}
+		q = append(q, right)
+		sum += int64(runningCosts[right])
 
-func getMax(in []int) int {
-	res := 0
-	for i := 0; i < len(in); i++ {
-		res = max(res, in[i])
+		// 2. 出
+		for len(q) > 0 && int64(chargeTimes[q[0]])+int64(right-left+1)*sum > budget {
+			// 最大值出队
+			if q[0] == left {
+				q = q[1:]
+			}
+			sum -= int64(runningCosts[left])
+			left++
+		}
+
+		// 3. 更新答案
+		ans = max(ans, right-left+1)
 	}
-	return res
+	return
 }
