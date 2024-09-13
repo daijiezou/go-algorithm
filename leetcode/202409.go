@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"fmt"
 	"sort"
 )
 
@@ -225,6 +226,37 @@ func maxNumOfMarkedIndices(nums []int) (res int) {
 			left++
 		}
 		right++
+	}
+	return res
+}
+
+func maximumRobots(chargeTimes []int, runningCosts []int, budget int64) int {
+	curCost := 0
+	res := 0
+	left, right := 0, 0
+	n := len(chargeTimes)
+	sum := 0
+	for right < n {
+		sum += runningCosts[right]
+		fmt.Println(left, right+1)
+		cMax := getMax(chargeTimes[left : right+1])
+		curCost = cMax + sum*(right-left+1)
+		for int64(curCost) > budget && left <= right {
+			left++
+			sum -= runningCosts[left]
+			cMax = getMax(chargeTimes[left : right+1])
+			curCost = cMax + sum*(right-left+1)
+		}
+		res = max(res, right-left+1)
+		right++
+	}
+	return res
+}
+
+func getMax(in []int) int {
+	res := 0
+	for i := 0; i < len(in); i++ {
+		res = max(res, in[i])
 	}
 	return res
 }
