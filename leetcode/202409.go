@@ -273,3 +273,15 @@ func removeStars(s string) string {
 	}
 	return string(res)
 }
+
+func numberOfPoints(nums [][]int) int {
+	n := len(nums)
+	maps := make(map[int]struct{})
+	for i := 0; i < n; i++ {
+		x, y := nums[i][0], nums[i][1]
+		for j := x; j <= y; j++ {
+			maps[j] = struct{}{}
+		}
+	}
+	return len(maps)
+}
