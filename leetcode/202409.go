@@ -285,3 +285,103 @@ func numberOfPoints(nums [][]int) int {
 	}
 	return len(maps)
 }
+
+func distanceBetweenBusStops(distance []int, start int, destination int) int {
+	totao := 0
+	zheng := 0
+	n := len(distance)
+	if start > destination {
+		start, destination = destination, start
+	}
+	for i := 0; i < n; i++ {
+		totao += distance[i]
+		if start <= i && i < destination {
+			zheng += distance[i]
+		}
+	}
+
+	fan := totao - zheng
+	if fan < zheng {
+		return fan
+	}
+	return zheng
+}
+
+// https://leetcode.cn/problems/bus-routes/
+func numBusesToDestination(routes [][]int, source int, target int) int {
+	if source == target {
+		return 0
+	}
+	n := len(routes)
+	lineMap := make(map[int][]int) // key:车站,value:公交线路
+	for i := 0; i < n; i++ {
+		m := len(routes[i])
+		for j := 0; j < m; j++ {
+			lineMap[routes[i][j]] = append(lineMap[routes[i][j]], i)
+		}
+	}
+
+	// check 是否无解
+	if lineMap[source] == nil || lineMap[target] == nil {
+		if source != target {
+			return -1
+		}
+	}
+	dis := map[int]int{source: 0}
+	q := []int{source}
+	visited := make(map[int]bool)
+	for len(q) > 0 {
+		x := q[0]
+		q = q[1:]
+		disX := dis[x]
+		for _, i := range lineMap[x] {
+			if visited[i] {
+				continue
+			}
+			for _, j := range routes[i] {
+				if _, ok := dis[j]; !ok {
+					dis[j] = disX + 1
+					q = append(q, j)
+				}
+			}
+			visited[i] = true
+		}
+	}
+	if d, ok := dis[target]; ok {
+		return d
+	}
+	return -1
+}
+
+func latestTimeCatchTheBus(buses []int, passengers []int, capacity int) int {
+	sort.Ints(buses)
+	sort.Ints(passengers)
+
+	n := len(buses)
+	m := len(passengers)
+	cc := 0
+	lastTime := 0
+	timeMap := make(map[int]struct{})
+loop1:
+	for i := 0; i < n; i++ {
+		for j := 0; j < m; j++ {
+			if passengers[j] >= buses[i] {
+				cc++
+				lastTime = passengers[j]
+				timeMap[passengers[j]] = struct{}{}
+				if cc == capacity {
+					cc = 0
+					continue loop1
+				}
+			}
+		}
+	}
+	res := 0
+	for i := lastTime; i >= passengers[0]; i-- {
+		if _, ok := timeMap[i]; !ok {
+			res = i
+			break
+		}
+	}
+	return res
+}

@@ -1,5 +1,7 @@
 package _1_huadongchuangkou
 
+import "slices"
+
 func numSubarrayProductLessThanK(nums []int, k int) int {
 	res := 0
 	left, right := 0, 0
@@ -38,4 +40,27 @@ func numberOfSubstrings(s string) int {
 		}
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/count-subarrays-where-max-element-appears-at-least-k-times/
+func countSubarrays(nums []int, k int) int64 {
+	res := 0
+	xMax := slices.Max(nums)
+	left, right := 0, 0
+	countMax := 0
+	for right < len(nums) {
+		if nums[right] == xMax {
+			countMax++
+		}
+		right++
+		for countMax >= k {
+			if nums[left] == xMax {
+				countMax--
+			}
+			left++
+		}
+		//该数组满足，包括left之前的数组也都满足
+		res += left
+	}
+	return int64(res)
 }
