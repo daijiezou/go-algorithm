@@ -359,29 +359,46 @@ func latestTimeCatchTheBus(buses []int, passengers []int, capacity int) int {
 
 	n := len(buses)
 	m := len(passengers)
+
+	j := 0
 	cc := 0
-	lastTime := 0
-	timeMap := make(map[int]struct{})
-loop1:
 	for i := 0; i < n; i++ {
-		for j := 0; j < m; j++ {
-			if passengers[j] >= buses[i] {
-				cc++
-				lastTime = passengers[j]
-				timeMap[passengers[j]] = struct{}{}
-				if cc == capacity {
-					cc = 0
-					continue loop1
-				}
-			}
+		for cc = capacity; cc > 0 && j < m && passengers[j] <= buses[i]; cc-- {
+			j++
 		}
 	}
+	timeMap := make(map[int]struct{})
+	for i := 0; i < j; i++ {
+		timeMap[passengers[i]] = struct{}{}
+	}
 	res := 0
-	for i := lastTime; i >= passengers[0]; i-- {
-		if _, ok := timeMap[i]; !ok {
-			res = i
+	if cc > 0 {
+		res = buses[len(buses)-1] //说明最后一班公交车没有坐满
+	} else {
+		res = passengers[j-1] // 最后一个上车的乘客的时间,之前j多加了一次
+	}
+
+	// 寻找插队的时机
+	for ; res >= passengers[0]; res-- {
+		if _, ok := timeMap[res]; !ok {
 			break
 		}
+	}
+
+	return res
+}
+
+func longestContinuousSubstring(s string) int {
+	n := len(s)
+	res := 1
+	cur := 1
+	for right := 0; right < n-1; right++ {
+		if s[right+1]-s[right] == 1 {
+			cur++
+		} else {
+			cur = 1
+		}
+		res = max(res, cur)
 	}
 	return res
 }
