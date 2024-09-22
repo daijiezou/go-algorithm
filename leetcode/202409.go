@@ -402,3 +402,39 @@ func longestContinuousSubstring(s string) int {
 	}
 	return res
 }
+
+func edgeScore(edges []int) int {
+	n := len(edges)
+	score := make([]int, n)
+	for i := 0; i < n; i++ {
+		score[edges[i]] += i
+	}
+	res := 0
+	maxScore := 0
+	for i := 0; i < n; i++ {
+		if score[i] > maxScore {
+			maxScore = score[i]
+			res = i
+		}
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/find-the-town-judge/description/
+func findJudge(n int, trust [][]int) int {
+	if n == 1 {
+		return 1
+	}
+	inDegrees := make([]int, n+1)
+	outDegrees := make([]int, n+1)
+	for _, v := range trust {
+		inDegrees[v[1]]++
+		outDegrees[v[0]]++
+	}
+	for i := 1; i <= n; i++ {
+		if inDegrees[i] == n-1 && outDegrees[i] == 0 {
+			return i
+		}
+	}
+	return -1
+}
