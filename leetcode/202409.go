@@ -470,3 +470,46 @@ func OfficialMaxScoreSightseeingPair(values []int) int {
 	}
 	return ans
 }
+
+func maximumSubsequenceCount(text string, pattern string) int64 {
+	x, y := pattern[0], pattern[1]
+	cntX := 0
+	cntY := 0
+	res := int64(0)
+	for i := range text {
+		c := text[i]
+		// x==y 的情况下 要先更新答案再更新Y
+		if c == y {
+			res += int64(cntX)
+			cntY++
+		}
+		if c == x {
+			cntX++
+		}
+	}
+	return res + int64(max(cntY, cntX))
+}
+
+// https://leetcode.cn/problems/naming-a-company/
+func distinctNames(ideas []string) int64 {
+	group := [26]map[string]bool{}
+	for i := range group {
+		group[i] = map[string]bool{}
+	}
+	for _, s := range ideas {
+		group[s[0]-'a'][s[1:]] = true // 按照首字母分组
+	}
+	res := int64(0)
+	for i, a := range group { // 枚举所有名字
+		for _, b := range group[i:] {
+			same := 0
+			for mm := range a {
+				if b[mm] {
+					same++
+				}
+			}
+			res += int64(len(a)-same) * int64(len(b)-same)
+		}
+	}
+	return res * 2
+}
