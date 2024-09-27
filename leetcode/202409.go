@@ -513,3 +513,77 @@ func distinctNames(ideas []string) int64 {
 	}
 	return res * 2
 }
+
+func takeCharacters(s string, k int) int {
+	if k == 0 {
+		return 0
+	}
+	step := 0
+	lettersCnt := make(map[byte]int)
+	return dp(s, k, lettersCnt, step, 0, len(s)-1)
+}
+
+func dp(s string, k int, cnts map[byte]int, steps int, leftIndex, rightIndex int) int {
+	// 遍历完成没有找到满足条件的，返回-1
+	if leftIndex > rightIndex {
+		return -1
+	}
+	leftMap := make(map[byte]int)
+	rightMap := make(map[byte]int)
+	for b, i := range cnts {
+		leftMap[b] = i
+		rightMap[b] = i
+	}
+	leftMap[s[leftIndex]]++
+	rightMap[s[rightIndex]]++
+	leftValid := 0
+	for _, v := range leftMap {
+		if v >= k {
+			leftValid++
+		}
+	}
+	if leftValid == 3 {
+		return steps + 1
+	}
+	rightValid := 0
+	for _, v := range rightMap {
+		if v >= k {
+			rightValid++
+		}
+	}
+	if rightValid == 3 {
+		return steps + 1
+	}
+	left := dp(s, k, leftMap, steps+1, leftIndex+1, rightIndex)
+	right := dp(s, k, rightMap, steps+1, leftIndex, rightIndex-1)
+	return min(left, right)
+}
+
+func takeCharacters2(s string, k int) int {
+	if k == 0 {
+		return 0
+	}
+	cnt := make(map[uint8]int)
+	for i := 0; i < len(s); i++ {
+		cnt[s[i]-'a']++
+	}
+	for _, i := range cnt {
+		if i < k {
+			return -1
+		}
+	}
+	// 滑动窗口，找到满足条件的最大长度
+	left, right := 0, 0
+	ans := 0
+	for right < len(s) {
+		c := s[right] - 'a'
+		cnt[c]--         // 相当于加入窗口
+		for cnt[c] < k { // 窗口之外的 c 不足 k
+			cnt[s[left]-'a']++ // 移出窗口，相当于取走 s[left]
+			left++
+		}
+		ans = max(ans, right-left+1)
+		right++
+	}
+	return len(s) - ans
+}
