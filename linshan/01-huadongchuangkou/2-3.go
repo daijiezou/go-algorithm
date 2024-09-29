@@ -60,7 +60,35 @@ func countSubarrays(nums []int, k int) int64 {
 			left++
 		}
 		//该数组满足，包括left之前的数组也都满足
-		res += left
+
 	}
+	return int64(res)
+}
+
+/*
+给你一个整数数组 nums 和一个整数 k ，请你返回 nums 中 好 子数组的数目。
+一个子数组 arr 如果有 至少 k 对下标 (i, j) 满足 i < j 且 arr[i] == arr[j] ，那么称它是一个 好 子数组。
+子数组 是原数组中一段连续 非空 的元素序列。
+*/
+func countGood(nums []int, k int) int64 {
+	n := len(nums)
+	left, right := 0, 1
+	res := 0
+	count := 0
+	window := make(map[int]int)
+	window[nums[0]]++
+	for ; right < n; right++ {
+		window[nums[right]]++
+		count += window[nums[right]] - 1
+		// 左侧窗口收缩，直到窗口内的元素个数小于 k
+		for count >= k {
+			// 后续子数组都满足
+			res += n - right
+			count -= window[nums[left]] - 1
+			window[nums[left]]--
+			left++
+		}
+	}
+
 	return int64(res)
 }

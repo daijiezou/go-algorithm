@@ -587,3 +587,38 @@ func takeCharacters2(s string, k int) int {
 	}
 	return len(s) - ans
 }
+
+func timeRequiredToBuy(tickets []int, k int) int {
+	cntK := tickets[k]
+	res := cntK
+	//for ; cntK > 0; cntK-- {
+	//	for i := 0; i < len(tickets); i++ {
+	//		if i < k && tickets[i] > 0 {
+	//			tickets[i]--
+	//			res++
+	//		}
+	//		if i > k && tickets[i] > 0 && cntK > 1 {
+	//			tickets[i]--
+	//			res++
+	//		}
+	//	}
+	//}
+	for i := 0; i < len(tickets); i++ {
+		if i < k {
+			if tickets[i] > tickets[k] {
+				res += cntK
+			} else {
+				res += tickets[i]
+			}
+		}
+		if i > k {
+			if tickets[i] > tickets[k]-1 {
+				res += tickets[k] - 1
+			} else {
+				res += tickets[i]
+			}
+		}
+	}
+	return res
+
+}
