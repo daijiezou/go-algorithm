@@ -1,6 +1,13 @@
 package _1_huadongchuangkou
 
-import "slices"
+import (
+	"slices"
+)
+
+/*
+2.3.1 越长越合法
+一般要写 ans += left。
+*/
 
 func numSubarrayProductLessThanK(nums []int, k int) int {
 	res := 0
@@ -82,13 +89,42 @@ func countGood(nums []int, k int) int64 {
 		count += window[nums[right]] - 1
 		// 左侧窗口收缩，直到窗口内的元素个数小于 k
 		for count >= k {
-			// 后续子数组都满足
-			res += n - right
 			count -= window[nums[left]] - 1
 			window[nums[left]]--
 			left++
 		}
+		res += left
 	}
-
 	return int64(res)
+}
+
+/*
+2799. 统计完全子数组的数目
+给你一个由 正 整数组成的数组 nums 。
+如果数组中的某个子数组满足下述条件，则称之为 完全子数组 ：
+子数组中 不同 元素的数目等于整个数组不同元素的数目。
+请返回 nums 中完全子数组的数目。
+*/
+func countCompleteSubarrays(nums []int) int {
+	set := make(map[int]struct{})
+
+	for i := 0; i < len(nums); i++ {
+		set[nums[i]] = struct{}{}
+	}
+	n := len(set)
+	left, right := 0, 0
+	window := make(map[int]int)
+	sum := 0
+	for ; right < len(nums); right++ {
+		window[nums[right]]++
+		for len(window) == n {
+			window[nums[left]]--
+			if window[nums[left]] == 0 {
+				delete(window, nums[left])
+			}
+			left++
+		}
+		sum += left
+	}
+	return sum
 }
