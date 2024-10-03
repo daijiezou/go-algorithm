@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"container/heap"
 	"sort"
 )
 
@@ -620,5 +621,56 @@ func timeRequiredToBuy(tickets []int, k int) int {
 		}
 	}
 	return res
+}
 
+/*
+请你设计一个管理 n 个座位预约的系统，座位编号从 1 到 n 。
+请你实现 SeatManager 类：
+SeatManager(int n) 初始化一个 SeatManager 对象，它管理从 1 到 n 编号的 n 个座位。所有座位初始都是可预约的。
+int reserve() 返回可以预约座位的 最小编号 ，此座位变为不可预约。
+void unreserve(int seatNumber) 将给定编号 seatNumber 对应的座位变成可以预约。
+*/
+
+// https://leetcode.cn/problems/seat-reservation-manager/description/
+type SeatManager struct {
+	SeatList []int
+}
+
+func Constructor(n int) SeatManager {
+	list := make([]int, n)
+	for i := 0; i < n; i++ {
+		list[i] = i + 1
+	}
+	s := SeatManager{list}
+	return s
+}
+
+func (this *SeatManager) Reserve() int {
+	return heap.Pop(this).(int)
+}
+
+func (this *SeatManager) Unreserve(seatNumber int) {
+	heap.Push(this, seatNumber)
+}
+
+func (this *SeatManager) Len() int {
+	return len(this.SeatList)
+}
+
+func (this *SeatManager) Less(i, j int) bool {
+	return this.SeatList[i] < this.SeatList[j]
+}
+
+func (this *SeatManager) Swap(i, j int) {
+	this.SeatList[i], this.SeatList[j] = this.SeatList[j], this.SeatList[i]
+}
+
+func (this *SeatManager) Push(x any) {
+	this.SeatList = append(this.SeatList, x.(int))
+}
+
+func (this *SeatManager) Pop() any {
+	x := this.SeatList[len(this.SeatList)-1]
+	this.SeatList = this.SeatList[0 : len(this.SeatList)-1]
+	return x
 }

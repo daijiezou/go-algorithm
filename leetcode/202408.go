@@ -381,7 +381,7 @@ type MagicDictionary struct {
 	v map[int][]string
 }
 
-func Constructor() MagicDictionary {
+func Constructor1() MagicDictionary {
 	v := make(map[int][]string, 100)
 	return MagicDictionary{
 		v: v,
@@ -419,7 +419,7 @@ func (this *MagicDictionary) Search(searchWord string) bool {
 }
 
 func MagicDict(req1 []string, req2 string) bool {
-	m := Constructor()
+	m := Constructor1()
 	m.BuildDict(req1)
 	return m.Search(req2)
 }
