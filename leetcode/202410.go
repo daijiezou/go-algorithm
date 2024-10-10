@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"math"
+	"sort"
 )
 
 func mincostTickets(days []int, costs []int) int {
@@ -107,4 +108,100 @@ func minCostDp(start int, n int, maxTime int, cityMaps map[int][][2]int, passing
 		}
 	}
 	return minSpend
+}
+
+func minimumTime(time []int, totalTrips int) int64 {
+	left := 1
+	right := 100000000000
+	for left <= right {
+		mid := left + (right-left)>>1
+		if getTotalTrips(time, mid) >= int64(totalTrips) {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+	return int64(left)
+}
+
+func getTotalTrips(time []int, t int) int64 {
+	sum := int64(0)
+	for i := 0; i < len(time); i++ {
+		sum += int64(t / time[i])
+	}
+	return sum
+}
+
+func minRefuelStops(target int, startFuel int, stations [][]int) int {
+	res := minRefuelStopsDP(target, 0, startFuel, stations, 0)
+	if res < 0 || res == math.MaxInt32 {
+		return -1
+	}
+	return res
+}
+
+func minRefuelStopsDP(target int, cur int, curFuel int, stations [][]int, index int) int {
+	if cur+curFuel >= target {
+		return 0
+	}
+	dis := target - cur
+	fuel := 0
+	if index < len(stations) {
+		dis = stations[index][0] - cur
+		fuel = stations[index][1]
+	}
+	if curFuel < dis {
+		return math.MaxInt32
+	}
+	// 加油
+	op1 := minRefuelStopsDP(target, cur+dis, curFuel-dis+fuel, stations, index+1) + 1
+	// 不加油
+	op2 := minRefuelStopsDP(target, cur+dis, curFuel-dis, stations, index+1)
+	return min(op1, op2)
+}
+
+func destCity(paths [][]string) string {
+	city := make(map[string]struct{})
+	degree := make(map[string]int)
+	for _, path := range paths {
+		from := path[0]
+		to := path[1]
+		city[from] = struct{}{}
+		city[to] = struct{}{}
+		// 记录出度
+		degree[from]++
+	}
+	for cityName, _ := range city {
+		if degree[cityName] == 0 {
+			return cityName
+		}
+	}
+	return ""
+}
+
+// https://leetcode.cn/problems/find-the-number-of-good-pairs-ii/submissions/571384654/
+func numberOfPairs(nums1 []int, nums2 []int, k int) int64 {
+	sort.Ints(nums1)
+	ans := int64(0)
+	cnt1 := make(map[int]int)
+	m := 0
+	for i := 0; i < len(nums1); i++ {
+		if nums1[i]%k == 0 {
+			m = max(m, nums1[i]/k)
+			cnt1[nums1[i]/k]++
+		}
+	}
+	cnt2 := make(map[int]int)
+	for i := 0; i < len(nums2); i++ {
+		cnt2[nums2[i]]++
+	}
+	for x, cnt := range cnt2 {
+		sum := 0
+		for i := x; i <= m; i += x {
+			sum += cnt1[i]
+		}
+		ans += int64(sum * cnt)
+	}
+
+	return ans
 }

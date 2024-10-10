@@ -115,3 +115,89 @@ func Test_minCost(t *testing.T) {
 		})
 	}
 }
+
+func Test_getTotalTrips(t *testing.T) {
+	type args struct {
+		time []int
+		t    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "case 1",
+			args: args{
+				time: []int{1, 2, 3},
+				t:    3,
+			},
+			want: 5,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getTotalTrips(tt.args.time, tt.args.t); got != tt.want {
+				t.Errorf("getTotalTrips() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minRefuelStops(t *testing.T) {
+	type args struct {
+		target    int
+		startFuel int
+		stations  [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+
+		{
+			name: "1",
+			args: args{
+				target:    100,
+				startFuel: 10,
+				stations: [][]int{
+					{10, 60},
+					{20, 30},
+					{30, 30},
+					{60, 40},
+				},
+			},
+			want: 2,
+		},
+		{
+			name: "2",
+			args: args{
+				target:    100,
+				startFuel: 25,
+				stations: [][]int{
+					{25, 25},
+					{50, 25},
+					{75, 25},
+				},
+			},
+			want: 3,
+		},
+		{
+			name: "3",
+			args: args{
+				target:    1000000000,
+				startFuel: 26136899,
+				stations:  [][]int{{17654548, 460787121}, {67802923, 34444712}, {243977947, 259740557}, {438730568, 343225863}, {574211102, 423090989}, {577337718, 237883992}, {780977723, 314461540}, {848603056, 144394709}, {881449326, 364937682}, {918179140, 289252804}},
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minRefuelStops(tt.args.target, tt.args.startFuel, tt.args.stations); got != tt.want {
+				t.Errorf("minRefuelStops() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
