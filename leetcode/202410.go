@@ -205,3 +205,17 @@ func numberOfPairs(nums1 []int, nums2 []int, k int) int64 {
 
 	return ans
 }
+
+func duplicateNumbersXOR(nums []int) int {
+	numMap := make(map[int]struct{})
+	ans := 0
+	for i := 0; i < len(nums); i++ {
+		if _, ok := numMap[nums[i]]; ok {
+			ans ^= nums[i]
+		} else {
+			numMap[nums[i]] = struct{}{}
+		}
+
+	}
+	return ans
+}
