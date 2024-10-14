@@ -1,6 +1,9 @@
 package _2_binary_search
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 /*
 	求最小
@@ -98,4 +101,27 @@ func check(houses []int, heaters []int, r int) bool {
 
 	}
 	return true
+}
+
+func repairCars(ranks []int, cars int) int64 {
+	right := cars*cars*100 + 1
+	left := 1
+	for left <= right {
+		mid := left + (right-left)>>1
+		if getRepairCars(ranks, mid) >= cars {
+			right = mid - 1
+
+		} else {
+			left = mid + 1
+		}
+	}
+	return int64(left)
+}
+
+func getRepairCars(ranks []int, k int) int {
+	sum := 0
+	for i := 0; i < len(ranks); i++ {
+		sum += int(math.Sqrt(float64(k) / float64(ranks[i])))
+	}
+	return sum
 }

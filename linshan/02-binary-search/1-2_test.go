@@ -1,6 +1,10 @@
 package _2_binary_search
 
-import "testing"
+import (
+	"fmt"
+	"math"
+	"testing"
+)
 
 func Test_findRadius(t *testing.T) {
 	type args struct {
@@ -33,6 +37,72 @@ func Test_findRadius(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := findRadius(tt.args.houses, tt.args.heaters); got != tt.want {
 				t.Errorf("findRadius() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_repairCars(t *testing.T) {
+
+	fmt.Println(math.Log2(16))
+	type args struct {
+		ranks []int
+		cars  int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "case 1",
+			args: args{
+				ranks: []int{4, 2, 3, 1},
+				cars:  10,
+			},
+			want: 16,
+		},
+		{
+			name: "case 2",
+			args: args{
+				ranks: []int{1, 1, 3, 3},
+				cars:  74,
+			},
+			want: 576,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := repairCars(tt.args.ranks, tt.args.cars); got != tt.want {
+				t.Errorf("repairCars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getRepairCars(t *testing.T) {
+	type args struct {
+		ranks []int
+		k     int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				ranks: []int{4, 2, 3, 1},
+				k:     64,
+			},
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getRepairCars(tt.args.ranks, tt.args.k); got != tt.want {
+				t.Errorf("getRepairCars() = %v, want %v", got, tt.want)
 			}
 		})
 	}
