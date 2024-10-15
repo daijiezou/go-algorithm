@@ -62,6 +62,27 @@ func getHours(piles []int, k int) int {
 	return sum
 }
 
+func findRadius2(houses, heaters []int) (ans int) {
+	sort.Ints(heaters)
+	for _, house := range houses {
+		// 则 j 是满足 heaters[j]>house 的最小下标
+		j := sort.SearchInts(heaters, house+1)
+		minDis := math.MaxInt32
+		if j < len(heaters) {
+			minDis = heaters[j] - house
+		}
+		// 则 i 是满足 heaters[i]<=house 的最大下标
+		i := j - 1
+		if i >= 0 && house-heaters[i] < minDis {
+			minDis = house - heaters[i]
+		}
+		if minDis > ans {
+			ans = minDis
+		}
+	}
+	return
+}
+
 func findRadius(houses []int, heaters []int) int {
 	sort.Ints(houses)
 	sort.Ints(heaters)
@@ -122,4 +143,14 @@ func getRepairCars(ranks []int, k int) int {
 		sum += int(math.Sqrt(float64(k) / float64(ranks[i])))
 	}
 	return sum
+}
+
+/*
+给你一个整数数组 bloomDay，以及两个整数 m 和 k 。
+现需要制作 m 束花。制作花束时，需要使用花园中 相邻的 k 朵花 。
+花园中有 n 朵花，第 i 朵花会在 bloomDay[i] 时盛开，恰好 可以用于 一束 花中。
+请你返回从花园中摘 m 束花需要等待的最少的天数。如果不能摘到 m 束花则返回 -1 。
+*/
+func minDays(bloomDay []int, m int, k int) int {
+	return 0
 }

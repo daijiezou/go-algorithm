@@ -3,11 +3,14 @@ package _2_binary_search
 import "sort"
 
 /*
->=
->  相当于>=x+1
-< 相当于(>=x)-1
-<= 相当于(>x)-1
+>=x 直接使用lowerBound
+< 相当于(>=x)-1 lowerBound(x)-1
 
+>  相当于>=x+1 lowerBound(x+1)
+<= 相当于(>x)-1 lowerBound(x+1)-1
+
+
+x>=9 相当于 x
 */
 
 // 适用于>=
