@@ -91,14 +91,12 @@ func findRadius(houses []int, heaters []int) int {
 func check(houses []int, heaters []int, r int) bool {
 	j := 0
 	for i := 0; i < len(houses); i++ {
-		for ; j < len(heaters) && houses[i] > heaters[j]+r; j++ {
-			if heaters[j]-r <= houses[i] && houses[i] <= heaters[j]+r {
+		for j < len(heaters) && houses[i] > heaters[j]+r {
+			if j < len(heaters) && heaters[j]-r <= houses[i] && houses[i] <= heaters[j]+r {
 				continue
 			}
-
+			return false
 		}
-		return false
-
 	}
 	return true
 }

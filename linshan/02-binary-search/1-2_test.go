@@ -107,3 +107,61 @@ func Test_getRepairCars(t *testing.T) {
 		})
 	}
 }
+
+func Test_findRadius1(t *testing.T) {
+	type args struct {
+		houses  []int
+		heaters []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				houses:  []int{1, 5},
+				heaters: []int{10},
+			},
+			want: 9,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findRadius(tt.args.houses, tt.args.heaters); got != tt.want {
+				t.Errorf("findRadius() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_check(t *testing.T) {
+	type args struct {
+		houses  []int
+		heaters []int
+		r       int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case 1",
+			args: args{
+				houses:  []int{1, 5},
+				heaters: []int{10},
+				r:       5,
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := check(tt.args.houses, tt.args.heaters, tt.args.r); got != tt.want {
+				t.Errorf("check() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

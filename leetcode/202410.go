@@ -323,3 +323,69 @@ func superEggDropDP(k int, n int, memo [][]int) int {
 	memo[k][n] = res
 	return res
 }
+
+// https://leetcode.cn/problems/maximum-height-of-a-triangle/
+func maxHeightOfTriangle(red int, blue int) int {
+	left := 1
+	right := max(red, blue)
+	for left <= right {
+		mid := left + (right-left)/2
+		if maxHeightOfTriangleB(red, blue, mid) {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	if maxHeightOfTriangleB(red, blue, left) {
+		return left
+	}
+	return left - 1
+}
+
+func maxHeightOfTriangleB(red int, blue int, n int) bool {
+	flagou := false
+	flagji := false
+	if n%2 == 0 {
+		firstCnt := sumn(n - 1)
+		secondCnt := sumn(n)
+		if (red >= firstCnt && blue >= secondCnt) || (red >= secondCnt && blue >= firstCnt) {
+			flagou = true
+		}
+	} else {
+		firstCnt := sumn(n)
+		secondCnt := sumn(n - 1)
+		if (red >= firstCnt && blue >= secondCnt) || (red >= secondCnt && blue >= firstCnt) {
+			flagji = true
+		}
+	}
+	return flagou || flagji
+}
+
+func sumn(n int) int {
+	sum := 0
+	for n > 0 {
+		sum += n
+		n -= 2
+	}
+	return sum
+}
+
+func maxHeightOfTriangle2(red int, blue int) int {
+	return max(maxHeight(red, blue), maxHeight(blue, red))
+}
+
+func maxHeight(x, y int) int {
+	for i := 1; ; i++ {
+		if i%2 == 0 {
+			x -= i
+			if x < 0 {
+				return i - 1
+			}
+		} else {
+			y -= i
+			if y < 0 {
+				return i - 1
+			}
+		}
+	}
+}
