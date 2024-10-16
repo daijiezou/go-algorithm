@@ -152,5 +152,46 @@ func getRepairCars(ranks []int, k int) int {
 请你返回从花园中摘 m 束花需要等待的最少的天数。如果不能摘到 m 束花则返回 -1 。
 */
 func minDays(bloomDay []int, m int, k int) int {
-	return 0
+	n := len(bloomDay)
+	if m*k > n {
+		return -1
+	}
+	right := 1000000000
+	left := 1
+	for left <= right {
+		mid := left + (right-left)/2
+		if checkBloom(bloomDay, m, k, mid) {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+	return left
+}
+
+func checkBloom(bloomDay []int, m int, k int, days int) bool {
+	n := len(bloomDay)
+	total := 0
+	for i := 0; i < n; i++ {
+		// 成熟了
+		if bloomDay[i] <= days {
+			canMakeBloom := true
+			if n-i < k {
+				break
+			}
+			j := i
+			for ; j < i+k; j++ {
+				if bloomDay[j] > days {
+					canMakeBloom = false
+					i = j
+					break
+				}
+			}
+			if canMakeBloom {
+				i = j - 1
+				total++
+			}
+		}
+	}
+	return total >= m
 }

@@ -165,3 +165,46 @@ func Test_check(t *testing.T) {
 		})
 	}
 }
+
+func Test_checkBloom(t *testing.T) {
+	type args struct {
+		bloomDay []int
+		m        int
+		k        int
+		days     int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+
+		{
+			name: "case 1",
+			args: args{
+				bloomDay: []int{7, 7, 7, 7, 12, 7, 7},
+				m:        2,
+				k:        3,
+				days:     12,
+			},
+			want: true,
+		},
+		{
+			name: "case 2",
+			args: args{
+				bloomDay: []int{1, 10, 2, 9, 3, 8, 4, 7, 5, 6},
+				m:        4,
+				k:        2,
+				days:     9,
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := checkBloom(tt.args.bloomDay, tt.args.m, tt.args.k, tt.args.days); got != tt.want {
+				t.Errorf("checkBloom() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

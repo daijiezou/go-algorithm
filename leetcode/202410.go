@@ -389,3 +389,16 @@ func maxHeight(x, y int) int {
 		}
 	}
 }
+
+func minimumAverage(nums []int) float64 {
+	res := math.MaxFloat64
+	sort.Ints(nums)
+	n := len(nums)
+	for i := 0; i < n/2; i++ {
+		temp := (float64(nums[i] + nums[n-1-i])) / 2
+		if temp < res {
+			res = temp
+		}
+	}
+	return res
+}
