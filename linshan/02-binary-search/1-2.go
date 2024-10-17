@@ -172,25 +172,18 @@ func minDays(bloomDay []int, m int, k int) int {
 func checkBloom(bloomDay []int, m int, k int, days int) bool {
 	n := len(bloomDay)
 	total := 0
+	flowers := 0
 	for i := 0; i < n; i++ {
 		// 成熟了
+
 		if bloomDay[i] <= days {
-			canMakeBloom := true
-			if n-i < k {
-				break
-			}
-			j := i
-			for ; j < i+k; j++ {
-				if bloomDay[j] > days {
-					canMakeBloom = false
-					i = j
-					break
-				}
-			}
-			if canMakeBloom {
-				i = j - 1
+			flowers++
+			if flowers == k {
 				total++
+				flowers = 0
 			}
+		} else {
+			flowers = 0
 		}
 	}
 	return total >= m
