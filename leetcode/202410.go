@@ -402,3 +402,69 @@ func minimumAverage(nums []int) float64 {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/minimum-operations-to-make-binary-array-elements-equal-to-one-i/description/
+func minOperations(nums []int) int {
+	n := len(nums)
+	ans := 0
+	for i := 0; i < n-2; i++ {
+		if nums[i] == 0 {
+			ans++
+			// 异或运算符
+			// 1^1 = 0
+			// 1^0 = 1
+			nums[i+1] ^= 1
+			nums[i+2] ^= 1
+		}
+	}
+	if nums[n-1] == 0 || nums[n-2] == 0 {
+		return -1
+	}
+	return ans
+}
+
+// 0 1 1 0 1
+// 1 0 0 1 0
+// 1 1 1 0 1
+// 1 1 1 1 0
+// 1 1 1 1 1
+
+// 0 0 1 0 0 1
+// 1 1 0 1 1 0
+// 1 1 1 0 0 1
+// 1 1 1 1 1 0
+// 1 1 1 1 1 1
+func minOperations2(nums []int) int {
+	n := len(nums)
+	ans := 0
+	flag := 0
+	for i := 0; i < n; i++ {
+		if nums[i] == flag {
+			ans++
+			j := i + 1
+			for ; j < n; j++ {
+				if nums[j] != flag {
+					break
+				}
+			}
+			flag ^= 1
+			i = j - 1
+		}
+	}
+	return ans
+}
+
+func minOperations3(nums []int) int {
+	n := len(nums)
+	op := 0
+	for i := 0; i < n; i++ {
+		// 纪录之前操作的次数
+		if nums[i] == 0 && op%2 == 0 {
+			op++
+		}
+		if nums[i] == 1 && op%2 == 1 {
+			op++
+		}
+	}
+	return op
+}
