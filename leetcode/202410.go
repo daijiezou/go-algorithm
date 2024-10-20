@@ -468,3 +468,20 @@ func minOperations3(nums []int) int {
 	}
 	return op
 }
+
+func smallestRangeI(nums []int, k int) int {
+	min1 := math.MaxInt
+	max1 := math.MinInt
+	for i := 0; i < len(nums); i++ {
+		if nums[i] < min1 {
+			min1 = nums[i]
+		}
+		if nums[i] > max1 {
+			max1 = nums[i]
+		}
+		if max1-min1 <= 2*k {
+			return 0
+		}
+	}
+	return max1 - min1 - 2*k
+}

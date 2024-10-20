@@ -96,3 +96,75 @@ func nextGreaterElement(nums1 []int, nums2 []int) []int {
 	}
 	return res
 }
+
+func nextGreaterElements2(nums []int) []int {
+	n := len(nums)
+	//nums = append(nums, nums...)
+	res := make([]int, n)
+	s := make([]int, 0)
+	for i := 0; i < 2*n; i++ {
+		x := i % n
+		for len(s) > 0 && nums[x] > nums[s[len(s)-1]] {
+			j := s[len(s)-1]
+			s = s[:len(s)-1]
+			res[j] = nums[x]
+		}
+		if i < n {
+			s = append(s, i)
+		}
+
+	}
+	for i := 0; i < len(s); i++ {
+		res[s[i]] = -1
+	}
+	return res
+}
+
+type ListNode struct {
+	Val  int
+	Next *ListNode
+}
+
+func maxWidthRamp2(nums []int) int {
+	n := len(nums)
+	res := 0
+	//s := make([]int, 0)
+	for i := 0; i < n; i++ {
+		if n-i < res {
+			break
+		}
+		for j := n - 1; j >= 0 && j-i > res; j-- {
+			if nums[i] <= nums[j] {
+				res = max(res, j-i)
+				break
+			}
+		}
+	}
+	return res
+}
+
+func maxWidthRamp(nums []int) int {
+	stack := []int{}
+	ans := 0
+	stack = append(stack, nums[0])
+	// First pass: populate the stack
+	for i, x := range nums {
+		if nums[stack[len(stack)-1]] > x {
+			stack = append(stack, i)
+		}
+	}
+
+	// Second pass: calculate the maximum width ramp
+	j := len(nums) - 1
+	for len(stack) > 0 && j >= 0 {
+		for j >= 0 && nums[j] < nums[stack[len(stack)-1]] {
+			j--
+		}
+		if j >= 0 {
+			ans = max(ans, j-stack[len(stack)-1])
+			stack = stack[:len(stack)-1] // pop the last element
+		}
+	}
+
+	return ans
+}

@@ -84,3 +84,62 @@ func Test_nextGreaterElement(t *testing.T) {
 		})
 	}
 }
+
+func Test_nextGreaterElements2(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums: []int{1, 2, 1},
+			},
+			want: []int{2, -1, 2},
+		},
+		{
+			name: "case2",
+			args: args{
+				nums: []int{1, 2, 3, 4, 3},
+			},
+			want: []int{2, 3, 4, -1, 4},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := nextGreaterElements2(tt.args.nums); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("nextGreaterElements2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxWidthRamp(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums: []int{9, 8, 1, 0, 1, 9, 4, 0, 4, 1},
+			},
+			want: 7,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxWidthRamp(tt.args.nums); got != tt.want {
+				t.Errorf("maxWidthRamp() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
