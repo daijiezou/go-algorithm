@@ -485,3 +485,20 @@ func smallestRangeI(nums []int, k int) int {
 	}
 	return max1 - min1 - 2*k
 }
+
+func smallestRangeII(nums []int, k int) int {
+	sort.Ints(nums)
+	n := len(nums)
+	if n == 0 {
+		return 0
+	}
+	ans := nums[n-1] - nums[0]
+	// 前i个变大，后n-i个变小
+	// nums[0] 到 nums[i] 都变大 k，把 nums[i+1] 到 nums[n−1] 都变小 k
+	for i := 0; i < n-1; i++ {
+		maxn := max(nums[i]+k, nums[n-1]-k)
+		minn := min(nums[0]+k, nums[i+1]-k)
+		ans = min(ans, maxn-minn)
+	}
+	return ans
+}

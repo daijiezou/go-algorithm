@@ -1,5 +1,7 @@
 package _3_monotone_stack
 
+import "sort"
+
 // 从左到右遍历
 func dailyTemperatures(temperatures []int) []int {
 	length := len(temperatures)
@@ -167,4 +169,33 @@ func maxWidthRamp(nums []int) int {
 	}
 
 	return ans
+}
+
+// https://leetcode.cn/problems/car-fleet/
+func carFleet(target int, position []int, speed []int) int {
+	n := len(position)
+	cars := make([][2]int, n)
+	for i := 0; i < n; i++ {
+		cars[i][0] = position[i]
+		cars[i][1] = speed[i]
+	}
+	// 按照初始位置，从小到大排序
+	sort.Slice(cars, func(i, j int) bool {
+		return cars[i][0] < cars[j][0]
+	})
+	// 计算每辆车到达终点的时间
+	time := make([]float64, n)
+	for i := 0; i < n; i++ {
+		car := cars[i]
+		time[i] = float64(target-car[0]) / float64(car[1])
+	}
+	// 如果位置再后面，需要的时间却比前面的车长，则肯定会形成一个车队
+	s := make([]int, n)
+	for i := 0; i < n; i++ {
+		for len(s) > 0 && time[i] >= time[s[len(s)-1]] {
+			s = s[:len(s)-1]
+		}
+		s = append(s, i)
+	}
+	return len(s)
 }
