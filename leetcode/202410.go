@@ -502,3 +502,23 @@ func smallestRangeII(nums []int, k int) int {
 	}
 	return ans
 }
+
+func countCompleteDayPairs(hours []int) (res int) {
+	n := len(hours)
+	cnt := [24]int{}
+	for i := 0; i < n; i++ {
+		res += cnt[24-(cnt[hours[i]%24])]
+		cnt[hours[i]%24]++
+	}
+	return res
+}
+
+func countCompleteDayPairs2(hours []int) (res int64) {
+	n := len(hours)
+	cnt := [24]int64{}
+	for i := 0; i < n; i++ {
+		res += cnt[(24-hours[i]%24)%24]
+		cnt[hours[i]%24]++
+	}
+	return res
+}

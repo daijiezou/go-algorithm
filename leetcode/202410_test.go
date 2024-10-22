@@ -295,3 +295,29 @@ func Test_maxHeightOfTriangleB(t *testing.T) {
 		})
 	}
 }
+
+func Test_countCompleteDayPairs2(t *testing.T) {
+	type args struct {
+		hours []int
+	}
+	tests := []struct {
+		name    string
+		args    args
+		wantRes int64
+	}{
+		{
+			name: "case 1",
+			args: args{
+				hours: []int{12, 12, 30, 24, 24},
+			},
+			wantRes: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if gotRes := countCompleteDayPairs2(tt.args.hours); gotRes != tt.wantRes {
+				t.Errorf("countCompleteDayPairs2() = %v, want %v", gotRes, tt.wantRes)
+			}
+		})
+	}
+}
