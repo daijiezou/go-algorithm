@@ -1,6 +1,9 @@
 package _3_monotone_stack
 
-import "sort"
+import (
+	"math"
+	"sort"
+)
 
 // 从左到右遍历
 func dailyTemperatures(temperatures []int) []int {
@@ -148,25 +151,30 @@ func maxWidthRamp2(nums []int) int {
 func maxWidthRamp(nums []int) int {
 	stack := []int{}
 	ans := 0
-	stack = append(stack, nums[0])
 	// First pass: populate the stack
 	for i, x := range nums {
-		if nums[stack[len(stack)-1]] > x {
+		if len(stack) == 0 || nums[stack[len(stack)-1]] > x {
 			stack = append(stack, i)
 		}
 	}
-
 	// Second pass: calculate the maximum width ramp
-	j := len(nums) - 1
-	for len(stack) > 0 && j >= 0 {
-		for j >= 0 && nums[j] < nums[stack[len(stack)-1]] {
-			j--
-		}
-		if j >= 0 {
+
+	//j := len(nums) - 1
+	for j := len(nums) - 1; j >= 0; j-- {
+		for len(stack) > 0 && nums[j] >= nums[stack[len(stack)-1]] {
 			ans = max(ans, j-stack[len(stack)-1])
 			stack = stack[:len(stack)-1] // pop the last element
 		}
 	}
+	//for len(stack) > 0 && j >= 0 {
+	//	for j >= 0 && nums[j] < nums[stack[len(stack)-1]] {
+	//		j--
+	//	}
+	//	if j >= 0 {
+	//		ans = max(ans, j-stack[len(stack)-1])
+	//		stack = stack[:len(stack)-1] // pop the last element
+	//	}
+	//}
 
 	return ans
 }
@@ -198,4 +206,69 @@ func carFleet(target int, position []int, speed []int) int {
 		s = append(s, i)
 	}
 	return len(s)
+}
+
+type StockSpanner struct {
+	s        []pair
+	curDay   int
+	daysSpan map[int]int
+}
+
+type pair struct {
+	day   int
+	price int
+}
+
+func Constructor() StockSpanner {
+	return StockSpanner{
+		s:        []pair{{-1, math.MaxInt}},
+		curDay:   -1,
+		daysSpan: map[int]int{},
+	}
+}
+
+func (this *StockSpanner) Next(price int) int {
+	this.curDay++
+	//cnt := 1
+	for len(this.s) != 0 && price >= this.s[len(this.s)-1].price {
+		//cnt += this.daysSpan[this.s[len(this.s)-1].day]
+		this.s = this.s[:len(this.s)-1]
+	}
+	this.s = append(this.s, pair{this.curDay, price})
+	//this.daysSpan[this.curDay] = cnt
+	return this.curDay - this.s[len(this.s)-2].day
+}
+
+// https://leetcode.cn/problems/longest-well-performing-interval/
+/*
+给你一份工作时间表 hours，上面记录着某一位员工每天的工作小时数。
+我们认为当员工一天中的工作小时数大于 8 小时的时候，那么这一天就是「劳累的一天」。
+所谓「表现良好的时间段」，意味在这段时间内，「劳累的天数」是严格 大于「不劳累的天数」。
+请你返回「表现良好时间段」的最大长度。
+*/
+func longestWPI(hours []int) int {
+	window := make([]int, 0)
+	left := 0
+	laolei := 0
+	bulaolei := 0
+	res := 0
+	for i := 0; i < len(hours); i++ {
+		window = append(window, hours[i])
+		if hours[i] > 8 {
+			laolei++
+		} else {
+			bulaolei++
+		}
+		for bulaolei >= laolei && left <= i {
+			window = window[1:]
+			if hours[left] > 8 {
+				laolei--
+			} else {
+				bulaolei--
+			}
+			left++
+		}
+		res = max(res, len(window))
+	}
+	return res
 }

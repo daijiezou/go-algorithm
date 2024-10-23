@@ -130,9 +130,9 @@ func Test_maxWidthRamp(t *testing.T) {
 		{
 			name: "case1",
 			args: args{
-				nums: []int{9, 8, 1, 0, 1, 9, 4, 0, 4, 1},
+				nums: []int{6, 0, 8, 2, 1, 5},
 			},
-			want: 7,
+			want: 4,
 		},
 	}
 	for _, tt := range tests {
