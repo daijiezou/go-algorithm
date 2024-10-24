@@ -522,3 +522,19 @@ func countCompleteDayPairs2(hours []int) (res int64) {
 	}
 	return res
 }
+
+func findWinningPlayer(skills []int, k int) int {
+	maxIndex := 0
+	winCnt := 0
+	for i := 1; i < len(skills); i++ {
+		if skills[i] > skills[maxIndex] {
+			maxIndex = i
+			winCnt = 0
+		}
+		winCnt++
+		if winCnt == k {
+			return maxIndex
+		}
+	}
+	return maxIndex
+}

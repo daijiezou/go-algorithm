@@ -1,6 +1,7 @@
 package _3_monotone_stack
 
 import (
+	"fmt"
 	"math"
 	"sort"
 )
@@ -148,34 +149,30 @@ func maxWidthRamp2(nums []int) int {
 	return res
 }
 
+// https://leetcode.cn/problems/maximum-width-ramp/description/
+/*
+给定一个整数数组 A，坡是元组 (i, j)，其中  i < j 且 A[i] <= A[j]。这样的坡的宽度为 j - i。
+
+找出 A 中的坡的最大宽度，如果不存在，返回 0 。
+*/
 func maxWidthRamp(nums []int) int {
-	stack := []int{}
+	stack := []int{0}
 	ans := 0
+
 	// First pass: populate the stack
-	for i, x := range nums {
-		if len(stack) == 0 || nums[stack[len(stack)-1]] > x {
+	for i := 1; i < len(nums); i++ {
+		if nums[stack[len(stack)-1]] > nums[i] {
 			stack = append(stack, i)
 		}
 	}
+	fmt.Println(stack)
 	// Second pass: calculate the maximum width ramp
-
-	//j := len(nums) - 1
 	for j := len(nums) - 1; j >= 0; j-- {
 		for len(stack) > 0 && nums[j] >= nums[stack[len(stack)-1]] {
 			ans = max(ans, j-stack[len(stack)-1])
 			stack = stack[:len(stack)-1] // pop the last element
 		}
 	}
-	//for len(stack) > 0 && j >= 0 {
-	//	for j >= 0 && nums[j] < nums[stack[len(stack)-1]] {
-	//		j--
-	//	}
-	//	if j >= 0 {
-	//		ans = max(ans, j-stack[len(stack)-1])
-	//		stack = stack[:len(stack)-1] // pop the last element
-	//	}
-	//}
-
 	return ans
 }
 
