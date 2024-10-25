@@ -3,6 +3,7 @@ package leetcode
 import (
 	"math"
 	"sort"
+	"strconv"
 )
 
 func mincostTickets(days []int, costs []int) int {
@@ -537,4 +538,43 @@ func findWinningPlayer(skills []int, k int) int {
 		}
 	}
 	return maxIndex
+}
+
+// https://leetcode.cn/problems/maximum-total-reward-using-operations-i/
+func maxTotalReward(rewardValues []int) int {
+	sort.Ints(rewardValues)
+	m := rewardValues[len(rewardValues)-1]
+	dp := make([]bool, 2*m)
+	dp[0] = true
+	for _, x := range rewardValues {
+		for k := 2*x - 1; k >= x; k-- {
+			if dp[k-x] == true {
+				dp[k] = true
+			}
+		}
+	}
+	n := len(rewardValues)
+	for i := n - 1; i >= 0; i-- {
+		if dp[i] {
+			return i
+		}
+	}
+	return 0
+}
+
+func maxTotalRewardDp(start int, reward int, rewardValues []int, memo map[string]int) int {
+	if start == len(rewardValues) {
+		return 0
+	}
+	key := strconv.Itoa(start) + ":" + strconv.Itoa(reward)
+	if memo[key] != 0 {
+		return memo[key]
+	}
+	if rewardValues[start] > reward {
+		memo[key] = max(maxTotalRewardDp(start+1, reward+rewardValues[start], rewardValues, memo)+rewardValues[start],
+			maxTotalRewardDp(start+1, reward, rewardValues, memo))
+		return memo[key]
+	}
+	memo[key] = maxTotalRewardDp(start+1, reward, rewardValues, memo)
+	return memo[key]
 }

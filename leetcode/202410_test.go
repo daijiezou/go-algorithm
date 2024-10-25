@@ -357,3 +357,29 @@ func Test_findWinningPlayer(t *testing.T) {
 		})
 	}
 }
+
+func Test_maxTotalReward(t *testing.T) {
+	type args struct {
+		rewardValues []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case 1",
+			args: args{
+				rewardValues: []int{1, 6, 4, 3, 2},
+			},
+			want: 11,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxTotalReward(tt.args.rewardValues); got != tt.want {
+				t.Errorf("maxTotalReward() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
