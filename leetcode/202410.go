@@ -546,14 +546,18 @@ func maxTotalReward(rewardValues []int) int {
 	m := rewardValues[len(rewardValues)-1]
 	dp := make([]bool, 2*m)
 	dp[0] = true
+	/*
+		v为当前的值
+		动态转移方程为：f[i][j] = f[i-1][j] || f[i-1][j-v]，
+		其中 v 是当前的 rewardValue， v>j-v => j<2v
+		并且 v <= j < 2v。
+	*/
 	for _, x := range rewardValues {
 		for k := 2*x - 1; k >= x; k-- {
-			if dp[k-x] == true {
-				dp[k] = true
-			}
+			dp[k] = dp[k] || dp[k-x]
 		}
 	}
-	n := len(rewardValues)
+	n := 2 * m
 	for i := n - 1; i >= 0; i-- {
 		if dp[i] {
 			return i
