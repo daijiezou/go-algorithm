@@ -269,3 +269,113 @@ func longestWPI(hours []int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/maximum-score-of-a-good-subarray/
+func maximumScore(nums []int, k int) int {
+	n := len(nums)
+	s1 := []int{k}
+	// 纪录最小值
+	s1Map := map[int]int{
+		k: nums[k],
+	}
+	s1Min := nums[k]
+	for i := k - 1; i >= 0; i-- {
+		if nums[i] < s1Min {
+			s1Min = nums[i]
+		}
+		for len(s1) > 0 && nums[i] > nums[s1[len(s1)-1]] && s1Min >= s1Map[s1[len(s1)-1]] {
+			s1 = s1[:len(s1)-1]
+		}
+		s1Map[i] = s1Min
+		s1 = append(s1, i)
+	}
+
+	// 逐渐递减
+	s2 := []int{k}
+	s2Map := map[int]int{
+		k: nums[k],
+	}
+	s2Min := nums[k]
+	for i := k + 1; i < n; i++ {
+		if nums[i] < s2Min {
+			s2Min = nums[i]
+		}
+		for len(s2) > 0 && nums[i] > nums[s2[len(s2)-1]] && s2Min >= s2Map[s2[len(s2)-1]] {
+			s2 = s2[:len(s2)-1]
+		}
+		s2Map[i] = s2Min
+		s2 = append(s2, i)
+	}
+	//fmt.Println(s1, s1Map)
+	//fmt.Println(s2, s2Map)
+	ans := 0
+	for i := 0; i < len(s1); i++ {
+		for j := 0; j < len(s2); j++ {
+			minNum := s1Map[s1[i]]
+			if s2Map[s2[j]] < minNum {
+				minNum = s2Map[s2[j]]
+			}
+			ans = max(ans, minNum*(s2[j]-s1[i]+1))
+		}
+	}
+	return ans
+}
+
+func maximumScore2(nums []int, k int) int {
+	n := len(nums)
+	left := k - 1
+	right := k + 1
+	ans := 0
+	for i := nums[k]; ; i-- {
+		for left >= 0 && nums[left] >= i {
+			left--
+		}
+		for right < n && nums[right] >= i {
+			right++
+		}
+		ans = max(ans, (right-left-1)*i)
+		if left == -1 && right == n {
+			break
+		}
+	}
+	return ans
+}
+
+func maximumScore3(nums []int, k int) (ans int) {
+	n := len(nums)
+	left := make([]int, n)
+	st := []int{}
+	for i, x := range nums {
+		for len(st) > 0 && x <= nums[st[len(st)-1]] {
+			st = st[:len(st)-1]
+		}
+		if len(st) > 0 {
+			left[i] = st[len(st)-1]
+		} else {
+			left[i] = -1
+		}
+		st = append(st, i)
+	}
+
+	right := make([]int, n)
+	st = st[:0]
+	for i := n - 1; i >= 0; i-- {
+		for len(st) > 0 && nums[i] <= nums[st[len(st)-1]] {
+			st = st[:len(st)-1]
+		}
+		if len(st) > 0 {
+			right[i] = st[len(st)-1]
+		} else {
+			right[i] = n
+		}
+		st = append(st, i)
+	}
+	// 枚举当前元素的左边的下一个更小元素和右边的下一个更小元素，则其上一个就是>=当前元素的
+	for i, h := range nums {
+		l, r := left[i], right[i]
+		if l < k && k < r { // 相比 84 题多了个 if 判断
+			ans = max(ans, h*((r-1)-(l+1)+1))
+		}
+	}
+	return ans
+}
