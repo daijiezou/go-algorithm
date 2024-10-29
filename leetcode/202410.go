@@ -582,3 +582,30 @@ func maxTotalRewardDp(start int, reward int, rewardValues []int, memo map[string
 	memo[key] = maxTotalRewardDp(start+1, reward, rewardValues, memo)
 	return memo[key]
 }
+
+func validStrings(n int) []string {
+	res := make([]string, 0)
+	trackBack("", n, &res, false)
+	return res
+}
+
+func trackBack(temp string, n int, res *[]string, preZero bool) {
+	if len(temp) == n {
+		*res = append(*res, temp)
+		return
+	}
+	// 做选择
+	if preZero {
+		temp += "1"
+		trackBack(temp, n, res, false)
+	} else {
+		// 做选择
+		temp += "0"
+		trackBack(temp, n, res, true)
+
+		// 取消选择
+		temp = temp[:len(temp)-1]
+		temp += "1"
+		trackBack(temp, n, res, false)
+	}
+}

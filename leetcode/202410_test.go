@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -379,6 +380,32 @@ func Test_maxTotalReward(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxTotalReward(tt.args.rewardValues); got != tt.want {
 				t.Errorf("maxTotalReward() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_validStrings(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []string
+	}{
+		{
+			name: "case 1",
+			args: args{
+				n: 3,
+			},
+			want: []string{},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := validStrings(tt.args.n); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("validStrings() = %v, want %v", got, tt.want)
 			}
 		})
 	}
