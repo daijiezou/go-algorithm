@@ -6,6 +6,11 @@ import (
 	"sort"
 )
 
+/*
+给定一个整数数组 temperatures ，表示每天的温度，返回一个数组 answer ，
+其中 answer[i] 是指对于第 i 天，下一个更高温度出现在几天后。
+如果气温在这之后都不会升高，请在该位置用 0 来代替。
+*/
 // 从左到右遍历
 func dailyTemperatures(temperatures []int) []int {
 	length := len(temperatures)
@@ -386,25 +391,25 @@ func largestRectangleArea(heights []int) int {
 	Right := make([]int, n)
 	Left := make([]int, n)
 
-	s := []int{0}
-	for i := 1; i < n; i++ {
+	s := []int{}
+	for i := 0; i < n; i++ {
 		for len(s) != 0 && heights[i] < heights[s[len(s)-1]] {
 			x := s[len(s)-1]
 			s = s[:len(s)-1]
 			Right[x] = i
 		}
-		if len(s) == 0 {
-			Right[i] = n
-		} else {
-			Right[i] = s[len(s)-1]
-		}
 		s = append(s, i)
 	}
+	for _, h := range s {
+		Right[h] = n
+	}
 
-	s = []int{n - 1}
-	for i := n - 2; i >= 0; i-- {
+	s = []int{}
+	for i := n - 1; i >= 0; i-- {
 		for len(s) != 0 && heights[i] < heights[s[len(s)-1]] {
+			x := s[len(s)-1]
 			s = s[:len(s)-1]
+			Left[x] = i
 		}
 		if len(s) == 0 {
 			Left[i] = -1
@@ -413,8 +418,11 @@ func largestRectangleArea(heights []int) int {
 		}
 		s = append(s, i)
 	}
-	fmt.Println(Left)
-	fmt.Println(Right)
+	for _, h := range s {
+		Left[h] = -1
+	}
+	//fmt.Println(Left)
+	//fmt.Println(Right)
 	res := 0
 	for i := 0; i < len(heights); i++ {
 		width := Right[i] - 1 - (Left[i] + 1) + 1
