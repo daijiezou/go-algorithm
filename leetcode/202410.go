@@ -609,3 +609,61 @@ func trackBack(temp string, n int, res *[]string, preZero bool) {
 		trackBack(temp, n, res, false)
 	}
 }
+
+func getSmallestString1(s string) string {
+	runes := []rune(s)
+	for i := 0; i < len(runes)-1; i++ {
+		if runes[i] > runes[i+1] && (runes[i]-runes[i+1])%2 == 0 {
+			runes[i], runes[i+1] = runes[i+1], runes[i]
+			break
+		}
+	}
+	return string(runes)
+}
+
+func maxEnergyBoost(energyDrinkA []int, energyDrinkB []int) int64 {
+	memo := make(map[string]int)
+	return int64(maxEnergyBoostDp(energyDrinkA, energyDrinkB, 0, 0, 0, memo))
+
+}
+
+func maxEnergyBoostDp(energyDrinkA []int, energyDrinkB []int, i int, aflag, bflag int, memo map[string]int) int {
+	if i == len(energyDrinkA) {
+		return 0
+	}
+	key := strconv.Itoa(i) + ":" + strconv.Itoa(aflag+bflag)
+	if memo[key] != 0 {
+		return memo[key]
+	}
+	if aflag == 2 {
+		op1 := energyDrinkA[i] + maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 2, 0, memo)
+		op2 := maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 0, 0, memo)
+		memo[key] = max(op1, op2)
+		return memo[key]
+	}
+	if bflag == 1 {
+		op1 := energyDrinkB[i] + maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 0, 1, memo)
+		op2 := maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 0, 0, memo)
+		memo[key] = max(op1, op2)
+		return memo[key]
+	}
+	op1 := energyDrinkA[i] + maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 2, 0, memo)
+	op2 := energyDrinkB[i] + maxEnergyBoostDp(energyDrinkA, energyDrinkB, i+1, 0, 1, memo)
+	memo[key] = max(op1, op2)
+	return memo[key]
+}
+
+func maxEnergyBoost2(energyDrinkA []int, energyDrinkB []int) int64 {
+	n := len(energyDrinkA)
+	dp := make([][2]int64, n+1)
+	for i := 1; i <= n; i++ {
+		dp[i][0] = dp[i-1][0] + int64(energyDrinkA[i-1])
+		dp[i][1] = dp[i-1][1] + int64(energyDrinkB[i-1])
+		if i >= 2 {
+			dp[i][0] = max(dp[i][0], dp[i-2][1]+int64(energyDrinkA[i-1]))
+			dp[i][1] = max(dp[i][1], dp[i-2][0]+int64(energyDrinkB[i-1]))
+		}
+	}
+	return max(dp[n][0], dp[n][1])
+
+}

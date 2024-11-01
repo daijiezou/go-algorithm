@@ -379,3 +379,46 @@ func maximumScore3(nums []int, k int) (ans int) {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/largest-rectangle-in-histogram/
+func largestRectangleArea(heights []int) int {
+	n := len(heights)
+	Right := make([]int, n)
+	Left := make([]int, n)
+
+	s := []int{0}
+	for i := 1; i < n; i++ {
+		for len(s) != 0 && heights[i] < heights[s[len(s)-1]] {
+			x := s[len(s)-1]
+			s = s[:len(s)-1]
+			Right[x] = i
+		}
+		if len(s) == 0 {
+			Right[i] = n
+		} else {
+			Right[i] = s[len(s)-1]
+		}
+		s = append(s, i)
+	}
+
+	s = []int{n - 1}
+	for i := n - 2; i >= 0; i-- {
+		for len(s) != 0 && heights[i] < heights[s[len(s)-1]] {
+			s = s[:len(s)-1]
+		}
+		if len(s) == 0 {
+			Left[i] = -1
+		} else {
+			Left[i] = s[len(s)-1]
+		}
+		s = append(s, i)
+	}
+	fmt.Println(Left)
+	fmt.Println(Right)
+	res := 0
+	for i := 0; i < len(heights); i++ {
+		width := Right[i] - 1 - (Left[i] + 1) + 1
+		res = max(res, heights[i]*width)
+	}
+	return res
+}
