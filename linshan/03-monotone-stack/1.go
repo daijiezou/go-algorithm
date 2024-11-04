@@ -430,3 +430,47 @@ func largestRectangleArea(heights []int) int {
 	}
 	return res
 }
+
+func trap(height []int) int {
+	res := 0
+	leftMaxList := make([]int, len(height))
+	rightMaxList := make([]int, len(height))
+
+	leftMaxList[0] = height[0]
+	for i := 1; i < len(height); i++ {
+		leftMaxList[i] = max(leftMaxList[i-1], height[i])
+	}
+
+	rightMaxList[len(height)-1] = height[len(height)-1]
+	for i := len(height) - 2; i >= 0; i-- {
+		rightMaxList[i] = max(rightMaxList[i+1], height[i])
+	}
+	for i := 0; i < len(height); i++ {
+		leftMax := leftMaxList[i]
+		rightMax := rightMaxList[i]
+		if min(leftMax, rightMax) > height[i] {
+			res += min(leftMax, rightMax) - height[i]
+		}
+	}
+	return res
+}
+
+func trap2(height []int) int {
+	res := 0
+	s := make([]int, 0)
+	for i := 0; i < len(height); i++ {
+		for len(s) > 0 && height[s[len(s)-1]] < height[i] {
+			bottom := s[len(s)-1]
+			s = s[:len(s)-1]
+			if len(s) == 0 {
+				break
+			}
+			left := s[len(s)-1]
+			width := i - left - 1
+			h := min(height[left], height[i]) - height[bottom]
+			res += width * h
+		}
+		s = append(s, i)
+	}
+	return res
+}
