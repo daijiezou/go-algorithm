@@ -103,3 +103,16 @@ func judgeSquareSum(c int) bool {
 	}
 	return false
 }
+
+func losingPlayer(x int, y int) string {
+	res := 1
+	for x > 1 && y >= 4 {
+		res ^= 1
+		x -= 1
+		y -= 4
+	}
+	if res == 0 {
+		return "Alice"
+	}
+	return "Bob"
+}

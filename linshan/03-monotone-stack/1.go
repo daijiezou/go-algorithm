@@ -474,3 +474,31 @@ func trap2(height []int) int {
 	}
 	return res
 }
+
+func sumSubarrayMins(arr []int) int {
+	n := len(arr)
+	left := make([]int, n)
+	right := make([]int, n)
+	for i := 0; i < n; i++ {
+		right[i] = n
+	}
+	s := make([]int, 0)
+	for i := 0; i < len(arr); i++ {
+		for len(s) > 0 && arr[s[len(s)-1]] >= arr[i] {
+			right[s[len(s)-1]] = i
+			s = s[:len(s)-1]
+		}
+		// 剩下的就是小于当前数字的，可以作为左边界，没有的话左边界就是-1
+		if len(s) == 0 {
+			left[i] = -1
+		} else {
+			left[i] = s[len(s)-1]
+		}
+		s = append(s, i)
+	}
+	res := 0
+	for i := 0; i < n; i++ {
+		res += (i - left[i]) * (right[i] - i) * arr[i]
+	}
+	return res
+}
