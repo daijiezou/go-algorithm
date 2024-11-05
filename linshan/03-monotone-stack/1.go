@@ -507,16 +507,11 @@ func sumSubarrayMins(arr []int) int {
 
 // https://leetcode.cn/problems/sum-of-subarray-ranges/
 // 子数组的最小值和最大值的差值之和
+// 实际就是求子数组的最大值之和减去子数组的最小值之和
 func subArrayRanges(nums []int) int64 {
-	n := len(nums)
-	res := 0
-	s := make([]int, 0)
-	for i := 0; i < n; i++ {
-		for len(s) > 0 && nums[i] > nums[s[len(s)-1]] {
-			res += nums[i] - nums[s[len(s)-1]]
-			s = s[:len(s)-1]
-		}
-		s = append(s, i)
+	ans := sumSubarrayMins(nums)
+	for i, v := range nums { // 小技巧：所有元素取反后算的就是最大值的贡献
+		nums[i] = -v
 	}
-	return int64(res)
+	return int64(-ans - sumSubarrayMins(nums))
 }
