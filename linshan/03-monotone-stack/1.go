@@ -475,6 +475,8 @@ func trap2(height []int) int {
 	return res
 }
 
+// https://leetcode.cn/problems/sum-of-subarray-minimums/
+// 子数组的最小值之和
 func sumSubarrayMins(arr []int) int {
 	n := len(arr)
 	left := make([]int, n)
@@ -501,4 +503,20 @@ func sumSubarrayMins(arr []int) int {
 		res += (i - left[i]) * (right[i] - i) * arr[i]
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/sum-of-subarray-ranges/
+// 子数组的最小值和最大值的差值之和
+func subArrayRanges(nums []int) int64 {
+	n := len(nums)
+	res := 0
+	s := make([]int, 0)
+	for i := 0; i < n; i++ {
+		for len(s) > 0 && nums[i] > nums[s[len(s)-1]] {
+			res += nums[i] - nums[s[len(s)-1]]
+			s = s[:len(s)-1]
+		}
+		s = append(s, i)
+	}
+	return int64(res)
 }
