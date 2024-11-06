@@ -515,3 +515,22 @@ func subArrayRanges(nums []int) int64 {
 	}
 	return int64(-ans - sumSubarrayMins(nums))
 }
+
+func resultsArray(nums []int, k int) []int {
+	n := len(nums)
+	res := make([]int, n-k+1)
+loop1:
+	for i := 0; i <= n-k; i++ {
+		for j := i; j < i+k-1; j++ {
+			if nums[j]+1 != nums[j+1] {
+				for ii := i; ii <= n-j-k+1; ii++ {
+					res[ii] = -1
+				}
+				i = j
+				continue loop1
+			}
+		}
+		res[i] = nums[i+k-1]
+	}
+	return res
+}
