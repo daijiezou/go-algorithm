@@ -519,18 +519,62 @@ func subArrayRanges(nums []int) int64 {
 func resultsArray(nums []int, k int) []int {
 	n := len(nums)
 	res := make([]int, n-k+1)
-loop1:
-	for i := 0; i <= n-k; i++ {
-		for j := i; j < i+k-1; j++ {
-			if nums[j]+1 != nums[j+1] {
-				for ii := i; ii <= n-j-k+1; ii++ {
-					res[ii] = -1
-				}
-				i = j
-				continue loop1
-			}
+	for i := range res {
+		res[i] = -1
+	}
+	cnt := 0
+	for i, x := range nums {
+		if i == 0 || x == nums[i-1]+1 {
+			cnt++
+		} else {
+			cnt = 1
 		}
-		res[i] = nums[i+k-1]
+		if cnt >= k {
+			res[i-k+1] = x
+		}
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/maximum-subarray-min-product/
+/*
+一个数组的 最小乘积 定义为这个数组中 最小值 乘以 数组的 和 。
+比方说，数组 [3,2,5] （最小值是 2）的最小乘积为 2 * (3+2+5) = 2 * 10 = 20 。
+给你一个正整数数组 nums ，请你返回 nums 任意 非空子数组 的最小乘积 的 最大值 。由于答案可能很大，请你返回答案对  109 + 7 取余 的结果。
+请注意，最小乘积的最大值考虑的是取余操作 之前 的结果。题目保证最小乘积的最大值在 不取余 的情况下可以用 64 位有符号整数 保存。
+子数组 定义为一个数组的 连续 部分。
+
+*/
+func maxSumMinProduct(nums []int) int {
+	n := len(nums)
+	Right := make([]int, n)
+	for i := 0; i < n; i++ {
+		Right[i] = n
+	}
+	Left := make([]int, n)
+	for i := 0; i < n; i++ {
+		Left[i] = -1
+	}
+	s := make([]int, 0)
+	preSum := make([]int, n+1)
+	for i := 0; i < len(nums); i++ {
+		preSum[i+1] = preSum[i] + nums[i]
+		for len(s) > 0 && nums[s[len(s)-1]] >= nums[i] { // 剩下的那个值就是比当前小的
+			// 栈顶即将被弹出的这个值的下一个最大值就是当前的i
+			Right[s[len(s)-1]] = i
+			s = s[:len(s)-1]
+		}
+		if len(s) != 0 {
+			Left[i] = s[len(s)-1]
+		}
+		s = append(s, i)
+	}
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		left := Left[i] + 1
+		right := Right[i] - 1
+		sum := preSum[right+1] - preSum[left]
+		res = max(res, sum*nums[i])
+	}
+	return res % (1e9 + 7)
 }

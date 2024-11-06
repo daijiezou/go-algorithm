@@ -301,3 +301,36 @@ func Test_resultsArray(t *testing.T) {
 		})
 	}
 }
+
+func Test_maxSumMinProduct(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums: []int{1, 2, 3, 2},
+			},
+			want: 14,
+		},
+		{
+			name: "case2",
+			args: args{
+				nums: []int{3, 1, 5, 6, 4, 2},
+			},
+			want: 60,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxSumMinProduct(tt.args.nums); got != tt.want {
+				t.Errorf("maxSumMinProduct() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
