@@ -1,7 +1,6 @@
 package _3_monotone_stack
 
 import (
-	"fmt"
 	"math"
 	"sort"
 )
@@ -244,10 +243,9 @@ func find132pattern(nums []int) bool {
 	for i := 1; i < n; i++ {
 		leftMin[i] = min(leftMin[i-1], nums[i-1])
 	}
-	fmt.Println(leftMin)
 	s := make([]int, 0)
-	for i := 0; i < n; i++ {
-		rightMax := -1
+	for i := n - 1; i > 0; i-- {
+		rightMax := math.MinInt32
 		for len(s) > 0 && nums[i] > nums[s[len(s)-1]] {
 			rightMax = nums[s[len(s)-1]]
 			s = s[:len(s)-1]
