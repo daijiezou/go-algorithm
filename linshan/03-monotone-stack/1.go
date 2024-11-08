@@ -110,7 +110,6 @@ func nextGreaterElement(nums1 []int, nums2 []int) []int {
 
 func nextGreaterElements2(nums []int) []int {
 	n := len(nums)
-	//nums = append(nums, nums...)
 	res := make([]int, n)
 	s := make([]int, 0)
 	for i := 0; i < 2*n; i++ {
@@ -136,52 +135,43 @@ type ListNode struct {
 	Next *ListNode
 }
 
-func maxWidthRamp2(nums []int) int {
-	n := len(nums)
-	res := 0
-	//s := make([]int, 0)
-	for i := 0; i < n; i++ {
-		if n-i < res {
-			break
+// 1019. 链表中的下一个更大节点
+func nextLargerNodes(head *ListNode) []int {
+	nums := make([]int, 0)
+	for head != nil {
+		nums = append(nums, head.Val)
+		head = head.Next
+	}
+	return NextGreaterElement(nums)
+}
+
+func NextGreaterElement(nums []int) []int {
+	length := len(nums)
+	res := make([]int, length)
+	s := make([]int, 0)
+	for i := 0; i < length; i++ {
+		for len(s) > 0 && nums[i] > nums[s[len(s)-1]] {
+			j := s[len(s)-1]
+			s = s[:len(s)-1]
+			res[j] = nums[i]
 		}
-		for j := n - 1; j >= 0 && j-i > res; j-- {
-			if nums[i] <= nums[j] {
-				res = max(res, j-i)
-				break
-			}
-		}
+		s = append(s, i)
+	}
+	for i := 0; i < len(s); i++ {
+		res[s[i]] = 0
 	}
 	return res
 }
 
-// https://leetcode.cn/problems/maximum-width-ramp/description/
-/*
-给定一个整数数组 A，坡是元组 (i, j)，其中  i < j 且 A[i] <= A[j]。这样的坡的宽度为 j - i。
-
-找出 A 中的坡的最大宽度，如果不存在，返回 0 。
-*/
-func maxWidthRamp(nums []int) int {
-	stack := []int{0}
-	ans := 0
-
-	// First pass: populate the stack
-	for i := 1; i < len(nums); i++ {
-		if nums[stack[len(stack)-1]] > nums[i] {
-			stack = append(stack, i)
-		}
-	}
-	fmt.Println(stack)
-	// Second pass: calculate the maximum width ramp
-	for j := len(nums) - 1; j >= 0; j-- {
-		for len(stack) > 0 && nums[j] >= nums[stack[len(stack)-1]] {
-			ans = max(ans, j-stack[len(stack)-1])
-			stack = stack[:len(stack)-1] // pop the last element
-		}
-	}
-	return ans
-}
-
 // https://leetcode.cn/problems/car-fleet/
+/*
+在一条单行道上，有 n 辆车开往同一目的地。目的地是几英里以外的 target 。
+给定两个整数数组 position 和 speed ，长度都是 n ，其中 position[i] 是第 i 辆车的位置， speed[i] 是第 i 辆车的速度(单位是英里/小时)。
+一辆车永远不会超过前面的另一辆车，但它可以追上去，并以较慢车的速度在另一辆车旁边行驶。
+车队 是指并排行的一辆或几辆汽车。车队的速度是车队中 最慢 的车的速度。
+即便一辆车在 target 才赶上了一个车队，它们仍然会被视作是同一个车队。
+返回到达目的地的车队数量 。
+*/
 func carFleet(target int, position []int, speed []int) int {
 	n := len(position)
 	cars := make([][2]int, n)
@@ -200,9 +190,10 @@ func carFleet(target int, position []int, speed []int) int {
 		time[i] = float64(target-car[0]) / float64(car[1])
 	}
 	// 如果位置再后面，需要的时间却比前面的车长，则肯定会形成一个车队
-	s := make([]int, n)
+	s := make([]int, 0)
 	for i := 0; i < n; i++ {
 		for len(s) > 0 && time[i] >= time[s[len(s)-1]] {
+			// 说明栈顶的车子被合并了
 			s = s[:len(s)-1]
 		}
 		s = append(s, i)
@@ -210,6 +201,12 @@ func carFleet(target int, position []int, speed []int) int {
 	return len(s)
 }
 
+/*
+https://leetcode.cn/problems/online-stock-span/description/
+设计一个算法收集某些股票的每日报价，并返回该股票当日价格的 跨度 。
+当日股票价格的 跨度 被定义为股票价格小于或等于今天价格的最大连续日数（从今天开始往回数，包括今天）。
+例如，如果未来 7 天股票的价格是 [100,80,60,70,60,75,85]，那么股票跨度将是 [1,1,1,2,1,4,6] 。
+*/
 type StockSpanner struct {
 	s        []pair
 	curDay   int
@@ -231,14 +228,84 @@ func Constructor() StockSpanner {
 
 func (this *StockSpanner) Next(price int) int {
 	this.curDay++
-	//cnt := 1
 	for len(this.s) != 0 && price >= this.s[len(this.s)-1].price {
-		//cnt += this.daysSpan[this.s[len(this.s)-1].day]
 		this.s = this.s[:len(this.s)-1]
 	}
 	this.s = append(this.s, pair{this.curDay, price})
-	//this.daysSpan[this.curDay] = cnt
 	return this.curDay - this.s[len(this.s)-2].day
+}
+
+// https://leetcode.cn/problems/132-pattern/
+
+func find132pattern(nums []int) bool {
+	n := len(nums)
+	leftMin := make([]int, n)
+	leftMin[0] = math.MaxInt
+	for i := 1; i < n; i++ {
+		leftMin[i] = min(leftMin[i-1], nums[i-1])
+	}
+	fmt.Println(leftMin)
+	s := make([]int, 0)
+	for i := 0; i < n; i++ {
+		rightMax := -1
+		for len(s) > 0 && nums[i] > nums[s[len(s)-1]] {
+			rightMax = nums[s[len(s)-1]]
+			s = s[:len(s)-1]
+		}
+		if leftMin[i] < rightMax {
+			return true
+		}
+		s = append(s, i)
+	}
+	return false
+}
+
+// https://leetcode.cn/problems/maximum-width-ramp/description/
+/*
+给定一个整数数组 A，坡是元组 (i, j)，其中  i < j 且 A[i] <= A[j]。这样的坡的宽度为 j - i。
+
+找出 A 中的坡的最大宽度，如果不存在，返回 0 。
+*/
+// 暴力做法超时了
+func maxWidthRamp2(nums []int) int {
+	n := len(nums)
+	res := 0
+	//s := make([]int, 0)
+	for i := 0; i < n; i++ {
+		if n-i < res {
+			break
+		}
+		for j := n - 1; j >= 0 && j-i > res; j-- {
+			if nums[i] <= nums[j] {
+				res = max(res, j-i)
+				break
+			}
+		}
+	}
+	return res
+}
+
+// 单调栈的第二种模板
+func maxWidthRamp(nums []int) int {
+	stack := []int{0}
+	ans := 0
+	n := len(nums)
+	// First pass: populate the stack
+	// s中的元素是递减的
+	for i := 1; i < n; i++ {
+		if nums[stack[len(stack)-1]] > nums[i] {
+			stack = append(stack, i)
+		}
+	}
+
+	// Second pass: calculate the maximum width ramp
+	for j := n - 1; j >= 0; j-- {
+		for len(stack) > 0 && nums[j] >= nums[stack[len(stack)-1]] {
+			ans = max(ans, j-stack[len(stack)-1])
+			stack = stack[:len(stack)-1] // pop the last element
+		}
+	}
+	return ans
 }
 
 // https://leetcode.cn/problems/longest-well-performing-interval/
@@ -249,30 +316,29 @@ func (this *StockSpanner) Next(price int) int {
 请你返回「表现良好时间段」的最大长度。
 */
 func longestWPI(hours []int) int {
-	window := make([]int, 0)
-	left := 0
-	laolei := 0
-	bulaolei := 0
-	res := 0
-	for i := 0; i < len(hours); i++ {
-		window = append(window, hours[i])
+	n := len(hours)
+	s := []int{0}
+
+	preSum := make([]int, n+1)
+	for i := 0; i < n; i++ {
+		preSum[i+1] = preSum[i]
 		if hours[i] > 8 {
-			laolei++
+			preSum[i+1]++
 		} else {
-			bulaolei++
+			preSum[i+1]--
 		}
-		for bulaolei >= laolei && left <= i {
-			window = window[1:]
-			if hours[left] > 8 {
-				laolei--
-			} else {
-				bulaolei--
-			}
-			left++
+		if preSum[i+1] < preSum[s[len(s)-1]] {
+			s = append(s, i+1)
 		}
-		res = max(res, len(window))
 	}
-	return res
+	ans := 0
+	for i := n; i > 0; i-- {
+		for len(s) > 0 && preSum[i] > preSum[s[len(s)-1]] {
+			ans = max(ans, i-s[len(s)-1]) // [栈顶,i) 可能是最长子数组
+			s = s[:len(s)-1]
+		}
+	}
+	return ans
 }
 
 // https://leetcode.cn/problems/maximum-score-of-a-good-subarray/
@@ -516,26 +582,6 @@ func subArrayRanges(nums []int) int64 {
 	return int64(-ans - sumSubarrayMins(nums))
 }
 
-func resultsArray(nums []int, k int) []int {
-	n := len(nums)
-	res := make([]int, n-k+1)
-	for i := range res {
-		res[i] = -1
-	}
-	cnt := 0
-	for i, x := range nums {
-		if i == 0 || x == nums[i-1]+1 {
-			cnt++
-		} else {
-			cnt = 1
-		}
-		if cnt >= k {
-			res[i-k+1] = x
-		}
-	}
-	return res
-}
-
 // https://leetcode.cn/problems/maximum-subarray-min-product/
 /*
 一个数组的 最小乘积 定义为这个数组中 最小值 乘以 数组的 和 。
@@ -560,7 +606,7 @@ func maxSumMinProduct(nums []int) int {
 	for i := 0; i < len(nums); i++ {
 		preSum[i+1] = preSum[i] + nums[i]
 		for len(s) > 0 && nums[s[len(s)-1]] >= nums[i] { // 剩下的那个值就是比当前小的
-			// 栈顶即将被弹出的这个值的下一个最大值就是当前的i
+			// 栈顶即将被弹出的这个值的右边最大值就是当前的i
 			Right[s[len(s)-1]] = i
 			s = s[:len(s)-1]
 		}
@@ -577,4 +623,27 @@ func maxSumMinProduct(nums []int) int {
 		res = max(res, sum*nums[i])
 	}
 	return res % (1e9 + 7)
+}
+
+func removeKdigits(num string, k int) string {
+	if len(num) == k {
+		return "0"
+	}
+	s := []byte{}
+	n := len(num)
+	cnt := 0
+	for i := 0; i < n; i++ {
+		for len(s) > 0 && s[len(s)-1] > num[i] && cnt < k {
+			cnt++
+			s = s[:len(s)-1]
+		}
+		s = append(s, num[i])
+	}
+	for i := cnt; i < k && len(s) > 1; i++ {
+		s = s[:len(s)-1]
+	}
+	for len(s) > 1 && s[0] == '0' {
+		s = s[1:]
+	}
+	return string(s)
 }

@@ -258,50 +258,6 @@ func Test_subArrayRanges(t *testing.T) {
 	}
 }
 
-func Test_resultsArray(t *testing.T) {
-	type args struct {
-		nums []int
-		k    int
-	}
-	tests := []struct {
-		name string
-		args args
-		want []int
-	}{
-		{
-			name: "case1",
-			args: args{
-				nums: []int{1, 2, 3, 4, 3, 2, 5},
-				k:    3,
-			},
-			want: []int{3, 4, -1, -1, -1},
-		},
-		{
-			name: "case2",
-			args: args{
-				nums: []int{2, 2, 2, 2, 2},
-				k:    4,
-			},
-			want: []int{-1, -1},
-		},
-		{
-			name: "case3",
-			args: args{
-				nums: []int{1, 2, 3, 2},
-				k:    3,
-			},
-			want: []int{3, -1},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := resultsArray(tt.args.nums, tt.args.k); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("resultsArray() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
 func Test_maxSumMinProduct(t *testing.T) {
 	type args struct {
 		nums []int
@@ -330,6 +286,123 @@ func Test_maxSumMinProduct(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxSumMinProduct(tt.args.nums); got != tt.want {
 				t.Errorf("maxSumMinProduct() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_removeKdigits(t *testing.T) {
+	type args struct {
+		num string
+		k   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "case1",
+			args: args{
+				num: "1432219",
+				k:   3,
+			},
+			want: "1219",
+		},
+		{
+			name: "case2",
+			args: args{
+				num: "10200",
+				k:   1,
+			},
+			want: "200",
+		},
+		{
+			name: "10",
+			args: args{
+				num: "10",
+				k:   2,
+			},
+			want: "0",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := removeKdigits(tt.args.num, tt.args.k); got != tt.want {
+				t.Errorf("removeKdigits() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_longestWPI(t *testing.T) {
+	type args struct {
+		hours []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				hours: []int{6, 9, 6},
+			},
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := longestWPI(tt.args.hours); got != tt.want {
+				t.Errorf("longestWPI() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_find132pattern(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums: []int{1, 2, 3},
+			},
+			want: false,
+		},
+		{
+			name: "case2",
+			args: args{
+				nums: []int{3, 1, 4, 2},
+			},
+			want: true,
+		},
+		{
+			name: "case3",
+			args: args{
+				nums: []int{-1, 3, 2, 0},
+			},
+			want: true,
+		},
+		{
+			name: "case4",
+			args: args{
+				nums: []int{-2, 1, 1},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := find132pattern(tt.args.nums); got != tt.want {
+				t.Errorf("find132pattern() = %v, want %v", got, tt.want)
 			}
 		})
 	}
