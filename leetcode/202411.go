@@ -1,6 +1,8 @@
 package leetcode
 
-import "math"
+import (
+	"math"
+)
 
 func minChanges(n int, k int) int {
 	if n == k {
@@ -146,3 +148,66 @@ func resultsArray(nums []int, k int) []int {
 	}
 	return res
 }
+
+type NeighborSum struct {
+	grid    [][]int
+	n       int
+	Address map[int][2]int
+}
+
+func Constructor2(grid [][]int) NeighborSum {
+	addr := make(map[int][2]int)
+	for rowIndex, row := range grid {
+		for colIndex, cell := range row {
+			addr[cell] = [2]int{rowIndex, colIndex}
+		}
+	}
+	return NeighborSum{grid: grid, Address: addr, n: len(grid)}
+}
+
+func (this *NeighborSum) AdjacentSum(value int) int {
+	sum := 0
+	addr := this.Address[value]
+	row := addr[0]
+	col := addr[1]
+	if row > 0 {
+		sum += this.grid[row-1][col]
+	}
+	if row < this.n-1 {
+		sum += this.grid[row+1][col]
+	}
+	if col > 0 {
+		sum += this.grid[row][col-1]
+	}
+	if col < this.n-1 {
+		sum += this.grid[row][col+1]
+	}
+	return sum
+}
+
+func (this *NeighborSum) DiagonalSum(value int) int {
+	sum := 0
+	addr := this.Address[value]
+	row := addr[0]
+	col := addr[1]
+	if row > 0 && col > 0 {
+		sum += this.grid[row-1][col-1]
+	}
+	if row > 0 && col < this.n-1 {
+		sum += this.grid[row-1][col+1]
+	}
+	if row < this.n-1 && col > 0 {
+		sum += this.grid[row+1][col-1]
+	}
+	if row < this.n-1 && col < this.n-1 {
+		sum += this.grid[row+1][col+1]
+	}
+	return sum
+}
+
+/**
+ * Your NeighborSum object will be instantiated and called as such:
+ * obj := Constructor(grid);
+ * param_1 := obj.AdjacentSum(value);
+ * param_2 := obj.DiagonalSum(value);
+ */

@@ -645,3 +645,18 @@ func removeKdigits(num string, k int) string {
 	}
 	return string(s)
 }
+
+func mostCompetitive(nums []int, k int) []int {
+	n := len(nums)
+	s := make([]int, 0)
+	for i := 0; i < n; i++ {
+		for len(s) > 0 && s[len(s)-1] > nums[i] && len(s)+n-i > k {
+			s = s[:len(s)-1]
+		}
+		s = append(s, nums[i])
+	}
+	if len(s) > k {
+		s = s[:k]
+	}
+	return s
+}

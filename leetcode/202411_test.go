@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"fmt"
+	"testing"
+)
 
 func Test_minChanges(t *testing.T) {
 	type args struct {
@@ -73,6 +76,31 @@ func Test_shoppingOffers(t *testing.T) {
 			if got := shoppingOffers(tt.args.price, tt.args.special, tt.args.needs); got != tt.want {
 				t.Errorf("shoppingOffers() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestConstructor2(t *testing.T) {
+	type args struct {
+		grid [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want NeighborSum
+	}{
+		{
+			name: "case1",
+			args: args{
+				grid: [][]int{{0, 1, 2}, {3, 4, 5}, {6, 7, 8}},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ns := Constructor2(tt.args.grid)
+			fmt.Println(ns)
+			fmt.Println(ns.AdjacentSum(1))
 		})
 	}
 }
