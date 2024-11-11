@@ -1,7 +1,9 @@
 package leetcode
 
 import (
+	"fmt"
 	"math"
+	"sort"
 )
 
 func minChanges(n int, k int) int {
@@ -205,9 +207,39 @@ func (this *NeighborSum) DiagonalSum(value int) int {
 	return sum
 }
 
-/**
- * Your NeighborSum object will be instantiated and called as such:
- * obj := Constructor(grid);
- * param_1 := obj.AdjacentSum(value);
- * param_2 := obj.DiagonalSum(value);
- */
+/*
+有序数组中的单一元素
+https://leetcode.cn/problems/single-element-in-a-sorted-array/description/
+*/
+func singleNonDuplicate(nums []int) int {
+	res := nums[0]
+	for i := 1; i < len(nums); i++ {
+		res ^= nums[i]
+	}
+	return res
+}
+
+/*
+https://leetcode.cn/problems/minimum-cost-to-cut-a-stick/
+*/
+func minCost2(n int, cuts []int) int {
+	cuts = append(cuts, 0, n)
+	sort.Ints(cuts)
+	fmt.Println(n)
+	res := getCost(n, 0, len(cuts)-1, cuts)
+	return res
+}
+
+func getCost(n, left, right int, cuts []int) int {
+	if right-left <= 1 {
+		return 0
+	}
+	res := math.MaxInt
+	for i := left + 1; i < right; i++ {
+		res = min(res, getCost(cuts[i], left, i, cuts)+getCost(n-cuts[i], i, right, cuts))
+	}
+	fmt.Println("length", cuts[right]-cuts[left])
+	fmt.Println("=====")
+	// 切割之前的木棍长度
+	return res + cuts[right] - cuts[left]
+}

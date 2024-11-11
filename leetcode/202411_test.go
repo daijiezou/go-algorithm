@@ -104,3 +104,31 @@ func TestConstructor2(t *testing.T) {
 		})
 	}
 }
+
+func Test_minCost2(t *testing.T) {
+	type args struct {
+		n    int
+		cuts []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				n:    7,
+				cuts: []int{1, 3, 4, 5},
+			},
+			want: 16,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minCost2(tt.args.n, tt.args.cuts); got != tt.want {
+				t.Errorf("minCost2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
