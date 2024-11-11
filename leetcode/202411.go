@@ -1,7 +1,6 @@
 package leetcode
 
 import (
-	"fmt"
 	"math"
 	"sort"
 )
@@ -225,7 +224,6 @@ https://leetcode.cn/problems/minimum-cost-to-cut-a-stick/
 func minCost2(n int, cuts []int) int {
 	cuts = append(cuts, 0, n)
 	sort.Ints(cuts)
-	fmt.Println(n)
 	res := getCost(n, 0, len(cuts)-1, cuts)
 	return res
 }
@@ -236,10 +234,8 @@ func getCost(n, left, right int, cuts []int) int {
 	}
 	res := math.MaxInt
 	for i := left + 1; i < right; i++ {
-		res = min(res, getCost(cuts[i], left, i, cuts)+getCost(n-cuts[i], i, right, cuts))
+		res = min(res, getCost(cuts[i]-cuts[left], left, i, cuts)+getCost(cuts[right]-cuts[i], i, right, cuts))
 	}
-	fmt.Println("length", cuts[right]-cuts[left])
-	fmt.Println("=====")
 	// 切割之前的木棍长度
-	return res + cuts[right] - cuts[left]
+	return res + n
 }
