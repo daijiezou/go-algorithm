@@ -224,18 +224,65 @@ https://leetcode.cn/problems/minimum-cost-to-cut-a-stick/
 func minCost2(n int, cuts []int) int {
 	cuts = append(cuts, 0, n)
 	sort.Ints(cuts)
-	res := getCost(n, 0, len(cuts)-1, cuts)
+	memo := make([][]int, len(cuts))
+	for i := range memo {
+		memo[i] = make([]int, len(cuts))
+	}
+	res := getCost(0, len(cuts)-1, cuts, memo)
 	return res
 }
 
-func getCost(n, left, right int, cuts []int) int {
+func getCost(left, right int, cuts []int, memo [][]int) int {
 	if right-left <= 1 {
 		return 0
 	}
+	if memo[left][right] > 0 {
+		return memo[left][right]
+	}
 	res := math.MaxInt
 	for i := left + 1; i < right; i++ {
-		res = min(res, getCost(cuts[i]-cuts[left], left, i, cuts)+getCost(cuts[right]-cuts[i], i, right, cuts))
+		res = min(res, getCost(left, i, cuts, memo)+getCost(i, right, cuts, memo))
 	}
+	memo[left][right] = res + cuts[right] - cuts[left]
 	// 切割之前的木棍长度
-	return res + n
+	return memo[left][right]
+}
+
+/*
+给你一个 二进制 字符串 s 和一个整数 k。
+
+如果一个 二进制字符串 满足以下任一条件，则认为该字符串满足 k 约束：
+
+字符串中 0 的数量最多为 k。
+字符串中 1 的数量最多为 k。
+返回一个整数，表示 s 的所有满足 k 约束 的
+子字符串
+的数量。
+*/
+// https://leetcode.cn/problems/count-substrings-that-satisfy-k-constraint-i/description/
+func countKConstraintSubstrings(s string, k int) int {
+	res := 0
+	left, right := 0, 0
+	n := len(s)
+	zeroCnt := 0
+	oneCnt := 0
+	for right < n {
+		if s[right] == '0' {
+			zeroCnt++
+		} else {
+			oneCnt++
+		}
+
+		for oneCnt > k && zeroCnt > k {
+			if s[left] == '0' {
+				zeroCnt--
+			} else {
+				oneCnt--
+			}
+			left++
+		}
+		res += right - left + 1
+		right++
+	}
+	return res
 }
