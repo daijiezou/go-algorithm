@@ -317,6 +317,7 @@ func countKConstraintSubstrings2(s string, k int, queries [][]int) []int64 {
 	}
 	for i, q := range queries {
 		l, r := q[0], q[1]
+		// [l:j]内的所有子串均满足要求
 		j := l + sort.SearchInts(leftBound[l:r+1], l) // 如果区间内所有数都小于 l，结果是 j=r+1
 		res[i] = int64(sum[r+1] - sum[j] + (j-l+1)*(j-l)/2)
 	}
