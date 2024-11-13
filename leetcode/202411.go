@@ -286,3 +286,40 @@ func countKConstraintSubstrings(s string, k int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/count-substrings-that-satisfy-k-constraint-ii/
+func countKConstraintSubstrings2(s string, k int, queries [][]int) []int64 {
+	left, right := 0, 0
+	n := len(s)
+	zeroCnt := 0
+	oneCnt := 0
+	res := make([]int64, len(queries))
+	sum := make([]int, n+1)
+	leftBound := make([]int, n)
+	for right < n {
+		if s[right] == '0' {
+			zeroCnt++
+		} else {
+			oneCnt++
+		}
+
+		for oneCnt > k && zeroCnt > k {
+			if s[left] == '0' {
+				zeroCnt--
+			} else {
+				oneCnt--
+			}
+			left++
+		}
+		leftBound[right] = left //  记录合法子串右端点 i 对应的最小左端点 l
+		sum[right+1] = sum[right] + right - left + 1
+		right++
+	}
+	for i, q := range queries {
+		l, r := q[0], q[1]
+		j := l + sort.SearchInts(leftBound[l:r+1], l) // 如果区间内所有数都小于 l，结果是 j=r+1
+		res[i] = int64(sum[r+1] - sum[j] + (j-l+1)*(j-l)/2)
+	}
+	return res
+
+}
