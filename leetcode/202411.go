@@ -324,3 +324,87 @@ func countKConstraintSubstrings2(s string, k int, queries [][]int) []int64 {
 	return res
 
 }
+
+func minFlips(grid [][]int) int {
+	cowCnt := 0
+	colCnt := 0
+	m := len(grid)
+	n := len(grid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n/2; j++ {
+			if grid[i][j] != grid[i][n-j-1] {
+				cowCnt++
+			}
+		}
+	}
+	for i := 0; i < n; i++ {
+		for j := 0; j < m/2; j++ {
+			if grid[j][i] != grid[m-j-1][i] {
+				colCnt++
+				if colCnt >= cowCnt {
+					return cowCnt
+				}
+			}
+		}
+	}
+	return min(cowCnt, colCnt)
+}
+
+/*
+在社交媒体网站上有 n 个用户。给你一个整数数组 ages ，其中 ages[i] 是第 i 个用户的年龄。
+
+如果下述任意一个条件为真，那么用户 x 将不会向用户 y（x != y）发送好友请求：
+
+ages[y] <= 0.5 * ages[x] + 7  只能向年龄大于自己一半+7岁
+ages[y] > ages[x]  只能向年龄比自己小的人发送请求
+ages[y] > 100 && ages[x] < 100
+*/
+func numFriendRequests(ages []int) int {
+	sort.Ints(ages)
+	n := len(ages)
+	ans := 0
+	for i := 0; i < n; i++ {
+		leftBound := sort.SearchInts(ages, ages[i]/2+8)
+		rightBound := sort.SearchInts(ages, ages[i]+1) - 1
+		if rightBound >= leftBound {
+			if rightBound >= i {
+				rightBound--
+			}
+			ans += rightBound - leftBound + 1
+		}
+	}
+	return ans
+}
+
+// https://leetcode.cn/problems/image-smoother/
+func imageSmoother(img [][]int) [][]int {
+
+	m := len(img)
+	n := len(img[0])
+	ans := make([][]int, m)
+	preSum := make([][]int, m+10)
+	for i := 0; i < m+10; i++ {
+		preSum[i] = make([]int, n+10)
+
+	}
+	for i := 0; i < m; i++ {
+		ans[i] = make([]int, n)
+	}
+
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			preSum[i][j] = preSum[i-1][j] + preSum[i][j-1] - preSum[i-1][j-1] + img[i-1][j-1]
+		}
+	}
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			a := max(0, i-1)
+			b := min(m-1, i+1)
+			c := max(0, j-1)
+			d := min(n-1, j+1)
+			cnt := (d - c + 1) * (b - a + 1)
+			ans[i][j] = (preSum[b+1][d+1] - preSum[a][d+1] - preSum[b+1][c] + preSum[a][c]) / cnt
+		}
+	}
+	return ans
+}
