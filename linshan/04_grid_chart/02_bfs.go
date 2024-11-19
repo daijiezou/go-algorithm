@@ -34,3 +34,38 @@ func nearestExit(maze [][]byte, entrance []int) int {
 	}
 	return -1
 }
+
+func shortestPathBinaryMatrix(grid [][]int) int {
+	if grid[0][0] == 1 {
+		return -1
+	}
+	m := len(grid)
+	n := len(grid[0])
+	visited := make([][]bool, m)
+	for i := range visited {
+		visited[i] = make([]bool, n)
+	}
+	step := 1
+	queue := [][]int{{0, 0}}
+	for len(queue) > 0 {
+		sz := len(queue)
+		for i := 0; i < sz; i++ {
+			cur := queue[0]
+			queue = queue[1:]
+			if cur[0] == m-1 && cur[1] == n-1 {
+				return step
+			}
+			for _, d := range [][]int{{-1, -1}, {-1, 0}, {-1, 1}, {0, -1}, {0, 1}, {1, -1}, {1, 0}, {1, 1}} {
+				x := cur[0] + d[0]
+				y := cur[1] + d[1]
+				if x < 0 || x >= m || y < 0 || y >= n || visited[x][y] || grid[x][y] == 1 {
+					continue
+				}
+				visited[x][y] = true
+				queue = append(queue, []int{x, y})
+			}
+		}
+		step++
+	}
+	return -1
+}
