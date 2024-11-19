@@ -301,7 +301,7 @@ func Test_shortestDistanceAfterQueries(t *testing.T) {
 		{
 			name: "case1",
 			args: args{
-				n:       7,
+				n:       5,
 				queries: [][]int{{2, 4}, {0, 2}, {0, 4}},
 			},
 			want: []int{3, 2, 1},

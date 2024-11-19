@@ -409,14 +409,14 @@ func imageSmoother(img [][]int) [][]int {
 	return ans
 }
 
+// https://leetcode.cn/problems/shortest-distance-after-road-addition-queries-i/description/
 func shortestDistanceAfterQueries(n int, queries [][]int) []int {
 
 	m := len(queries)
 	ans := make([]int, m)
 	graph := make([][]int, n-1)
 	for i := 0; i < n-1; i++ {
-		graph[i] = make([]int, n)
-		graph[i][0] = i + 1
+		graph[i] = append(graph[i], i+1)
 	}
 	for i := 0; i < m; i++ {
 		source := queries[i][0]
@@ -430,7 +430,7 @@ func shortestDistanceAfterQueries(n int, queries [][]int) []int {
 func MinimumDistance(graph [][]int) int {
 	step := 1
 	queue := []int{0}
-	visited := make([]bool, len(graph))
+	visited := make([]bool, len(graph)+1)
 	for len(queue) > 0 {
 		size := len(queue)
 		for i := 0; i < size; i++ {
