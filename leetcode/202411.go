@@ -451,3 +451,56 @@ func MinimumDistance(graph [][]int) int {
 	}
 	return step
 }
+
+func shortestDistanceAfterQueries2(n int, queries [][]int) []int {
+	parent := make([]int, n-1)
+	for i := 0; i < n-1; i++ {
+		parent[i] = i
+	}
+	// 找到自己的父节点
+	find := func(x int) int {
+		root := x
+		for parent[root] != root {
+			root = parent[root]
+		}
+		oloParent := parent[x]
+		// 然后把 x 到根节点之间的所有节点直接接到根节点下面
+		for x != root {
+			parent[x] = root
+			x = oloParent
+			oloParent = parent[oloParent]
+		}
+		return root
+	}
+	ans := make([]int, len(queries))
+	cnt := n - 1
+	for qi, q := range queries {
+		l, r := q[0], q[1]-1
+		fr := find(r)
+		for i := find(l); i < r; i = find(i + 1) {
+			parent[i] = fr
+			cnt--
+		}
+		ans[qi] = cnt
+	}
+	return ans
+}
+
+func shortestDistanceAfterQueries3(n int, queries [][]int) []int {
+	nxt := make([]int, n-1)
+	for i := range nxt {
+		nxt[i] = i + 1 // 表示i指向的最右节点编号
+	}
+
+	ans := make([]int, len(queries))
+	cnt := n - 1
+	for qi, q := range queries {
+		source := q[0]
+		target := q[1]
+		for i := source; nxt[i] < target; i, nxt[i] = nxt[i], target {
+			cnt--
+		}
+		ans[qi] = cnt
+	}
+	return ans
+}
