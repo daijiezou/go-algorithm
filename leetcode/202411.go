@@ -504,3 +504,36 @@ func shortestDistanceAfterQueries3(n int, queries [][]int) []int {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/snake-in-matrix/
+func finalPositionOfSnake(n int, commands []string) int {
+	position := []int{0, 0}
+	for i := 0; i < len(commands); i++ {
+		switch commands[i] {
+		case "UP":
+			position[0]--
+		case "RIGHT":
+			position[1]++
+		case "DOWN":
+			position[0]++
+		case "LEFT":
+			position[1]--
+		}
+	}
+	res := position[0]*n + position[1]
+	return res
+}
+
+func finalPositionOfSnake1(n int, commands []string) int {
+	op := map[string]int{
+		"UP":    -n,
+		"RIGHT": 1,
+		"DOWN":  n,
+		"LEFT":  -1,
+	}
+	res := 0
+	for _, command := range commands {
+		res += op[command]
+	}
+	return res
+}
