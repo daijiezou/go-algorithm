@@ -202,3 +202,36 @@ func findMaxFishDFS(grid [][]int, i, j int) int {
 	res += findMaxFishDFS(grid, i, j-1)
 	return res
 }
+
+func numEnclaves(grid [][]int) int {
+	res := 0
+	m := len(grid)
+	n := len(grid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] > 0 {
+				cnt := numEnclavesDFS(grid, i, j)
+				if cnt > 0 {
+					res += cnt
+				}
+			}
+		}
+	}
+	return res
+}
+
+func numEnclavesDFS(grid [][]int, i, j int) int {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) {
+		return -1000000
+	}
+	if grid[i][j] == 0 {
+		return 0
+	}
+	res := 1
+	grid[i][j] = 0
+	res += numEnclavesDFS(grid, i+1, j)
+	res += numEnclavesDFS(grid, i-1, j)
+	res += numEnclavesDFS(grid, i, j+1)
+	res += numEnclavesDFS(grid, i, j-1)
+	return res
+}
