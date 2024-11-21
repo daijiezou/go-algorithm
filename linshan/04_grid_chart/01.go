@@ -4,6 +4,10 @@ import (
 	"sort"
 )
 
+/*
+网格图 DFS
+*/
+
 func numIslands(grid [][]byte) int {
 	m := len(grid)
 	n := len(grid[0])
@@ -11,7 +15,7 @@ func numIslands(grid [][]byte) int {
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
 			if grid[i][j] == '1' {
-				landDfs(grid, i, j)
+				landDfs2(grid, i, j)
 				cnt++
 			}
 		}
@@ -30,18 +34,18 @@ func landBfs(grid [][]byte, i, j int) {
 	landBfs(grid, i, j-1)
 }
 
-func landDfs(grid [][]byte, i, j int) {
+func landDfs2(grid [][]byte, i, j int) {
 	grid[i][j] = '0'
 	temp := [2]int{-1, 1}
 	for _, iBias := range temp {
 		if i+iBias >= 0 && i+iBias < len(grid) && grid[i+iBias][j] == '1' {
-			landDfs(grid, i+iBias, j)
+			landDfs2(grid, i+iBias, j)
 		}
 
 	}
 	for _, jBias := range temp {
 		if j+jBias >= 0 && j+jBias < len(grid[0]) && grid[i][j+jBias] == '1' {
-			landDfs(grid, i, j+jBias)
+			landDfs2(grid, i, j+jBias)
 		}
 	}
 }
@@ -169,4 +173,32 @@ func islandPerimeter(grid [][]int) int {
 		}
 	}
 	return ans
+}
+
+// https://leetcode.cn/problems/maximum-number-of-fish-in-a-grid/
+func findMaxFish(grid [][]int) int {
+	res := 0
+	m := len(grid)
+	n := len(grid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] > 0 {
+				res = max(res, findMaxFishDFS(grid, i, j))
+			}
+		}
+	}
+	return res
+}
+
+func findMaxFishDFS(grid [][]int, i, j int) int {
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) || grid[i][j] == 0 {
+		return 0
+	}
+	res := grid[i][j]
+	grid[i][j] = 0
+	res += findMaxFishDFS(grid, i+1, j)
+	res += findMaxFishDFS(grid, i-1, j)
+	res += findMaxFishDFS(grid, i, j+1)
+	res += findMaxFishDFS(grid, i, j-1)
+	return res
 }
