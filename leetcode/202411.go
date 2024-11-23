@@ -537,3 +537,75 @@ func finalPositionOfSnake1(n int, commands []string) int {
 	}
 	return res
 }
+
+const mx1 = 31622
+
+var pi [mx1 + 1]int
+
+// 筛选质数
+func init() {
+	for i := 2; i <= mx1; i++ {
+		if pi[i] == 0 { // i 是质数
+			pi[i] = pi[i-1] + 1
+
+			// 只需要从i的平方开始计算，而不需要从2*i来计算
+			for j := i * i; j <= mx1; j += i {
+				pi[j] = -1 // 标记 i 的倍数为合数
+			}
+		} else {
+			pi[i] = pi[i-1]
+		}
+	}
+}
+
+/*
+给你两个 正整数 l 和 r。对于任何数字 x，x 的所有正因数（除了 x 本身）被称为 x 的 真因数。
+如果一个数字恰好仅有两个 真因数，则称该数字为 特殊数字。例如：
+数字 4 是 特殊数字，因为它的真因数为 1 和 2。
+数字 6 不是 特殊数字，因为它的真因数为 1、2 和 3。
+返回区间 [l, r] 内 不是 特殊数字 的数字数量
+[l,r] = [0,r] - [0,l-1]
+*/
+func nonSpecialCount(l int, r int) int {
+	cntR := pi[int(math.Sqrt(float64(r)))]
+	cntL := pi[int(math.Sqrt(float64(l-1)))]
+	return r - l + 1 - (cntR - cntL)
+}
+
+// https://leetcode.cn/problems/find-the-number-of-winning-players/
+type BallCnt struct {
+	total    int
+	classCnt map[int]int
+}
+
+func winningPlayerCount(n int, pick [][]int) int {
+	cnt := 0
+	m := len(pick)
+	playerCnt := make([]BallCnt, n)
+	for i := 0; i < m; i++ {
+		player := pick[i][0]
+		ballColor := pick[i][1]
+		if playerCnt[player].total == 0 {
+			playerCnt[player].classCnt = make(map[int]int)
+		}
+		playerCnt[player].total++
+		if _, ok := playerCnt[player].classCnt[ballColor]; !ok {
+			playerCnt[player].classCnt[ballColor] = 1
+		} else {
+			playerCnt[player].classCnt[ballColor]++
+		}
+	}
+loop1:
+	for k, v := range playerCnt {
+		if v.total < k {
+			continue
+		}
+		for _, classCnt := range v.classCnt {
+			if classCnt > k {
+				cnt++
+				continue loop1
+			}
+		}
+	}
+	return cnt
+}

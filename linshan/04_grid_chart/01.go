@@ -235,3 +235,40 @@ func numEnclavesDFS(grid [][]int, i, j int) int {
 	res += numEnclavesDFS(grid, i, j-1)
 	return res
 }
+
+// https://leetcode.cn/problems/number-of-closed-islands/
+func closedIsland(grid [][]int) int {
+	res := 0
+	m := len(grid)
+	n := len(grid[0])
+	for i := 0; i < m; i++ {
+		for j := 0; j < n; j++ {
+			if grid[i][j] == 0 {
+				closed := true
+				closedIslandDFS(grid, i, j, &closed)
+				if closed {
+					res++
+				}
+			}
+		}
+	}
+	return res
+}
+
+func closedIslandDFS(grid [][]int, i, j int, closed *bool) {
+
+	if i < 0 || i >= len(grid) || j < 0 || j >= len(grid[0]) {
+		*closed = false
+		return
+	}
+	// 到达水
+	if grid[i][j] == 1 {
+		return
+	}
+	// 标记为已访问
+	grid[i][j] = 1
+	closedIslandDFS(grid, i+1, j, closed)
+	closedIslandDFS(grid, i-1, j, closed)
+	closedIslandDFS(grid, i, j+1, closed)
+	closedIslandDFS(grid, i, j-1, closed)
+}

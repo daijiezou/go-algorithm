@@ -315,3 +315,59 @@ func Test_shortestDistanceAfterQueries(t *testing.T) {
 		})
 	}
 }
+
+func Test_nonSpecialCount(t *testing.T) {
+	type args struct {
+		l int
+		r int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				l: 4,
+				r: 16,
+			},
+			want: 11,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := nonSpecialCount(tt.args.l, tt.args.r); got != tt.want {
+				t.Errorf("nonSpecialCount() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_winningPlayerCount(t *testing.T) {
+	type args struct {
+		n    int
+		pick [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "case1",
+			args: args{
+				n:    5,
+				pick: [][]int{{0, 0}, {1, 0}, {1, 0}, {2, 1}, {2, 1}, {2, 0}},
+			},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := winningPlayerCount(tt.args.n, tt.args.pick); got != tt.want {
+				t.Errorf("winningPlayerCount() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
