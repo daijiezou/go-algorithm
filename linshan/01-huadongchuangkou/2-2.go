@@ -35,8 +35,10 @@ func findLengthOfShortestSubarray(arr []int) int {
 	ans := right // 删除arr[0:right]
 	// 枚举左端点，移动右端点
 	for left := 0; left == 0 || arr[left-1] <= arr[left]; left++ {
-		for ; right < n && arr[right] < arr[left]; right++ {
 
+		// 直到arr[right] > arr[left]
+		for right < n && arr[right] < arr[left] {
+			right++
 		}
 		ans = min(right-left-1, ans) // 删除arr[left+1:right]
 	}
@@ -120,4 +122,72 @@ func smallestRange(nums [][]int) []int {
 		right++
 	}
 	return []int{bestLeft, bestRight}
+}
+
+//
+/*
+https://leetcode.cn/problems/shortest-and-lexicographically-smallest-beautiful-string/description/
+*/
+func shortestBeautifulSubstring(s string, k int) string {
+	n := len(s)
+	left, right := 0, 0
+	res := s + "a"
+	oneCnt := 0
+	for right < n {
+		if s[right] == '1' {
+			oneCnt++
+		}
+		for oneCnt == k {
+			if right-left+1 <= len(res) {
+				tmp := s[left : right+1]
+				if len(tmp) == len(res) {
+					res = min(res, tmp)
+				} else {
+					res = tmp
+				}
+			}
+			if s[left] == '1' {
+				oneCnt--
+			}
+			left++
+		}
+		right++
+	}
+	if len(res) > n {
+		return ""
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/replace-the-substring-for-balanced-string/
+func balancedString(s string) int {
+	letterCnt := make(map[byte]int, 4)
+	n := len(s)
+	needCnt := n / 4
+	need := make(map[byte]int)
+	flag := false
+	for i := 0; i < n; i++ {
+		letterCnt[s[i]]++
+		if letterCnt[s[i]] > needCnt {
+			need[s[i]] = letterCnt[s[i]] - needCnt
+			flag = true
+		}
+	}
+	if !flag {
+		return 0
+	}
+	left := 0
+	right := 0
+	res := n
+	for right < n {
+		letterCnt[s[right]]--
+		// 当除子串外，其他字符数量均不超过平均，则该子串是符合要求的
+		for letterCnt['Q'] <= needCnt && letterCnt['W'] <= needCnt && letterCnt['E'] <= needCnt && letterCnt['R'] <= needCnt {
+			res = min(res, right-left+1)
+			letterCnt[s[left]]++
+			left++
+		}
+		right++
+	}
+	return res
 }

@@ -609,3 +609,43 @@ loop1:
 	}
 	return cnt
 }
+
+// https://leetcode.cn/problems/smallest-range-covering-elements-from-k-lists/submissions/582674694/
+func smallestRange(nums [][]int) []int {
+	n := len(nums)
+	numCount := make(map[int][]int)
+	xMin, xMax := math.MaxInt32, math.MinInt32
+	for i := 0; i < n; i++ {
+		for _, num := range nums[i] {
+			numCount[num] = append(numCount[num], i)
+			xMin = min(num, xMin)
+			xMax = max(num, xMax)
+		}
+	}
+	left, right := xMin, xMin
+	bestLeft, bestRight := xMin, xMax
+	freq := make(map[int]int)
+	for right <= xMax {
+		if len(numCount[right]) > 0 {
+			// 计算包含该数字的数组的数量
+			for _, i := range numCount[right] {
+				freq[i]++
+			}
+			// 该数字在所有数组里都有，更新答案
+			for len(freq) == n {
+				if right-left < bestRight-bestLeft {
+					bestLeft, bestRight = left, right
+				}
+				for _, i := range numCount[left] {
+					freq[i]--
+					if freq[i] == 0 {
+						delete(freq, i)
+					}
+				}
+				left++
+			}
+		}
+		right++
+	}
+	return []int{bestLeft, bestRight}
+}
