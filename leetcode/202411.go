@@ -741,3 +741,39 @@ func (h hp) Less(i, j int) bool { return h[i].dis < h[j].dis }
 func (h hp) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
 func (h *hp) Push(v any)        { *h = append(*h, v.(pair)) }
 func (h *hp) Pop() (v any)      { a := *h; *h, v = a[:len(a)-1], a[len(a)-1]; return }
+
+func networkDelayTime3(times [][]int, n, k int) int {
+	type edge struct{ to, wt int }
+	g := make([][]edge, n+1) // 邻接表
+	for _, t := range times {
+		g[t[0]] = append(g[t[0]], edge{t[1], t[2]})
+	}
+
+	dis := make([]int, n+1)
+	for i := range dis {
+		dis[i] = math.MaxInt
+	}
+	dis[0] = 0
+	dis[k] = 0
+	queue := []pair{{0, k}}
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+		if cur.dis > dis[cur.x] { // x 之前出队过
+			continue
+		}
+		for _, e := range g[cur.x] {
+			y := e.to
+			newDis := cur.dis + e.wt
+			if newDis < dis[y] {
+				dis[y] = newDis // 更新 x 的邻居的最短路
+				queue = append(queue, pair{newDis, y})
+			}
+		}
+	}
+	mx := slices.Max(dis)
+	if mx < math.MaxInt {
+		return mx
+	}
+	return -1
+}
