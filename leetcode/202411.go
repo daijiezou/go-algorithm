@@ -649,3 +649,35 @@ func smallestRange(nums [][]int) []int {
 	}
 	return []int{bestLeft, bestRight}
 }
+
+// https://leetcode.cn/problems/network-delay-time/
+func networkDelayTime(times [][]int, n int, k int) int {
+	cost := 0
+	cnt := 1
+	queue := []int{k}
+	visited := make([]bool, n+1)
+	visited[k] = true
+	for len(queue) > 0 {
+		size := len(queue)
+		maxCost := 0
+		for i := 0; i < size; i++ {
+			cur := queue[0]
+			queue = queue[1:]
+			for _, time := range times {
+				if time[0] == cur {
+					if !visited[time[1]] {
+						queue = append(queue, time[1])
+						visited[time[1]] = true
+						cnt++
+						maxCost = max(maxCost, time[2])
+					}
+				}
+			}
+		}
+		cost += maxCost
+	}
+	if cnt != n {
+		return -1
+	}
+	return cost
+}
