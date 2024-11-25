@@ -1,7 +1,9 @@
 package leetcode
 
 import (
+	"container/heap"
 	"math"
+	"slices"
 	"sort"
 )
 
@@ -654,30 +656,88 @@ func smallestRange(nums [][]int) []int {
 func networkDelayTime(times [][]int, n int, k int) int {
 	cost := 0
 	cnt := 1
-	queue := []int{k}
+	type edge struct{ to, wt int }
+	// 节点编号是从1开始的，所以要一个大小为n + 1的邻接表
+	graph := make([][]edge, n+1)
+	for _, t := range times {
+		graph[t[0]] = append(graph[t[0]], edge{t[1], t[2]})
+	}
 	visited := make([]bool, n+1)
 	visited[k] = true
-	for len(queue) > 0 {
-		size := len(queue)
-		maxCost := 0
-		for i := 0; i < size; i++ {
-			cur := queue[0]
-			queue = queue[1:]
-			for _, time := range times {
-				if time[0] == cur {
-					if !visited[time[1]] {
-						queue = append(queue, time[1])
-						visited[time[1]] = true
-						cnt++
-						maxCost = max(maxCost, time[2])
-					}
-				}
-			}
-		}
-		cost += maxCost
-	}
+	netNodeCost := make([]int, n+1)
+	networkDelayTimeBackTrack(times, k, 0, visited, &cnt, netNodeCost)
 	if cnt != n {
 		return -1
 	}
+	for i := 1; i <= n; i++ {
+		cost = max(cost, netNodeCost[i])
+	}
 	return cost
 }
+
+func networkDelayTimeBackTrack(times [][]int, start int, costTime int, visited []bool,
+	cnt *int, netNodeCost []int) {
+	if *cnt == len(netNodeCost) {
+		return
+	}
+	for i := 0; i < len(times); i++ {
+		if times[i][0] == start {
+			if !visited[times[i][1]] {
+				visited[times[i][1]] = true
+				netNodeCost[times[i][1]] = costTime + times[i][2]
+				*cnt++
+				networkDelayTimeBackTrack(times, times[i][1], costTime+times[i][2], visited, cnt, netNodeCost)
+			} else {
+				if netNodeCost[times[i][1]] > costTime+times[i][2] {
+					netNodeCost[times[i][1]] = costTime + times[i][2]
+					networkDelayTimeBackTrack(times, times[i][1], costTime+times[i][2], visited, cnt, netNodeCost)
+				}
+			}
+		}
+	}
+}
+
+func networkDelayTime2(times [][]int, n, k int) int {
+	type edge struct{ to, wt int }
+	g := make([][]edge, n) // 邻接表
+	for _, t := range times {
+		g[t[0]-1] = append(g[t[0]-1], edge{t[1] - 1, t[2]})
+	}
+
+	dis := make([]int, n)
+	for i := range dis {
+		dis[i] = math.MaxInt
+	}
+	dis[k-1] = 0
+	h := hp{{0, k - 1}}
+	for len(h) > 0 {
+		p := heap.Pop(&h).(pair)
+		dx := p.dis
+		x := p.x
+		if dx > dis[x] { // x 之前出堆过
+			continue
+		}
+		for _, e := range g[x] {
+			y := e.to
+			newDis := dx + e.wt
+			if newDis < dis[y] {
+				dis[y] = newDis // 更新 x 的邻居的最短路
+				heap.Push(&h, pair{newDis, y})
+			}
+		}
+	}
+	mx := slices.Max(dis)
+	if mx < math.MaxInt {
+		return mx
+	}
+	return -1
+}
+
+type pair struct{ dis, x int }
+type hp []pair
+
+func (h hp) Len() int           { return len(h) }
+func (h hp) Less(i, j int) bool { return h[i].dis < h[j].dis }
+func (h hp) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *hp) Push(v any)        { *h = append(*h, v.(pair)) }
+func (h *hp) Pop() (v any)      { a := *h; *h, v = a[:len(a)-1], a[len(a)-1]; return }
