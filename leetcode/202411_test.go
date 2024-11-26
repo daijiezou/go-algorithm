@@ -410,3 +410,55 @@ func Test_networkDelayTime(t *testing.T) {
 		})
 	}
 }
+
+func Test_numberOfAlternatingGroups2(t *testing.T) {
+	type args struct {
+		colors []int
+		k      int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				colors: []int{0, 1, 0, 1, 0},
+				k:      3,
+			},
+			want: 3,
+		},
+		{
+			name: "1",
+			args: args{
+				colors: []int{0, 1, 0, 0, 1, 0, 1},
+				k:      6,
+			},
+			want: 2,
+		},
+		{
+			name: "1",
+			args: args{
+				colors: []int{0, 0, 1, 1},
+				k:      3,
+			},
+			want: 0,
+		},
+		{
+			name: "1",
+			args: args{
+				colors: []int{0, 1, 0, 1},
+				k:      3,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := numberOfAlternatingGroups2(tt.args.colors, tt.args.k); got != tt.want {
+				t.Errorf("numberOfAlternatingGroups2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

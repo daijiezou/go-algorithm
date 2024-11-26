@@ -777,3 +777,42 @@ func networkDelayTime3(times [][]int, n, k int) int {
 	}
 	return -1
 }
+
+// https://leetcode.cn/problems/alternating-groups-i/
+func numberOfAlternatingGroups(colors []int) int {
+	cnt := 0
+	n := len(colors)
+	colors = append(colors, colors[:3]...)
+	for i := 0; i < n; i++ {
+		if colors[i] != colors[i+1] && colors[i] == colors[i+2] {
+			cnt++
+		}
+	}
+	return cnt
+}
+
+// https://leetcode.cn/problems/alternating-groups-ii/
+func numberOfAlternatingGroups2(colors []int, k int) int {
+	cnt := 0
+	n := len(colors)
+	colors = append(colors, colors[:k]...)
+	for i := 0; i < n; i++ {
+		temp := 1
+		j := i
+		for ; j < n+k-1; j++ {
+			if colors[j] != colors[j+1] {
+				temp++
+			} else {
+				if j > i {
+					i = j
+				}
+				break
+			}
+		}
+		if temp >= k {
+			cnt += temp - k + 1
+			i = j
+		}
+	}
+	return cnt
+}
