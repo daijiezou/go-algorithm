@@ -795,22 +795,20 @@ func numberOfAlternatingGroups(colors []int) int {
 func numberOfAlternatingGroups2(colors []int, k int) int {
 	cnt := 0
 	n := len(colors)
-	colors = append(colors, colors[:k]...)
+	colors = append(colors, colors[:k-1]...)
 	for i := 0; i < n; i++ {
-		temp := 1
+		cq := 1
 		j := i
-		for ; j < n+k-1; j++ {
+		for ; j < n+k-2; j++ {
 			if colors[j] != colors[j+1] {
-				temp++
+				cq++
 			} else {
-				if j > i {
-					i = j
-				}
+				i = j
 				break
 			}
 		}
-		if temp >= k {
-			cnt += temp - k + 1
+		if cq >= k {
+			cnt += cq - k + 1
 			i = j
 		}
 	}
