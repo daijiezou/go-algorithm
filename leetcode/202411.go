@@ -814,3 +814,113 @@ func numberOfAlternatingGroups2(colors []int, k int) int {
 	}
 	return cnt
 }
+
+func numberOfAlternatingGroups3(colors []int, k int) int {
+
+	n := len(colors)
+	ans := 0
+	cnt := 0
+	for i := 0; i < n*2; i++ {
+		if i > 0 && colors[i%n] != colors[(i+1)%n] {
+			cnt = 0
+		}
+		cnt++
+		// 维护以 i 为右端点的交替子数组的长度 cnt。
+		if cnt >= k && i >= n {
+			ans++
+		}
+	}
+	return ans
+}
+
+func countAlternatingSubarrays(nums []int) int64 {
+	n := len(nums)
+	ans := 0
+	cnt := 0
+	for i := 0; i < n; i++ {
+		if i > 0 && nums[i] == nums[i-1] {
+			cnt = 1
+		} else {
+			cnt++
+		}
+		ans += cnt
+	}
+	return int64(ans)
+}
+
+// https://leetcode.cn/problems/find-the-count-of-monotonic-pairs-i/
+func countOfPairs2(nums []int) int {
+	n := len(nums)
+	cnt := 0
+	// 非递减
+	num1Max := make([]int, n)
+	num1Max[n-1] = nums[n-1]
+	// 非递增数组
+	num2MAx := make([]int, n)
+	num2MAx[0] = nums[0]
+	for i := 0; i < n-1; i++ {
+		num2MAx[i+1] = min(nums[i+1], nums[i])
+		index := n - i - 1
+		num1Max[index-1] = min(nums[index-1], nums[index])
+	}
+	//arr1 := make([]int, n)
+	//arr2 := make([]int, n)
+	//for i := 0; i < n; i++ {
+	//	for j := 0; j <= num1Max[i]; j++ {
+	//
+	//	}
+	//}
+	return cnt
+	//for i := 0; i < n; i++ {
+	//	for j := 0; j <= nums[i]; j++ {
+	//
+	//	}
+	//}
+}
+
+var mod1 = int(1e9 + 7)
+
+func countOfPairs(nums []int) int {
+	n := len(nums)
+	sum := 0
+	memo := make([][]int, n)
+	for i := 0; i < n; i++ {
+		memo[i] = make([]int, nums[n-1]+1)
+		for j := 0; j <= nums[n-1]; j++ {
+			memo[i][j] = -1
+		}
+	}
+	for i := 0; i <= nums[n-1]; i++ {
+		sum += countOfPairsDfs(n-1, i, nums, memo)
+	}
+	return sum % mod1
+}
+
+// dfs(i，j)
+func countOfPairsDfs(i, j int, nums []int, memo [][]int) int {
+	if i == 0 {
+		return 1 // 表示找到了一个合法的单调数组对
+	}
+	if memo[i][j] != -1 {
+		return memo[i][j]
+	}
+	res := 0
+	// 枚举arr1[i-1] 填k
+	// k的合法范围
+	// 0 <= k <= nums[i-1]
+	// 0 <= arr1[i-1] <= nums[i-1]
+	// k <= arr1[i] = j
+
+	// arr2[i-1] = nums[i-1] - k
+	// nums[i-1] -k >= arr2[i] = nums[i]-j
+	// k <=  nums[i-1] - nums[i]+j
+
+	// 最终整理
+	// 0 <= k <= min(nums[i-1],j,nums[i-1] - nums[i]+j)
+	maxK := min(nums[i-1], j, nums[i-1]-nums[i]+j)
+	for k := 0; k <= maxK; k++ {
+		res += countOfPairsDfs(i-1, k, nums, memo)
+	}
+	memo[i][j] = res % mod1
+	return memo[i][j]
+}
