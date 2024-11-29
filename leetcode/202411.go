@@ -882,16 +882,45 @@ var mod1 = int(1e9 + 7)
 
 func countOfPairs(nums []int) int {
 	n := len(nums)
-	sum := 0
-	memo := make([][]int, n)
+	//memo := make([][]int, n)
+	//for i := 0; i < n; i++ {
+	//	memo[i] = make([]int, nums[n-1]+1)
+	//	for j := 0; j <= nums[n-1]; j++ {
+	//		memo[i][j] = -1
+	//	}
+	//}
+	m := slices.Max(nums)
+	dp := make([][]int, n)
 	for i := 0; i < n; i++ {
-		memo[i] = make([]int, nums[n-1]+1)
-		for j := 0; j <= nums[n-1]; j++ {
-			memo[i][j] = -1
+		dp[i] = make([]int, m+1)
+	}
+	// baseCase
+	for j := 0; j < nums[0]+1; j++ {
+		dp[0][j] = 1
+	}
+	for i := 1; i < n; i++ {
+		preSum := make([]int, len(dp[i-1])+1)
+		preSum[0] = dp[i-1][0]
+		for j := 1; j < len(dp[i-1]); j++ {
+			preSum[j] = preSum[j-1] + dp[i-1][j]
+		}
+		for j := 0; j <= nums[i]; j++ {
+			//res := 0
+			maxK := min(nums[i-1], j, nums[i-1]-nums[i]+j)
+			//for k := 0; k <= maxK; k++ {
+			//	res += dp[i-1][k]
+			//}
+			res := 0
+			if maxK >= 0 {
+				res = preSum[maxK]
+			}
+
+			dp[i][j] = res % mod1
 		}
 	}
+	sum := 0
 	for i := 0; i <= nums[n-1]; i++ {
-		sum += countOfPairsDfs(n-1, i, nums, memo)
+		sum += dp[n-1][i]
 	}
 	return sum % mod1
 }
@@ -907,11 +936,14 @@ func countOfPairsDfs(i, j int, nums []int, memo [][]int) int {
 	res := 0
 	// 枚举arr1[i-1] 填k
 	// k的合法范围
+
 	// 0 <= k <= nums[i-1]
 	// 0 <= arr1[i-1] <= nums[i-1]
 	// k <= arr1[i] = j
 
-	// arr2[i-1] = nums[i-1] - k
+	// arr2[i-1] >= arr2[i] = nums[i]-j
+	// arr2[i-1] = nums[i-1]-k
+
 	// nums[i-1] -k >= arr2[i] = nums[i]-j
 	// k <=  nums[i-1] - nums[i]+j
 
