@@ -5,6 +5,7 @@ import (
 	"math"
 	"slices"
 	"sort"
+	"strings"
 )
 
 func minChanges(n int, k int) int {
@@ -955,4 +956,92 @@ func countOfPairsDfs(i, j int, nums []int, memo [][]int) int {
 	}
 	memo[i][j] = res % mod1
 	return memo[i][j]
+}
+
+func canAliceWin(nums []int) bool {
+	n := len(nums)
+	total := 0
+	singleTotal := 0
+	for i := 0; i < n; i++ {
+		total += nums[i]
+		if nums[i] < 10 {
+			singleTotal += nums[i]
+		}
+	}
+
+	if 2*singleTotal == total {
+		return false
+	}
+	return true
+}
+
+func solveNQueens(n int) [][]string {
+	res := make([][]string, 0)
+	// 每个字符串代表一行，字符串列表代表一个棋盘
+	// '.' 表示空，'Q' 表示皇后，初始化空棋盘
+	board := make([]string, n)
+	for i := 0; i < n; i++ {
+		board[i] = strings.Repeat(".", n)
+	}
+	solveNQueensBackTrack(board, n, 0, &res)
+	return res
+}
+
+func solveNQueensBackTrack(board []string, n int, row int, res *[][]string) bool {
+	if row == n {
+		temp := make([]string, n)
+		copy(temp, board)
+		*res = append(*res, temp)
+	}
+	// 做选择
+	for col := 0; col < n; col++ {
+		// 剪枝，排除不合法选择
+		if !isValid(board, row, col) {
+			continue
+		}
+
+		// 做选择
+		rowChars := []rune(board[row])
+		rowChars[col] = 'Q'
+		board[row] = string(rowChars)
+
+		// 进入下一行决策
+		solveNQueensBackTrack(board, n, row+1, res) // row + 1)
+
+		// 撤销选择
+		rowChars[col] = '.'
+		board[row] = string(rowChars)
+	}
+	return false
+}
+
+func isValid(board []string, row, col int) bool {
+	// 因为我们是从上往下放置皇后的，
+	// 所以只需要检查上方是否有皇后互相冲突，
+	// 不需要检查下方
+
+	n := len(board)
+
+	// 检查列是否有皇后互相冲突
+	for i := 0; i < row; i++ {
+		if board[i][col] == 'Q' {
+			return false
+		}
+	}
+
+	// 检查右上方是否有皇后互相冲突
+	for i, j := row-1, col+1; i >= 0 && j < n; i, j = i-1, j+1 {
+		if board[i][j] == 'Q' {
+			return false
+		}
+	}
+
+	// 检查左上方是否有皇后互相冲突
+	for i, j := row-1, col-1; i >= 0 && j >= 0; i, j = i-1, j-1 {
+		if board[i][j] == 'Q' {
+			return false
+		}
+	}
+
+	return true
 }

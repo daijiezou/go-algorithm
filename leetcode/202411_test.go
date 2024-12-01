@@ -463,6 +463,58 @@ func Test_numberOfAlternatingGroups2(t *testing.T) {
 	}
 }
 
+func Test_canAliceWin(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case1",
+			args: args{
+				nums: []int{1, 2, 3, 4, 10},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := canAliceWin(tt.args.nums); got != tt.want {
+				t.Errorf("canAliceWin() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_solveNQueens(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want [][]string
+	}{
+		{
+			name: "case1",
+			args: args{
+				n: 4,
+			},
+			want: [][]string{{".Q..", "...Q", "Q...", "..Q."}, {"..Q.", "Q...", "...Q", ".Q.."}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := solveNQueens(tt.args.n); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("solveNQueens() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
 func Test_countOfPairs(t *testing.T) {
 	type args struct {
 		nums []int
