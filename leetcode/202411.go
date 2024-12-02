@@ -1045,3 +1045,53 @@ func isValid(board []string, row, col int) bool {
 
 	return true
 }
+
+// https://leetcode.cn/problems/corporate-flight-bookings/
+func corpFlightBookings(bookings [][]int, n int) []int {
+	res := make([]int, n)
+	diff := make([]int, n)
+	for _, booking := range bookings {
+		start := booking[0] - 1
+		end := booking[1] - 1
+		cnt := booking[2]
+		diff[start] += cnt
+		if end+1 < n {
+			diff[end+1] -= cnt
+		}
+	}
+	res[0] = diff[0]
+	for i := 1; i < n; i++ {
+		res[i] = diff[i] + res[i-1]
+	}
+	return res
+}
+
+func totalNQueens(n int) int {
+	board1 := make([]string, n)
+	for i := 0; i < n; i++ {
+		board1[i] = strings.Repeat(".", n)
+	}
+	cnt := 0
+	var btk = func(row int, board []string) {}
+	btk = func(row int, board []string) {
+		if row == n {
+			cnt++
+			return
+		}
+		for col := 0; col < n; col++ {
+			if !isValid(board, row, col) {
+				continue
+			}
+			temp := []rune(board[row])
+			temp[col] = 'Q'
+			board[row] = string(temp)
+
+			btk(row+1, board)
+
+			temp[col] = '.'
+			board[row] = string(temp)
+		}
+	}
+	btk(0, board1)
+	return cnt
+}
