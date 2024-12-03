@@ -33,3 +33,47 @@ func merge(left, right []int) []int {
 	}
 	return res
 }
+
+func mergeSort3(sumList []int) []int {
+	sort(sumList, 0, len(sumList)-1)
+	return sumList
+}
+
+func sort(nums []int, lo, hi int) {
+	if lo == hi {
+		return
+	}
+	mid := (lo + hi) / 2
+	// 利用定义，排序 nums[lo..mid]
+	sort(nums, lo, mid)
+	// 利用定义，排序 nums[mid+1..hi]
+	sort(nums, mid+1, hi)
+
+	// 此时两部分子数组已经被排好序
+	// 合并两个有序数组，使 nums[lo..hi] 有序
+	merge2(nums, lo, hi, mid)
+}
+
+func merge2(nums []int, lo int, hi int, mid int) {
+	temp := make([]int, hi-lo+1)
+	for i := lo; i <= hi; i++ {
+		temp[i-lo] = nums[i]
+	}
+	i := lo
+	j := mid + 1
+	for p := lo; p <= hi; p++ {
+		if i == mid+1 {
+			nums[p] = temp[j-lo]
+			j++
+		} else if j == hi+1 {
+			nums[p] = temp[i-lo]
+			i++
+		} else if temp[i-lo] < temp[j-lo] {
+			nums[p] = temp[i-lo]
+			i++
+		} else {
+			nums[p] = temp[j-lo]
+			j++
+		}
+	}
+}

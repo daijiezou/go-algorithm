@@ -1115,3 +1115,42 @@ func checkTwoChessboards(coordinate1 string, coordinate2 string) bool {
 		}
 	}
 }
+
+func sortArray(nums []int) []int {
+	mergeSort(nums, 0, len(nums)-1)
+	return nums
+}
+
+func mergeSort(nums []int, lo int, hi int) {
+	if lo == hi {
+		return
+	}
+	mid := lo + (hi-lo)/2
+	mergeSort(nums, lo, mid)
+	mergeSort(nums, mid+1, hi)
+	merge2(nums, lo, hi, mid)
+}
+
+func merge2(nums []int, lo int, hi int, mid int) {
+	temp := make([]int, hi-lo+1)
+	for i := lo; i <= hi; i++ {
+		temp[i-lo] = nums[i]
+	}
+	i := lo
+	j := mid + 1
+	for p := lo; p <= hi; p++ {
+		if i == mid+1 {
+			nums[p] = temp[j-lo]
+			j++
+		} else if j == hi+1 {
+			nums[p] = temp[i-lo]
+			i++
+		} else if temp[i-lo] < temp[j-lo] {
+			nums[p] = temp[i-lo]
+			i++
+		} else {
+			nums[p] = temp[j-lo]
+			j++
+		}
+	}
+}
