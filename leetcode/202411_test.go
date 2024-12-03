@@ -585,3 +585,31 @@ func Test_totalNQueens(t *testing.T) {
 		})
 	}
 }
+
+func Test_checkTwoChessboards(t *testing.T) {
+	type args struct {
+		coordinate1 string
+		coordinate2 string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "case1",
+			args: args{
+				coordinate1: "a7",
+				coordinate2: "a6",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := checkTwoChessboards(tt.args.coordinate1, tt.args.coordinate2); got != tt.want {
+				t.Errorf("checkTwoChessboards() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

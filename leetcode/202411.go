@@ -1095,3 +1095,23 @@ func totalNQueens(n int) int {
 	btk(0, board1)
 	return cnt
 }
+
+func checkTwoChessboards(coordinate1 string, coordinate2 string) bool {
+	row1 := []byte(coordinate1)[0] - 'a'
+	col1 := []byte(coordinate1)[1] - '1'
+	row2 := []byte(coordinate2)[0] - 'a'
+	col2 := []byte(coordinate2)[1] - '1'
+	if row1%2 == row2%2 {
+		if col1%2 == col2%2 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		if col1%2 == col2%2 {
+			return false
+		} else {
+			return true
+		}
+	}
+}
