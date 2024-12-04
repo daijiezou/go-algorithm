@@ -1,6 +1,9 @@
 package _1_listnode
 
-import "container/heap"
+import (
+	"container/heap"
+	"fmt"
+)
 
 type ListNode struct {
 	Val  int
@@ -161,4 +164,37 @@ func mergeKLists(lists []*ListNode) *ListNode {
 	return dummy.Next
 }
 
-// 链表排序，给
+func getIntersectionNode2(headA *ListNode, headB *ListNode) *ListNode {
+	A, B := headA, headB
+	for A != B {
+		if A == nil {
+			A = headB
+		} else {
+			A = A.Next
+		}
+		if B == nil {
+			B = headA
+		} else {
+			B = B.Next
+		}
+	}
+	return A
+}
+
+func removeNthFromEnd2(head *ListNode, n int) *ListNode {
+	dummy := &ListNode{-1, head}
+	p1 := dummy
+	// p1 先走 k 步
+	for i := 0; i < n+1; i++ {
+		p1 = p1.Next
+	}
+	p2 := dummy
+	// p1 和 p2 同时走 n - k 步
+	for p1 != nil {
+		p1 = p1.Next
+		p2 = p2.Next
+	}
+	fmt.Println(p2)
+	p2.Next = p2.Next.Next
+	return dummy.Next
+}
