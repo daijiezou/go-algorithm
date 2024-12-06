@@ -55,24 +55,6 @@ func reverseBetween(head *ListNode, left int, right int) *ListNode {
 	// 前进到反转的起点触发 base case
 	head.Next = reverseBetween(head.Next, left-1, right-1)
 	return head
-
-	/*	n := right - left + 1
-		temp := head
-		var pre *ListNode
-		if left == 1 {
-			pre = head
-		}
-		for ; left > 1; left-- {
-			if left == 2 {
-				pre = temp
-			}
-			temp = temp.Next
-		}
-
-		last := reverseN(temp, n)
-		pre.Next = last
-		return head*/
-
 }
 
 func ReverseN(head *ListNode, n int) *ListNode {
@@ -106,4 +88,21 @@ func DJreverseBetween(head *ListNode, left int, right int) *ListNode {
 	last := ReverseN(pre.Next, right-left+1)
 	pre.Next = last
 	return head
+}
+
+func re(head *ListNode) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	var pre, cur, nxt *ListNode
+	pre, cur, nxt = nil, head.Next, head
+	for cur != nil {
+		cur.Next = pre
+		pre = cur
+		cur = nxt
+		if nxt != nil {
+			nxt = nxt.Next
+		}
+	}
+	return pre
 }

@@ -50,3 +50,58 @@ func minMovesToCaptureTheQueen(a int, b int, c int, d int, e int, f int) int {
 func inBetween(l, m, r int) bool {
 	return min(l, r) < m && m < max(l, r)
 }
+
+func numRookCaptures(board [][]byte) int {
+	cnt := 0
+	rRow := 0
+	rCol := 0
+loop1:
+	for i := 0; i < len(board); i++ {
+		for j := 0; j < len(board[i]); j++ {
+			if board[i][j] == 'R' {
+				rRow = i
+				rCol = j
+				break loop1
+			}
+		}
+	}
+
+	for i := rRow + 1; i < 8; i++ {
+		if board[i][rCol] == 'p' {
+			cnt++
+			break
+		}
+		if board[i][rCol] == 'B' {
+			break
+		}
+	}
+	for i := rRow - 1; i >= 0; i-- {
+		if board[i][rCol] == 'p' {
+			cnt++
+			break
+		}
+		if board[i][rCol] == 'B' {
+			break
+		}
+	}
+
+	for j := rCol - 1; j >= 0; j-- {
+		if board[rRow][j] == 'p' {
+			cnt++
+			break
+		}
+		if board[rRow][j] == 'B' {
+			break
+		}
+	}
+	for j := rCol + 1; j < 8; j++ {
+		if board[rRow][j] == 'p' {
+			cnt++
+			break
+		}
+		if board[rRow][j] == 'B' {
+			break
+		}
+	}
+	return cnt
+}
