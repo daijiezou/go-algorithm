@@ -1154,3 +1154,35 @@ func merge2(nums []int, lo int, hi int, mid int) {
 		}
 	}
 }
+
+// https://leetcode.cn/problems/knight-probability-in-chessboard/
+func knightProbability(n int, k int, row int, column int) float64 {
+	posi := [][]int{{2, 1}, {1, 2}, {-1, 2}, {-2, 1}, {-2, -1}, {-1, -2}, {1, -2}, {2, -1}}
+	memo := make([][][]float64, k+1)
+	for i := range memo {
+		memo[i] = make([][]float64, n)
+		for j := range memo[i] {
+			memo[i][j] = make([]float64, n)
+		}
+	}
+	var dfs func(k int, row int, column int) float64
+	dfs = func(k int, row int, column int) float64 {
+		if row >= n || row < 0 || column >= n || column < 0 {
+			return 0
+		}
+		if k == 0 {
+			return 1
+		}
+		if memo[k][row][column] != 0 {
+			return memo[k][row][column]
+		}
+		res := float64(0)
+		for _, pos := range posi {
+			res += dfs(k-1, row+pos[0], column+pos[1])
+		}
+		res /= 8
+		memo[k][row][column] = res
+		return res
+	}
+	return dfs(k, row, column)
+}

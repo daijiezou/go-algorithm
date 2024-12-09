@@ -105,3 +105,23 @@ loop1:
 	}
 	return cnt
 }
+
+// https://leetcode.cn/problems/determine-color-of-a-chessboard-square/
+func squareIsWhite(coordinates string) bool {
+	bytes := []byte(coordinates)
+	row := bytes[0] - 'a'
+	col := bytes[1] - '0'
+	if row%2 == 0 {
+		if col%2 == 0 {
+			return true
+		} else {
+			return false
+		}
+	} else {
+		if col%2 == 0 {
+			return false
+		} else {
+			return true
+		}
+	}
+}
