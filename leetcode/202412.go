@@ -125,3 +125,35 @@ func squareIsWhite(coordinates string) bool {
 		}
 	}
 }
+
+var memo1 [5000][10]int
+
+// https://leetcode.cn/problems/knight-dialer/
+func knightDialer(n int) int {
+	next := [][]int{{4, 6}, {6, 8}, {7, 9}, {4, 8}, {0, 3, 9}, {}, {0, 1, 7}, {2, 6}, {1, 3}, {2, 4}}
+
+	const mod = 1_000_000_007
+	var dfs func(start int, n int) int
+	dfs = func(start int, n int) int {
+		if n == 0 {
+			return 1
+		}
+		if memo1[n][start] != 0 {
+			return memo1[n][start]
+		}
+		cnt := 0
+		for _, i2 := range next[start] {
+			cnt += dfs(i2, n-1) % mod
+		}
+		memo1[n][start] = cnt
+		return cnt
+	}
+	if n == 1 {
+		return 10
+	}
+	ans := 0
+	for j := range 10 {
+		ans += dfs(j, n-1)
+	}
+	return ans % mod
+}
