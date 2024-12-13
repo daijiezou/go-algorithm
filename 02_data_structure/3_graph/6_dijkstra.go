@@ -7,14 +7,6 @@ type State struct {
 	distFromStart int
 }
 
-func adj(s int) []int {
-	// 输入节点 s 返回 s 的相邻节点
-}
-
-func weight(from, to int) int {
-	// 返回节点 from 到节点 to 之间的边的权重
-}
-
 type PriorityQueue []*State
 
 func dijkstra(start int, graph [][]int) []int {

@@ -19,6 +19,22 @@ func climbStairsDp(memo []int, n int) int {
 	return memo[n]
 }
 
+func climbStairs2(n int) int {
+	dp := make([]int, n+1)
+	if n == 1 {
+		return 1
+	}
+	if n == 2 {
+		return 2
+	}
+	dp[1] = 1
+	dp[2] = 2
+	for i := 3; i <= n; i++ {
+		dp[i] = dp[i-1] + dp[i-2]
+	}
+	return dp[n]
+}
+
 // https://leetcode.cn/problems/count-ways-to-build-good-strings/
 func countGoodStrings(low int, high int, zero int, one int) int {
 	memo := make([]int, high+1)
@@ -57,12 +73,11 @@ func countGoodStrings2(low int, high int, zero int, one int) int {
 	res := 0
 	dp[0] = 1
 	for i := 1; i <= high; i++ {
-		temp := 0
 		if i >= one {
 			dp[i] = dp[i-one] % mod1
 		}
 		if i >= zero {
-			dp[i] = temp + dp[i-zero]%mod1
+			dp[i] = dp[i-one] + dp[i-zero]%mod1
 		}
 		if i >= low {
 			res += dp[i] % mod1
@@ -70,4 +85,34 @@ func countGoodStrings2(low int, high int, zero int, one int) int {
 	}
 
 	return res
+}
+
+const mx = 100_001
+const mod = 1_000_000_007
+
+var dp3 = [mx]int{1, 1, 2, 4}
+var dp4 = dp3
+
+func init() {
+	for i := 4; i < mx; i++ {
+		dp3[i] = (dp3[i-1] + dp3[i-2] + dp3[i-3]) % mod
+		dp4[i] = (dp4[i-1] + dp4[i-2] + dp4[i-3] + dp4[i-4]) % mod
+	}
+}
+
+// https://leetcode.cn/problems/count-number-of-texts/
+func countTexts(pressedKeys string) int {
+	ans, cnt := 1, 0
+	for i, c := range pressedKeys {
+		cnt++
+		if i == len(pressedKeys)-1 || pressedKeys[i+1] != byte(c) { // 找到一个完整的组
+			if c != '7' && c != '9' {
+				ans = ans * dp3[cnt] % mod
+			} else {
+				ans = ans * dp4[cnt] % mod
+			}
+			cnt = 0
+		}
+	}
+	return ans
 }

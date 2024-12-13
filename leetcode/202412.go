@@ -1,5 +1,10 @@
 package leetcode
 
+import (
+	"container/heap"
+	"sort"
+)
+
 func minMovesToCaptureTheQueen(a int, b int, c int, d int, e int, f int) int {
 
 	// 先判断车和后是否在一条直线
@@ -156,4 +161,98 @@ func knightDialer(n int) int {
 		ans += dfs(j, n-1)
 	}
 	return ans % mod
+}
+
+func semiOrderedPermutation(nums []int) int {
+	res := 0
+	minIndex := 0
+	maxIndex := 0
+	for i := 1; i < len(nums); i++ {
+		if nums[i] >= nums[maxIndex] {
+			maxIndex = i
+		}
+		if nums[i] <= nums[minIndex] {
+			minIndex = i
+		}
+	}
+	res = minIndex + len(nums) - 1 - maxIndex
+	if maxIndex < minIndex {
+		res -= 1
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/maximum-spending-after-buying-items/
+func maxSpending(values [][]int) int64 {
+	m := len(values)
+	n := len(values[0])
+	nums := make([]int, 0, m*n)
+	for i := range values {
+		nums = append(nums, values[i]...)
+	}
+	sort.Ints(nums)
+	res := 0
+	for i := range nums {
+		res += nums[i] * (i + 1)
+	}
+	return int64(res)
+}
+
+type pair2 struct {
+	first  int
+	second int
+}
+
+type minHeap []pair2
+
+func (h minHeap) Len() int {
+	return len(h)
+}
+func (h minHeap) Less(i, j int) bool {
+	return h[i].first < h[j].first || h[i].first == h[j].first && h[i].second < h[j].second
+}
+func (h minHeap) Swap(i, j int) {
+	h[i], h[j] = h[j], h[i]
+}
+
+func (h *minHeap) Push(x interface{}) {
+	*h = append(*h, x.(pair2))
+}
+
+func (h *minHeap) Pop() interface{} {
+	n := len(*h)
+	res := (*h)[n-1]
+	*h = (*h)[0 : n-1]
+	return res
+}
+func getFinalState(nums []int, k int, multiplier int) []int {
+	var newNums minHeap
+	heap.Init(&newNums)
+
+	for i := 0; i < len(nums); i++ {
+		heap.Push(&newNums, pair2{
+			first:  nums[i],
+			second: i,
+		})
+	}
+	for i := 0; i < k; i++ {
+		numPair := &newNums[0]      // 直接获取堆顶元素
+		numPair.first *= multiplier // 修改堆顶元素的值
+		nums[numPair.second] = numPair.first
+		heap.Fix(&newNums, 0)
+	}
+	return nums
+}
+
+func getFinalState2(nums []int, k int, multiplier int) []int {
+	for i := 0; i < k; i++ {
+		minIndex := 0
+		for j := 0; j < len(nums); j++ {
+			if nums[j] < nums[minIndex] {
+				minIndex = j
+			}
+		}
+		nums[minIndex] *= multiplier
+	}
+	return nums
 }

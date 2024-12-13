@@ -12,11 +12,6 @@ func NewMinPQ(cap int) *MaxPQ {
 	return &MaxPQ{pq: pq}
 }
 
-/* 返回当前队列中最小元素 */
-func (mpq *MaxPQ) min() int {
-	return mpq.pq[1]
-}
-
 /* 插入元素 e */
 func (mpq *MaxPQ) insert(e int) {
 	mpq.size++
@@ -27,16 +22,18 @@ func (mpq *MaxPQ) insert(e int) {
 }
 
 /* 删除并返回当前队列中最小元素 */
-func (mpq *MaxPQ) delMin() int {
+func (mpq *MaxPQ) pop() int {
 	// 堆顶就是最小元素
-	min := mpq.pq[1]
+	minVal := mpq.pq[1]
+
 	// 将其换到最后并删除之
 	mpq.swap(1, mpq.size)
 	mpq.pq = mpq.pq[:mpq.size]
 	mpq.size--
+
 	// 将堆顶元素下沉到正确的位置
 	mpq.sink(1)
-	return min
+	return minVal
 }
 
 /* 上浮第 x 个元素，以维护最小堆性质 */

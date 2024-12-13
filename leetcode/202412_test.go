@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_minMovesToCaptureTheQueen(t *testing.T) {
 	type args struct {
@@ -59,6 +62,36 @@ func Test_knightDialer(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := knightDialer(tt.args.n); got != tt.want {
 				t.Errorf("knightDialer() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getFinalState(t *testing.T) {
+	type args struct {
+		nums       []int
+		k          int
+		multiplier int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "1",
+			args: args{
+				nums:       []int{2, 1, 3, 5, 6},
+				k:          5,
+				multiplier: 2,
+			},
+			want: []int{8, 4, 6, 5, 6},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getFinalState(tt.args.nums, tt.args.k, tt.args.multiplier); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("getFinalState() = %v, want %v", got, tt.want)
 			}
 		})
 	}
