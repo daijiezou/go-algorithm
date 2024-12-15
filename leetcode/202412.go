@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"container/heap"
+	"slices"
 	"sort"
 )
 
@@ -228,20 +229,44 @@ func (h *minHeap) Pop() interface{} {
 func getFinalState(nums []int, k int, multiplier int) []int {
 	var newNums minHeap
 	heap.Init(&newNums)
-
+	n := len(nums)
+	const mod = 1_000_000_007
+	numMax := 0
 	for i := 0; i < len(nums); i++ {
 		heap.Push(&newNums, pair2{
 			first:  nums[i],
 			second: i,
 		})
+		numMax = max(numMax, nums[i])
 	}
-	for i := 0; i < k; i++ {
-		numPair := &newNums[0]      // 直接获取堆顶元素
-		numPair.first *= multiplier // 修改堆顶元素的值
-		nums[numPair.second] = numPair.first
+	for ; k > 0 && newNums[0].first < numMax; k-- {
+		newNums[0].first *= multiplier
 		heap.Fix(&newNums, 0)
 	}
+	sort.Slice(newNums, func(i, j int) bool {
+		return newNums[i].first < newNums[j].first || newNums[i].first == newNums[j].first && newNums[i].second < newNums[j].second
+	})
+	for i, p := range newNums {
+		e := k / n
+		if i < k%n {
+			e++
+		}
+		nums[p.second] = p.first % mod * pow(multiplier, e) % mod
+	}
 	return nums
+
+}
+
+func pow(x, n int) int {
+	res := 1
+	for n > 0 {
+		if n&1 > 0 { // 这个比特位是1，需要乘上
+			res = res * x % mod
+		}
+		x = x * x % mod
+		n >>= 1
+	}
+	return res
 }
 
 func getFinalState2(nums []int, k int, multiplier int) []int {
@@ -255,4 +280,32 @@ func getFinalState2(nums []int, k int, multiplier int) []int {
 		nums[minIndex] *= multiplier
 	}
 	return nums
+}
+
+func minSetSize(arr []int) int {
+	n := len(arr)
+	maxN := slices.Max(arr)
+	letterCnt := make([]int, maxN+1)
+	for i := 0; i < n; i++ {
+		letterCnt[arr[i]]++
+	}
+	sort.Slice(letterCnt, func(i, j int) bool {
+		return letterCnt[i] > letterCnt[j]
+	})
+	numTotal := 0
+	res := 0
+	for i := range letterCnt {
+		numTotal += letterCnt[i]
+		res++
+		if numTotal > n/2 {
+			return res
+		}
+	}
+
+	freq := map[int]int{}
+	for _, x := range arr {
+		freq[x]++
+	}
+
+	return 1
 }
