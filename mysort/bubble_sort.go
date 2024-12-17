@@ -24,10 +24,16 @@ func BubbleSort(arrayList []int) {
 func BubbleSort2(arrayList []int) {
 	n := len(arrayList)
 	for i := 0; i < n; i++ {
+		swapFlag := false
 		for j := n - 1; j > i; j-- {
 			if arrayList[j] < arrayList[j-1] {
 				arrayList[j], arrayList[j-1] = arrayList[j-1], arrayList[j]
+				swapFlag = true
 			}
+		}
+		// 一次交换操作都没有进行
+		if !swapFlag {
+			break
 		}
 	}
 	fmt.Println(arrayList)

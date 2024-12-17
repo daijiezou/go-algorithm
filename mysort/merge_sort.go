@@ -23,13 +23,11 @@ func merge(left, right []int) []int {
 			right = right[1:]
 		}
 	}
-	for len(left) > 0 {
-		res = append(res, left[0])
-		left = left[1:]
+	if len(left) > 0 {
+		res = append(res, left...)
 	}
-	for len(right) > 0 {
-		res = append(res, right[0])
-		right = right[1:]
+	if len(right) > 0 {
+		res = append(res, right...)
 	}
 	return res
 }
@@ -40,7 +38,7 @@ func mergeSort3(sumList []int) []int {
 }
 
 func sort(nums []int, lo, hi int) {
-	if lo == hi {
+	if lo >= hi {
 		return
 	}
 	mid := (lo + hi) / 2

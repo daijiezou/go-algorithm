@@ -121,3 +121,67 @@ func Test_minSetSize(t *testing.T) {
 		})
 	}
 }
+
+func Test_closestRoom(t *testing.T) {
+	type args struct {
+		rooms   [][]int
+		queries [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "1",
+			args: args{
+				rooms:   [][]int{{23, 22}, {6, 20}, {15, 6}, {22, 19}, {2, 10}, {21, 4}, {10, 18}, {16, 1}, {12, 7}, {5, 22}},
+				queries: [][]int{{12, 5}, {15, 15}, {21, 6}, {15, 1}, {23, 4}, {15, 11}, {1, 24}, {3, 19}, {25, 8}, {18, 6}},
+			},
+			want: []int{12, 10, 22, 15, 23, 10, -1, 5, 23, 15},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := closestRoom(tt.args.rooms, tt.args.queries); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("closestRoom() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minValidStrings(t *testing.T) {
+	type args struct {
+		words  []string
+		target string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				words:  []string{"abc", "aaaaa", "bcdef"},
+				target: "aabcdabc",
+			},
+			want: 3,
+		},
+		{
+			name: "2",
+			args: args{
+				words:  []string{"b", "ccacc", "a"},
+				target: "cccaaaacba",
+			},
+			want: 8,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minValidStrings(tt.args.words, tt.args.target); got != tt.want {
+				t.Errorf("minValidStrings() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -1,14 +1,14 @@
 package mysort
 
-func SelectSort(arrayList []int) {
-	length := len(arrayList)
-	for i := 0; i < length; i++ {
+func selectSort(nums []int) []int {
+	for i := 0; i < len(nums); i++ {
 		minIndex := i
-		for j := i + 1; j < length; j++ {
-			if arrayList[j] <= arrayList[minIndex] {
+		for j := i + 1; j < len(nums); j++ {
+			if nums[minIndex] > nums[j] {
 				minIndex = j
 			}
 		}
-		arrayList[i], arrayList[minIndex] = arrayList[minIndex], arrayList[i]
+		nums[i], nums[minIndex] = nums[minIndex], nums[i]
 	}
+	return nums
 }

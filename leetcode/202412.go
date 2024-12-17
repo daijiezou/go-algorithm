@@ -309,3 +309,105 @@ func minSetSize(arr []int) int {
 
 	return 1
 }
+
+func closestRoom(rooms [][]int, queries [][]int) []int {
+	ans := make([]int, len(queries))
+	n := len(rooms)
+	// 按照房子面积从小到大排序
+	sort.Slice(rooms, func(i, j int) bool {
+		return rooms[i][1] < rooms[j][1] || (rooms[i][1] == rooms[j][1] && rooms[i][0] < rooms[j][0])
+	})
+	for i := 0; i < len(queries); i++ {
+		perferredId := queries[i][0]
+		leftBound := RoomSizeLeftBound(rooms, queries[i][1])
+		if leftBound >= n {
+			ans[i] = -1
+		} else {
+			minAbs := myAbs(perferredId, rooms[leftBound][0])
+			ans[i] = rooms[leftBound][0]
+			minId := rooms[leftBound][0]
+			for j := leftBound + 1; j < n; j++ {
+				newAbs := myAbs(perferredId, rooms[j][0])
+				newMinId := rooms[j][0]
+				if newAbs <= minAbs {
+					if newAbs == minAbs {
+						if newMinId < minId {
+							minAbs = newAbs
+							minId = newMinId
+							ans[i] = minId
+						}
+					} else {
+						minAbs = newAbs
+						minId = newMinId
+						ans[i] = minId
+
+					}
+					if minAbs == 0 {
+						break
+					}
+
+				}
+			}
+		}
+	}
+	return ans
+}
+
+func RoomSizeLeftBound(rooms [][]int, target int) int {
+	left := 0
+	right := len(rooms) - 1
+	for left <= right {
+		mid := (left + right) / 2
+		if rooms[mid][1] < target {
+			left = mid + 1
+		} else {
+			right = mid - 1
+		}
+	}
+	return left
+}
+
+func myAbs(x, y int) int {
+	if x > y {
+		return x - y
+	} else {
+		return y - x
+	}
+}
+
+func minValidStrings(words []string, target string) int {
+	targets := []byte(target)
+
+	memo := make([]int, len(targets))
+	for i := range targets {
+		memo[i] = -1
+	}
+	res := minValDp(words, targets, 0, memo)
+
+	if res >= 50000 {
+		return -1
+	}
+	return res
+}
+
+func minValDp(words []string, target []byte, start int, memo []int) int {
+	if start >= len(target) {
+		return 0
+	}
+	if memo[start] != -1 {
+		return memo[start]
+	}
+	cnt := 50000
+	for _, word := range words {
+		var end int
+		for end = start; end < len(target) && end-start < len(word); end++ {
+			if word[end-start] != target[end] {
+				break
+			} else {
+				cnt = min(cnt, minValDp(words, target, end+1, memo)+1)
+			}
+		}
+	}
+	memo[start] = cnt
+	return cnt
+}
