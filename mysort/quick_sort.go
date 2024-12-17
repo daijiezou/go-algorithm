@@ -5,8 +5,8 @@ func QuickSort(arr []int, left, right int) {
 		return
 	}
 	part := Part(arr, left, right)
-	QuickSort(arr, left, part-1)
-	QuickSort(arr, part+1, right)
+	QuickSort(arr, left, part-1)  // 这里是part-1
+	QuickSort(arr, part+1, right) // 这里是part+1
 }
 
 func Part(arr []int, left, right int) int {

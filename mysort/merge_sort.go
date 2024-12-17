@@ -57,21 +57,21 @@ func merge2(nums []int, lo int, hi int, mid int) {
 	for i := lo; i <= hi; i++ {
 		temp[i-lo] = nums[i]
 	}
-	i := lo
-	j := mid + 1
-	for p := lo; p <= hi; p++ {
-		if i == mid+1 {
-			nums[p] = temp[j-lo]
-			j++
-		} else if j == hi+1 {
-			nums[p] = temp[i-lo]
-			i++
-		} else if temp[i-lo] < temp[j-lo] {
-			nums[p] = temp[i-lo]
-			i++
+	leftIndex := lo
+	rightIndex := mid + 1
+	for index := lo; index <= hi; index++ {
+		if leftIndex == mid+1 { // left数组中已经没有元素
+			nums[index] = temp[rightIndex-lo]
+			rightIndex++
+		} else if rightIndex == hi+1 { // right数组中已经没有元素
+			nums[index] = temp[leftIndex-lo]
+			leftIndex++
+		} else if temp[leftIndex-lo] < temp[rightIndex-lo] {
+			nums[index] = temp[leftIndex-lo]
+			leftIndex++
 		} else {
-			nums[p] = temp[j-lo]
-			j++
+			nums[index] = temp[rightIndex-lo]
+			rightIndex++
 		}
 	}
 }
