@@ -411,3 +411,38 @@ func minValDp(words []string, target []byte, start int, memo []int) int {
 	memo[start] = cnt
 	return cnt
 }
+
+// https://leetcode.cn/problems/jump-game-ii/
+func jumpGame(nums []int) int {
+	var step, forest, end int
+	for i := 0; i < len(nums)-1; i++ {
+		forest = max(forest, nums[i]+i)
+		if end == i { // 到达了桥的终点，需要重新架一座桥
+			end = forest
+			step++
+		}
+	}
+	return step
+}
+
+func canJump(nums []int) bool {
+	var farthest int
+	for i := 0; i < len(nums)-1; i++ {
+		farthest = max(farthest, nums[i]+i)
+		if farthest <= i {
+			return false
+		}
+	}
+	return farthest >= (len(nums) - 1)
+}
+
+func stableMountains(height []int, threshold int) []int {
+	res := make([]int, 0)
+	n := len(height)
+	for i := 1; i < n; i++ {
+		if height[i-1] > threshold {
+			res = append(res, i)
+		}
+	}
+	return res
+}

@@ -185,3 +185,50 @@ func Test_minValidStrings(t *testing.T) {
 		})
 	}
 }
+
+func Test_groupAnagrams(t *testing.T) {
+	type args struct {
+		strs []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want [][]string
+	}{
+		{
+			name: "1",
+			args: args{strs: []string{"eat", "tea", "tan", "ate", "nat", "bat"}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := groupAnagrams(tt.args.strs); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("groupAnagrams() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_longestConsecutive(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{0, 3, 7, 2, 5, 8, 4, 6, 0, 1}},
+			want: 9,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := longestConsecutive(tt.args.nums); got != tt.want {
+				t.Errorf("longestConsecutive() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

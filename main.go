@@ -623,3 +623,48 @@ func addTwoNumbers(l1 *ListNode, l2 *ListNode) *ListNode {
 	}
 	return dummy.Next
 }
+
+func nSumTarget(nums []int, n int, start int, target int64) [][]int {
+	res := make([][]int, 0)
+	if len(nums) < n {
+		return res
+	}
+	length := len(nums)
+	if n == 2 {
+		left := start
+		right := length - 1
+		for left < right {
+			leftVal := nums[left]
+			rightVal := nums[right]
+			sum := nums[right] + nums[left]
+			if int64(sum) > target {
+				right--
+			} else if int64(sum) < target {
+				left++
+			} else {
+				res = append(res, []int{left, right})
+				// 跳过所有重复的元素
+				for left < right && nums[left] == leftVal {
+					left++
+				}
+				for left < right && nums[right] == rightVal {
+					right--
+				}
+			}
+		}
+
+	} else {
+		for i := start; i < len(nums); i++ {
+			subs := nSumTarget(nums, n-1, i+1, target-int64(nums[i]))
+			for _, sub := range subs {
+				sub = append(sub, nums[i])
+				res = append(res, sub)
+			}
+			for i < length-1 && nums[i] == nums[i+1] {
+				i++
+			}
+		}
+	}
+	return res
+
+}
