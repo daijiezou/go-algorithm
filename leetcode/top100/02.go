@@ -79,3 +79,44 @@ func twoSum2(nums []int, start int, target int) [][]int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/trapping-rain-water/?envType=study-plan-v2&envId=top-100-liked
+// 接雨水
+func trap(height []int) int {
+	n := len(height)
+	leftMax := make([]int, n)
+	rightMax := make([]int, n)
+	lmax := height[0]
+	for i := 0; i < n; i++ {
+		lmax = max(lmax, height[i])
+		leftMax[i] = lmax
+	}
+	rMax := height[n-1]
+	for i := n - 1; i >= 0; i-- {
+		rMax = max(rMax, height[i])
+		rightMax[i] = rMax
+	}
+	res := 0
+	for i := 0; i < len(height); i++ {
+		h := min(leftMax[i], rightMax[n-i-1])
+		res += (h - height[i])
+	}
+	return res
+}
+
+func lengthOfLongestSubstring(s string) int {
+	window := make(map[byte]int, 0)
+	res := 0
+	left := 0
+	for right := 0; right < len(s); right++ {
+		cur := s[right]
+		window[cur]++
+		for window[cur] > 1 {
+			leftVal := s[left]
+			window[leftVal]--
+			left++
+		}
+		res = max(res, right-left+1)
+	}
+	return res
+}

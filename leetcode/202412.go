@@ -446,3 +446,34 @@ func stableMountains(height []int, threshold int) []int {
 	}
 	return res
 }
+
+func minAnagramLength(s string) int {
+	n := len(s)
+loop1:
+	for i := 1; i <= n/2; i++ {
+		if n%i != 0 {
+			continue
+		}
+		encodeStr := Encode(s[:i])
+		for j := i; j < n; j += i {
+			encode := Encode(s[j : j+i])
+			if encode != encodeStr {
+				continue loop1
+			}
+		}
+		return i
+	}
+	return n
+}
+
+func Encode(s string) [26]int {
+	var cnts [26]int
+	for _, v := range s {
+		cnts[v-'a']++
+	}
+	//var res strings.Builder
+	//for i := 0; i < 26; i++ {
+	//	res.WriteByte(byte(cnts[i]))
+	//}
+	return cnts
+}
