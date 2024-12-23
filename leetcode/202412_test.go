@@ -186,32 +186,9 @@ func Test_minValidStrings(t *testing.T) {
 	}
 }
 
-func Test_groupAnagrams(t *testing.T) {
+func Test_getWeight(t *testing.T) {
 	type args struct {
-		strs []string
-	}
-	tests := []struct {
-		name string
-		args args
-		want [][]string
-	}{
-		{
-			name: "1",
-			args: args{strs: []string{"eat", "tea", "tan", "ate", "nat", "bat"}},
-		},
-	}
-	for _, tt := range tests {
-		t.Run(tt.name, func(t *testing.T) {
-			if got := groupAnagrams(tt.args.strs); !reflect.DeepEqual(got, tt.want) {
-				t.Errorf("groupAnagrams() = %v, want %v", got, tt.want)
-			}
-		})
-	}
-}
-
-func Test_longestConsecutive(t *testing.T) {
-	type args struct {
-		nums []int
+		num int
 	}
 	tests := []struct {
 		name string
@@ -220,14 +197,44 @@ func Test_longestConsecutive(t *testing.T) {
 	}{
 		{
 			name: "1",
-			args: args{nums: []int{0, 3, 7, 2, 5, 8, 4, 6, 0, 1}},
+			args: args{num: 12},
 			want: 9,
 		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			if got := longestConsecutive(tt.args.nums); got != tt.want {
-				t.Errorf("longestConsecutive() = %v, want %v", got, tt.want)
+			if got := getWeight(tt.args.num); got != tt.want {
+				t.Errorf("getWeight() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getKth2(t *testing.T) {
+	type args struct {
+		lo int
+		hi int
+		k  int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				lo: 12,
+				hi: 15,
+				k:  2,
+			},
+			want: 13,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getKth2(tt.args.lo, tt.args.hi, tt.args.k); got != tt.want {
+				t.Errorf("getKth2() = %v, want %v", got, tt.want)
 			}
 		})
 	}

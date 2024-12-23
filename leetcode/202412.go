@@ -482,3 +482,38 @@ func sortTheStudents(score [][]int, k int) [][]int {
 	sort.Slice(score, func(i, j int) bool { return score[i][k] > score[j][k] })
 	return score
 }
+
+func getKth2(lo int, hi int, k int) int {
+	type pair struct {
+		origin int
+		weight int
+	}
+	nums := []pair{}
+	for i := lo; i <= hi; i++ {
+		weight := getWeight(i)
+		nums = append(nums, pair{
+			origin: i,
+			weight: weight,
+		})
+	}
+	sort.Slice(nums, func(i, j int) bool {
+		if nums[i].weight == nums[j].weight {
+			return nums[i].origin < nums[j].origin
+		}
+		return nums[i].weight < nums[j].weight
+	})
+	return nums[k-1].origin
+}
+
+func getWeight(num int) int {
+	weight := 0
+	for num != 1 {
+		if num%2 == 0 {
+			num = num / 2
+		} else {
+			num = 3*num + 1
+		}
+		weight++
+	}
+	return weight
+}
