@@ -517,3 +517,104 @@ func getWeight(num int) int {
 	}
 	return weight
 }
+
+// https://leetcode.cn/problems/maximum-number-of-eaten-apples/
+func eatenApples(apples []int, days []int) int {
+	res := 0
+	n := len(apples)
+	var h appleHp
+	heap.Init(&h)
+	for i := 0; i < n; i++ {
+		for h.Len() > 0 && h[0].rottenDay == i {
+			heap.Pop(&h)
+		}
+		if apples[i] > 0 {
+			heap.Push(&h, applePair{
+				rottenDay: i + days[i],
+				num:       apples[i],
+			})
+		}
+		if h.Len() > 0 {
+			res++
+			h[0].num--
+			if h[0].num == 0 {
+				heap.Pop(&h)
+			}
+		}
+	}
+	i := len(apples)
+	for h.Len() > 0 {
+		for h.Len() > 0 && h[0].rottenDay <= i {
+			heap.Pop(&h)
+		}
+		if h.Len() == 0 {
+			return res
+		}
+		p := heap.Pop(&h).(applePair)
+		k := min(p.num, p.rottenDay-i)
+		res += k
+		i += k
+	}
+	return res
+}
+
+type applePair struct {
+	rottenDay int
+	num       int
+}
+
+type appleHp []applePair
+
+func (a appleHp) Len() int {
+	return len(a)
+}
+
+func (a appleHp) Less(i, j int) bool {
+	return a[i].rottenDay < a[j].rottenDay
+}
+
+func (a appleHp) Swap(i, j int) {
+	a[i], a[j] = a[j], a[i]
+}
+
+func (a *appleHp) Push(x any) {
+	*a = append(*a, x.(applePair))
+}
+
+func (a *appleHp) Pop() any {
+	apple := *a
+	v := apple[len(apple)-1]
+	*a = apple[:len(apple)-1]
+	return v
+}
+
+// https://leetcode.cn/problems/minimum-cost-for-cutting-cake-i/
+func minimumCost(m int, n int, horizontalCut []int, verticalCut []int) int {
+	slices.Sort(horizontalCut)
+	slices.Sort(verticalCut)
+	i := m - 2
+	j := n - 2
+	res := 0
+	cnth := 1
+	cntw := 1
+	for i >= 0 && j >= 0 {
+		if horizontalCut[i] > verticalCut[j] {
+			res += horizontalCut[i] * cntw
+			cnth++
+			i--
+		} else {
+			res += verticalCut[j] * cnth
+			cntw++
+			j--
+		}
+	}
+	for i >= 0 {
+		res += horizontalCut[i] * cntw
+		i--
+	}
+	for j >= 0 {
+		res += verticalCut[j] * cnth
+		j--
+	}
+	return res
+}
