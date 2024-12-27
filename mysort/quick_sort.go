@@ -12,12 +12,12 @@ func QuickSort(arr []int, left, right int) {
 func Part(arr []int, left, right int) int {
 	key := arr[right]
 	index := left
-	for i := left; i < right; i++ {
-		if arr[i] < key {
-			arr[index], arr[i] = arr[i], arr[index]
+	for left < right {
+		if arr[left] < key {
+			arr[index], arr[left] = arr[left], arr[index]
 			index++
 		}
-
+		left++
 	}
 	arr[index], arr[right] = arr[right], arr[index]
 	return index

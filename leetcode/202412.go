@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"slices"
 	"sort"
+	"strings"
 )
 
 func minMovesToCaptureTheQueen(a int, b int, c int, d int, e int, f int) int {
@@ -615,6 +616,35 @@ func minimumCost(m int, n int, horizontalCut []int, verticalCut []int) int {
 	for j >= 0 {
 		res += verticalCut[j] * cnth
 		j--
+	}
+	return res
+}
+
+func isSubstringPresent(s string) bool {
+	for i := 0; i < len(s)-1; i++ {
+		str := string([]byte{s[i+1], s[i]})
+		if strings.Contains(s, str) {
+			return true
+		}
+	}
+	return false
+}
+
+// https://leetcode.cn/problems/find-occurrences-of-an-element-in-an-array/
+func occurrencesOfElement(nums []int, queries []int, x int) []int {
+	xIndex := make([]int, 0)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] == x {
+			xIndex = append(xIndex, i)
+		}
+	}
+	res := make([]int, 0, len(queries))
+	for _, query := range queries {
+		if query-1 >= len(xIndex) {
+			res = append(res, -1)
+		} else {
+			res = append(res, xIndex[query-1])
+		}
 	}
 	return res
 }
