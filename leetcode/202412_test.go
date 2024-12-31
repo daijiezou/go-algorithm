@@ -267,3 +267,51 @@ func Test_eatenApples(t *testing.T) {
 		})
 	}
 }
+
+func Test_rankTeams(t *testing.T) {
+	type args struct {
+		votes []string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "1",
+			args: args{votes: []string{"ABC", "ACB", "ABC", "ACB", "ACB"}},
+			want: "ACB",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := rankTeams(tt.args.votes); got != tt.want {
+				t.Errorf("rankTeams() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_findMid(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want float64
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{7, 2, 1, 10, 5, 8, 3}},
+			want: 5,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findMedian(tt.args.nums); got != tt.want {
+				t.Errorf("findMid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

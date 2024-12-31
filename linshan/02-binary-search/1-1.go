@@ -82,3 +82,14 @@ func countFairPairs(nums []int, lower int, upper int) int64 {
 	}
 	return int64(ans)
 }
+
+func isPossibleToSplit(nums []int) bool {
+	numCnt := make([]int, 101)
+	for i := 0; i < len(nums); i++ {
+		numCnt[nums[i]]++
+		if numCnt[nums[i]] > 2 {
+			return false
+		}
+	}
+	return true
+}

@@ -2,9 +2,11 @@ package leetcode
 
 import (
 	"container/heap"
+	"math/rand"
 	"slices"
 	"sort"
 	"strings"
+	"time"
 )
 
 func minMovesToCaptureTheQueen(a int, b int, c int, d int, e int, f int) int {
@@ -647,4 +649,229 @@ func occurrencesOfElement(nums []int, queries []int, x int) []int {
 		}
 	}
 	return res
+}
+
+func rankTeams(votes []string) string {
+	voteRank := make(map[uint8][]int)
+	m := len(votes[0])
+	voteRankKey := make([]uint8, m)
+	for i := 0; i < m; i++ {
+		voteRank[votes[0][i]] = make([]int, m)
+		voteRankKey[i] = votes[0][i]
+	}
+	for i := 0; i < len(votes); i++ {
+		for j := 0; j < m; j++ {
+			voteRank[votes[i][j]][j]++
+		}
+	}
+	sort.Slice(voteRankKey, func(i, j int) bool {
+		iKey := voteRankKey[i]
+		jKey := voteRankKey[j]
+		for index := 0; index < m; index++ {
+			if voteRank[iKey][index] != voteRank[jKey][index] {
+				return voteRank[iKey][index] > voteRank[jKey][index]
+			}
+		}
+		return voteRankKey[i] < voteRankKey[j]
+	})
+	res := strings.Builder{}
+	for i := 0; i < m; i++ {
+		res.WriteByte(voteRankKey[i])
+	}
+	return res.String()
+}
+
+// https://leetcode.cn/problems/linked-list-in-binary-tree/
+func isSubPath(head *ListNode, root *TreeNode) bool {
+	// 表示已经将链表遍历完
+	if head == nil {
+		return true
+	}
+	// 链表没有遍历完，但是二叉树已经到底
+	if root == nil {
+		return false
+	}
+
+	if root.Val == head.Val {
+		if check(head, root) {
+			return true
+		}
+	}
+	return isSubPath(head, root.Left) || isSubPath(head, root.Right)
+}
+
+// 检查是否能够将链表嵌入二叉树
+func check(head *ListNode, root *TreeNode) bool {
+	if head == nil {
+		return true
+	}
+	if root == nil {
+		return false
+	}
+
+	if head.Val == root.Val {
+		// 在子树上嵌入子链表
+		return check(head.Next, root.Left) || check(head.Next, root.Right)
+	}
+
+	return false
+}
+
+func findMid(nums []int) float64 {
+	n := len(nums)
+	if n%2 == 1 {
+		return float64(findk(nums, n/2))
+	}
+	// 偶数个元素，返回中间两个值的平均值
+	left := findk(nums, n/2-1)
+	right := findk(nums, n/2)
+	return float64(left+right) / 2.0
+}
+
+func findk(nums []int, k int) int {
+	keyValue := nums[0]
+	equalNums := make([]int, 0)
+	leftNums := make([]int, 0)
+	rightNums := make([]int, 0)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] == keyValue {
+			equalNums = append(equalNums, nums[i])
+		} else if nums[i] < keyValue {
+			leftNums = append(leftNums, nums[i])
+		} else {
+			rightNums = append(rightNums, nums[i])
+		}
+	}
+	if k < len(leftNums) {
+		return findk(leftNums, k)
+	} else if k <= len(leftNums)+len(equalNums) {
+		return keyValue
+	} else {
+		return findk(rightNums, k-len(leftNums)-len(equalNums))
+	}
+}
+
+func findMid2(nums []int) float64 {
+	n := len(nums)
+	if n%2 == 1 {
+		return float64(findk2(nums, n/2, 0, len(nums)-1))
+	}
+	// 偶数个元素，返回中间两个值的平均值
+	left := findk2(nums, n/2-1, 0, len(nums)-1)
+	right := findk2(nums, n/2, 0, len(nums)-1)
+	return float64(left+right) / 2.0
+}
+
+func findk2(nums []int, k int, left, right int) int {
+	if left >= right {
+		return nums[left]
+	}
+	keyValue := nums[right]
+	equalNums := 0
+	leftNums := 0
+	rightNums := 0
+	part := left
+	for i := left; i < right; i++ {
+		if nums[i] == keyValue {
+			equalNums++
+		} else if nums[i] < keyValue {
+			nums[part], nums[i] = nums[i], nums[part]
+			part++
+			leftNums++
+		} else {
+			rightNums++
+		}
+	}
+	nums[part], nums[right] = nums[right], nums[part]
+	if k < leftNums {
+		return findk2(nums, k, left, part-1)
+	} else if k < leftNums+equalNums {
+		return keyValue
+	} else {
+		return findk2(nums, k-leftNums-equalNums, part+1, right)
+	}
+}
+
+func findMedian(nums []int) float64 {
+	n := len(nums)
+	if n == 0 {
+		panic("数组不能为空")
+	}
+
+	if n%2 == 1 {
+		// 奇数个元素，中位数是第 n/2 小的元素
+		return float64(quickSelect(nums, n/2))
+	} else {
+		// 偶数个元素，中位数是第 n/2-1 和第 n/2 小的元素的平均值
+		left := quickSelect(nums, n/2-1)
+		right := quickSelect(nums, n/2)
+		return float64(left+right) / 2.0
+	}
+}
+
+func quickSelect(nums []int, k int) int {
+	left, right := 0, len(nums)-1
+	for left <= right {
+		pivotIndex := partition(nums, left, right)
+		if pivotIndex == k {
+			return nums[pivotIndex]
+		} else if pivotIndex < k {
+			left = pivotIndex + 1
+		} else {
+			right = pivotIndex - 1
+		}
+	}
+	panic("无法找到中位数")
+}
+
+func partition(nums []int, left, right int) int {
+	// 随机选择基准值，避免退化
+	rand.Seed(time.Now().UnixNano())
+	pivotIndex := left + rand.Intn(right-left+1)
+	nums[pivotIndex], nums[right] = nums[right], nums[pivotIndex]
+
+	pivot := nums[right]
+	i := left
+	for j := left; j < right; j++ {
+		if nums[j] < pivot {
+			nums[i], nums[j] = nums[j], nums[i]
+			i++
+		}
+	}
+	nums[i], nums[right] = nums[right], nums[i]
+	return i
+}
+
+// https://leetcode.cn/problems/minimum-cost-for-cutting-cake-ii/description/
+func minimumCost2(m int, n int, horizontalCut []int, verticalCut []int) int64 {
+	res := 0
+	slices.Sort(horizontalCut)
+	slices.Sort(verticalCut)
+	i := m - 2
+	j := n - 2
+	hcnt := 1
+	vcnt := 1
+
+	for i >= 0 && j >= 0 {
+		if horizontalCut[i] > verticalCut[j] {
+			res += horizontalCut[i] * vcnt
+			i--
+			hcnt++
+		} else {
+			res += verticalCut[j] * hcnt
+			j--
+			vcnt++
+		}
+	}
+	for i >= 0 {
+		res += horizontalCut[i] * vcnt
+		i--
+		hcnt++
+	}
+	for j >= 0 {
+		res += verticalCut[j] * hcnt
+		j--
+		vcnt++
+	}
+	return int64(res)
 }
