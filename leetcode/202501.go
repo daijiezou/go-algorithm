@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"container/list"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -90,4 +91,16 @@ func (this *ATM) Withdraw(amount int) []int {
 		}
 	}
 	return []int{-1}
+}
+
+func maxConsecutive(bottom int, top int, special []int) int {
+	res := 0
+	slices.Sort(special)
+	n := len(special)
+	res = special[0] - bottom
+	for i := 1; i < n; i++ {
+		res = max(res, special[i]-special[i-1]-1)
+	}
+	res = max(res, top-special[n-1])
+	return res
 }

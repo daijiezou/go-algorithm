@@ -78,3 +78,33 @@ func TestConstructorATM(t *testing.T) {
 	fmt.Println(atm.Withdraw(550))
 	//fmt.Println(atm.BanknotesCount)
 }
+
+func Test_maxConsecutive(t *testing.T) {
+	type args struct {
+		bottom  int
+		top     int
+		special []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				bottom:  2,
+				top:     9,
+				special: []int{4, 6},
+			},
+			want: 3,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxConsecutive(tt.args.bottom, tt.args.top, tt.args.special); got != tt.want {
+				t.Errorf("maxConsecutive() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
