@@ -83,22 +83,6 @@ func removeDuplicates2(nums []int) int {
 }
 
 func majorityElement(nums []int) int {
-	//if len(nums) == 1 {
-	//	return nums[0]
-	//}
-	//n := len(nums)
-	//slices.Sort(nums)
-	//for i := 1; i < n; i++ {
-	//	cnt := 1
-	//	for i < n && nums[i] == nums[i-1] {
-	//		cnt++
-	//		if cnt > n/2 {
-	//			return nums[i]
-	//		}
-	//		i++
-	//	}
-	//}
-	//return -1
 	numCnt := make(map[int]int)
 	n := len(nums)
 	targetCnt := n / 2
@@ -139,6 +123,10 @@ func maxProfit2(prices []int) int {
 	return res
 }
 
+/*
+dp[i][1] 表示第i天 手里有股票
+dp[i][0] 表示第i天 手里没股票
+*/
 func maxProfit_k1(prices []int) int {
 	dp := make([][2]int, 0)
 	n := len(prices)
@@ -323,7 +311,6 @@ func canCompleteCircuit(gas []int, cost []int) int {
 		if step == n {
 			return i
 		}
-
 	}
 	return -1
 }

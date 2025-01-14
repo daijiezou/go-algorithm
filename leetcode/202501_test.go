@@ -108,3 +108,91 @@ func Test_maxConsecutive(t *testing.T) {
 		})
 	}
 }
+
+func Test_largestGoodInteger(t *testing.T) {
+	type args struct {
+		num string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			args: args{num: "6777133339"},
+			want: "777",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := largestGoodInteger(tt.args.num); got != tt.want {
+				t.Errorf("largestGoodInteger() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_waysToSplitArray(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "",
+			args: args{nums: []int{2, 3, 1, 0}},
+			want: 2,
+		},
+		{
+			name: "",
+			args: args{nums: []int{10, 4, -8, 7}},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := waysToSplitArray(tt.args.nums); got != tt.want {
+				t.Errorf("waysToSplitArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minOperationsII(t *testing.T) {
+	type args struct {
+		nums []int
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{2, 11, 10, 1, 3},
+				k:    10,
+			},
+			want: 2,
+		},
+		{
+			name: "2",
+			args: args{
+				nums: []int{1, 1, 2, 4, 9},
+				k:    20,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minOperationsII(tt.args.nums, tt.args.k); got != tt.want {
+				t.Errorf("minOperationsII() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
