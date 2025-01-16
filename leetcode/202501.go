@@ -3,6 +3,8 @@ package leetcode
 import (
 	"container/heap"
 	"container/list"
+	"fmt"
+	"math"
 	"slices"
 	"strconv"
 	"strings"
@@ -273,4 +275,35 @@ func minOperationsII(nums []int, k int) int {
 		heap.Push(&nums2, newEle)
 	}
 	return cnt
+}
+
+func rotate(nums []int, k int) {
+	n := len(nums)
+	k = k % n
+	newNums := make([]int, n)
+	for i := 0; i < n; i++ {
+		newNums[(i+k)%n] = nums[i]
+	}
+	nums = newNums
+	fmt.Println(nums)
+}
+
+func minimumSubarrayLength(nums []int, k int) int {
+	ans := math.MaxInt
+	for i, x := range nums {
+		if x >= k {
+			return 1
+		}
+		for j := i - 1; j >= 0 && nums[j]|x != nums[j]; j-- {
+			nums[j] = nums[j] | x
+			if nums[j] >= k {
+				ans = min(ans, i-j+1)
+			}
+		}
+	}
+	if ans == math.MaxInt {
+		return -1
+	}
+
+	return ans
 }

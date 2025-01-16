@@ -16,15 +16,13 @@ func reverseList2(head *ListNode) *ListNode {
 	if head == nil || head.Next == nil {
 		return head
 	}
-	var pre, cur, nxt *ListNode
-	pre, cur, nxt = nil, head, head.Next
+	var pre, cur, next *ListNode
+	pre, cur, next = nil, head, head.Next
 	for cur != nil {
+		next = cur.Next
 		cur.Next = pre
 		pre = cur
-		cur = nxt
-		if nxt != nil {
-			nxt = nxt.Next
-		}
+		cur = next
 	}
 	return pre
 }
@@ -39,6 +37,35 @@ func reverseN(head *ListNode, n int) *ListNode {
 	head.Next.Next = head
 	head.Next = nextNode
 	return last
+}
+
+func reverseN2(head *ListNode, n int) *ListNode {
+	if head == nil || head.Next == nil {
+		return head
+	}
+	var pre, cur, next *ListNode
+	pre, cur, next = nil, head, head.Next
+	for n > 0 {
+		next = cur.Next
+		cur.Next = pre
+		pre = cur
+		cur = next
+		n--
+	}
+	head.Next = cur
+	return pre
+}
+
+func reverseBetween2(head *ListNode, m int, n int) *ListNode {
+	if m == 1 {
+		return reverseN2(head, n)
+	}
+	pre := head
+	for i := 1; i < m-1; i++ { // 此处比较重要，从1开始到m-1
+		pre = pre.Next
+	}
+	pre.Next = reverseN2(pre.Next, n-m+1)
+	return head
 }
 
 var nextNode *ListNode

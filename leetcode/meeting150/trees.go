@@ -103,10 +103,11 @@ func buildTree(inorder []int, postorder []int) *TreeNode {
 }
 
 type Node struct {
-	Val   int
-	Left  *Node
-	Right *Node
-	Next  *Node
+	Val    int
+	Left   *Node
+	Right  *Node
+	Next   *Node
+	Random *Node
 }
 
 func connect(root *Node) *Node {

@@ -87,3 +87,37 @@ func insert(intervals [][]int, newInterval []int) [][]int {
 	}
 	return res
 }
+
+func findMinArrowShots(points [][]int) int {
+	sort.Slice(points, func(i, j int) bool {
+		return points[i][0] < points[j][0]
+	})
+	cnt := 1
+	right := points[0][1]
+	for i := 1; i < len(points); i++ {
+		cur := points[i]
+		if cur[0] > right {
+			cnt++
+			right = cur[1]
+		} else {
+			right = min(right, cur[1])
+		}
+	}
+	return cnt
+}
+
+func findMinArrowShots1(points [][]int) int {
+	sort.Slice(points, func(i, j int) bool {
+		return points[i][1] < points[j][1]
+	})
+	cnt := 1
+	right := points[0][1]
+	for i := 1; i < len(points); i++ {
+		cur := points[i]
+		if cur[0] > right {
+			cnt++
+			right = cur[1]
+		}
+	}
+	return cnt
+}

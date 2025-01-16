@@ -27,3 +27,19 @@ func maxDepthTraverse(root *TreeNode) {
 	// 后续位置
 	depth--
 }
+
+func maxDepth2(root *TreeNode) int {
+	ans := 0
+	var f func(root *TreeNode, cnt int)
+	f = func(root *TreeNode, cnt int) {
+		if root == nil {
+			return
+		}
+		cnt++
+		ans = max(cnt, ans)
+		f(root.Left,cnt)
+		f(root.Right,cnt)
+	}
+	f(root, 0)
+	return ans
+}
