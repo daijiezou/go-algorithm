@@ -193,3 +193,23 @@ func partition(head *ListNode, x int) *ListNode {
 	p1.Next = dummy2.Next
 	return dummy1.Next
 }
+
+func deleteDuplicates(head *ListNode) *ListNode {
+	dummy := &ListNode{}
+	p := dummy
+	for head != nil {
+		if head.Next != nil && head.Val == head.Next.Val {
+			for head.Next != nil && head.Val == head.Next.Val {
+				head = head.Next
+			}
+			head = head.Next
+		} else {
+			p.Next = &ListNode{
+				Val: head.Val,
+			}
+			p = p.Next
+			head = head.Next
+		}
+	}
+	return dummy.Next
+}

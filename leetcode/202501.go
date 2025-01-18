@@ -307,3 +307,51 @@ func minimumSubarrayLength(nums []int, k int) int {
 
 	return ans
 }
+
+func fucn1(nums [][]int) int {
+	m := len(nums)
+	memo := make([][]int, m)
+	for i := 0; i < m; i++ {
+		memo[i] = make([]int, m)
+	}
+	memo[0][0] = nums[0][0]
+	return minPathSum(nums, 1, 0, memo) + nums[0][0]
+}
+
+func minPathSum(nums [][]int, depth int, row int, memo [][]int) int {
+	if depth == len(nums)-1 {
+		return min(nums[depth][row], nums[depth][row+1])
+	}
+	if memo[depth][row] != 0 {
+		return memo[depth][row]
+	}
+	memo[depth][row] = min(minPathSum(nums, depth+1, row, memo)+nums[depth][row],
+		minPathSum(nums, depth+1, row+1, memo)+nums[depth][row+1])
+	return memo[depth][row]
+}
+
+func minimumTotal(triangle [][]int) int {
+	m := len(triangle)
+	dp := make([][]int, m)
+	for i := 0; i < m; i++ {
+		dp[i] = make([]int, m)
+		for j := 0; j < m; j++ {
+			dp[i][j] = math.MaxInt
+		}
+	}
+	dp[0][0] = triangle[0][0]
+	for i := 1; i < m; i++ {
+		for j := 0; j < len(triangle[m]); j++ {
+			if j-1 >= 0 {
+				dp[i][j] = min(dp[i-1][j], dp[i-1][j-1]) + triangle[i][j]
+			} else {
+				dp[i][j] = dp[i-1][j] + triangle[i][j]
+			}
+		}
+	}
+	res := math.MaxInt
+	for i := 0; i < m; i++ {
+		res = min(res, dp[m-1][i])
+	}
+	return res
+}

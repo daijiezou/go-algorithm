@@ -1,6 +1,9 @@
 package meeting150
 
-import "math"
+import (
+	"math"
+	"slices"
+)
 
 type TreeNode struct {
 	Val   int
@@ -211,4 +214,153 @@ func countNodes(root *TreeNode) int {
 		return int(math.Pow(2, float64(lh))) - 1
 	}
 	return 1 + countNodes(root.Left) + countNodes(root.Right)
+}
+
+// 二叉树的右视图
+func rightSideView(root *TreeNode) []int {
+	if root == nil {
+		return []int{}
+	}
+	queue := []*TreeNode{root}
+	res := make([]int, 0)
+	for len(queue) > 0 {
+		size := len(queue)
+		for size > 0 {
+			cur := queue[0]
+			queue = queue[1:]
+			if cur.Left != nil {
+				queue = append(queue, cur.Left)
+			}
+			if cur.Right != nil {
+				queue = append(queue, cur.Right)
+			}
+			if size == 1 {
+				res = append(res, cur.Val)
+			}
+			size--
+		}
+	}
+	return res
+}
+
+func averageOfLevels(root *TreeNode) []float64 {
+	if root == nil {
+		return []float64{}
+	}
+	queue := []*TreeNode{root}
+	res := make([]float64, 0)
+	for len(queue) > 0 {
+		size := len(queue)
+		sum := float64(0)
+		curSize := size
+		for size > 0 {
+			cur := queue[0]
+			queue = queue[1:]
+			if cur.Left != nil {
+				queue = append(queue, cur.Left)
+			}
+			if cur.Right != nil {
+				queue = append(queue, cur.Right)
+			}
+			size--
+			sum += float64(cur.Val)
+		}
+		res = append(res, sum/float64(curSize))
+	}
+	return res
+}
+
+func zigzagLevelOrder(root *TreeNode) [][]int {
+	if root == nil {
+		return [][]int{}
+	}
+	queue := []*TreeNode{root}
+	res := make([][]int, 0)
+	flag := true
+	for len(queue) > 0 {
+		size := len(queue)
+		curVals := []int{}
+		for size > 0 {
+			cur := queue[0]
+			queue = queue[1:]
+			if cur.Left != nil {
+				queue = append(queue, cur.Left)
+			}
+			if cur.Right != nil {
+				queue = append(queue, cur.Right)
+			}
+			curVals = append(curVals, cur.Val)
+			size--
+		}
+		if flag {
+			res = append(res, curVals)
+		} else {
+			slices.Reverse(curVals)
+			res = append(res, curVals)
+		}
+		flag = !flag
+	}
+	return res
+}
+
+func getMinimumDifference(root *TreeNode) int {
+	ans := math.MaxInt
+	var prev *TreeNode
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if prev != nil {
+			ans = min(node.Val-prev.Val, ans)
+		}
+		prev = node
+		if ans == 1 {
+			return
+		}
+		dfs(node.Right)
+	}
+	dfs(root)
+	return ans
+}
+
+func kthSmallest(root *TreeNode, k int) int {
+	ans := 0
+
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		k--
+		if k == 0 {
+			ans = node.Val
+			return
+		}
+		dfs(node.Right)
+	}
+	dfs(root)
+	return ans
+}
+
+func isValidBST(root *TreeNode) bool {
+	var dfs func(node *TreeNode)
+	var prev *TreeNode
+	valid := true
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			return
+		}
+		dfs(node.Left)
+		if prev != nil && node.Val <= prev.Val {
+			valid = false
+			return
+		}
+		prev = node
+		dfs(node.Right)
+	}
+	dfs(root)
+	return valid
 }

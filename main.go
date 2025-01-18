@@ -4,19 +4,21 @@ import (
 	"fmt"
 	"math"
 	"slices"
-	"sync"
 )
 
 func main() {
-	var lock sync.RWMutex
-	lock.Lock()
-	lock.RLock()
-
-	fmt.Println(1e9)
-	list := []int{1, 2, 3}
-	fmt.Println(list[2:3])
+	fa(1)
 }
 
+//go:noline
+func fa(n int) (r int) {
+	return fb(n)
+}
+
+//go:noline
+func fb(n int) (r int) {
+	return n
+}
 func mergeSort(nums []int) []int {
 	length := len(nums)
 	if length < 2 {
