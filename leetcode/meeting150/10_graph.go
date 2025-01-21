@@ -1,6 +1,8 @@
 package meeting150
 
-import "slices"
+import (
+	"slices"
+)
 
 // 岛屿数量
 func numIslands(grid [][]byte) int {
@@ -146,4 +148,70 @@ func findOrder(numCourses int, prerequisites [][]int) []int {
 	}
 	slices.Reverse(postorder)
 	return postorder
+}
+
+type EdgeNode struct {
+	Node   string
+	Weight float64
+}
+
+func calcEquation(equations [][]string, values []float64, queries [][]string) []float64 {
+	graph := make(map[string][]EdgeNode)
+	for i := 0; i < len(equations); i++ {
+		from := equations[i][0]
+		to := equations[i][1]
+		if _, ok := graph[from]; !ok {
+			graph[from] = make([]EdgeNode, 0)
+		}
+		graph[from] = append(graph[from], EdgeNode{
+			Node:   to,
+			Weight: values[i],
+		})
+		if _, ok := graph[to]; !ok {
+			graph[to] = make([]EdgeNode, 0)
+		}
+		graph[to] = append(graph[to], EdgeNode{
+			Node:   from,
+			Weight: 1.0 / values[i],
+		})
+	}
+	res := make([]float64, len(queries))
+	for i := 0; i < len(queries); i++ {
+		res[i] = calDfs(graph, queries[i][0], queries[i][1])
+	}
+	return res
+}
+
+func calDfs(graph map[string][]EdgeNode, from, to string) float64 {
+	if _, ok := graph[from]; !ok {
+		return -1.0
+	}
+	if _, ok := graph[to]; !ok {
+		return -1.0
+	}
+	if from == to {
+		return 1.0
+	}
+	queue := []string{from}
+	weight := make(map[string]float64)
+	visited := make(map[string]bool)
+	visited[from] = true
+	weight[from] = 1.0
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+		for _, neighbor := range graph[cur] {
+			if visited[neighbor.Node] {
+				continue
+			}
+
+			weight[neighbor.Node] = weight[cur] * neighbor.Weight
+			if neighbor.Node == to {
+				return weight[neighbor.Node]
+			}
+			visited[neighbor.Node] = true
+			queue = append(queue, neighbor.Node)
+		}
+	}
+	return -1
 }

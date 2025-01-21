@@ -220,3 +220,55 @@ func Test_rotate(t *testing.T) {
 		})
 	}
 }
+
+func Test_findClosestNumber(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{-4, -2, 1, 4, 8}},
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findClosestNumber(tt.args.nums); got != tt.want {
+				t.Errorf("findClosestNumber() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxValueOfCoins(t *testing.T) {
+	type args struct {
+		piles [][]int
+		k     int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				piles: [][]int{{1, 100, 3}, {7, 8, 9}},
+				k:     2,
+			},
+			want: 101,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxValueOfCoins(tt.args.piles, tt.args.k); got != tt.want {
+				t.Errorf("maxValueOfCoins() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

@@ -355,3 +355,110 @@ func minimumTotal(triangle [][]int) int {
 	}
 	return res
 }
+
+func findClosestNumber(nums []int) int {
+	//slices.Sort(nums)
+	//zeroIndex, ok := slices.BinarySearch(nums, 0)
+	//if ok {
+	//	return 0
+	//}
+	//var res int
+	//curAbs := math.MaxInt
+	//if zeroIndex > 0 {
+	//	curAbs = abs2(nums[zeroIndex-1])
+	//	res = nums[zeroIndex-1]
+	//}
+	//if zeroIndex < len(nums) {
+	//	if nums[zeroIndex] <= curAbs {
+	//		res = nums[zeroIndex]
+	//	}
+	//}
+	//return res
+	ans := nums[0]
+	for i := 0; i < len(nums); i++ {
+		if abs2(nums[i]) < abs2(ans) || abs2(nums[i]) == abs2(ans) && nums[i] > ans {
+			ans = nums[i]
+		}
+	}
+	return ans
+
+}
+
+func abs2(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func maxValueOfCoins(piles [][]int, k int) int {
+	res := 0
+	var backtrack func(cnt int, curSum int)
+	backtrack = func(cnt int, curSum int) {
+		if cnt == 0 {
+			res = max(res, curSum)
+			return
+		}
+		for i := 0; i < len(piles); i++ {
+			if len(piles[i]) > 0 {
+				cur := piles[i][0]
+				curSum += cur
+				piles[i] = piles[i][1:]
+				backtrack(cnt-1, curSum)
+				curSum -= cur
+				piles[i] = append([]int{cur}, piles[i]...)
+			}
+		}
+	}
+	backtrack(k, 0)
+	return res
+}
+
+func maxValueOfCoins2(piles [][]int, k int) int {
+	n := len(piles)
+	memo := make([][]int, n)
+	for i := range memo {
+		memo[i] = make([]int, k+1)
+	}
+	var dfs func(int, int) int
+	dfs = func(i, j int) (res int) {
+		if i < 0 {
+			return
+		}
+		if memo[i][j] != 0 { // 之前计算过
+			return memo[i][j]
+		}
+		// 不选这一组中的任何物品
+		res = dfs(i-1, j)
+		// 枚举选哪个
+		v := 0
+		for w := range min(j, len(piles[i])) {
+			v += piles[i][w]
+			// w 从 0 开始，物品体积为 w+1
+			res = max(res, dfs(i-1, j-w-1)+v)
+		}
+		memo[i][j] = res
+		return
+	}
+	return dfs(n-1, k)
+}
+
+func maxValueOfCoins3(piles [][]int, k int) int {
+	n := len(piles)
+	dp := make([][]int, n+1)
+	for i := 0; i <= n; i++ {
+		dp[i] = make([]int, k+1)
+	}
+	for i, pile := range piles {
+		for j := 0; j <= k; j++ {
+			dp[i+1][j] = dp[i][j]
+			v := 0
+			for w := 0; w < min(j, len(pile)); w++ {
+				v += pile[w]
+				dp[i+1][j] = max(dp[i+1][j], dp[i][j-w-1]+v)
+			}
+		}
+	}
+
+	return dp[n][k]
+}

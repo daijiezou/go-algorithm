@@ -7,27 +7,19 @@ import (
 )
 
 func main() {
-	fa(1)
-}
-
-//go:noline
-func fa(n int) (r int) {
-	return fb(n)
-}
-
-//go:noline
-func fb(n int) (r int) {
-	return n
-}
-func mergeSort(nums []int) []int {
-	length := len(nums)
-	if length < 2 {
-		return nums
+	fs := create()
+	for i := 0; i < len(fs); i++ {
+		fs[i]()
 	}
+}
 
-	left := nums[:length/2]
-	right := nums[length/2:]
-	return merge(mergeSort(left), mergeSort(right))
+func create() (fs [2]func()) {
+	for i := 0; i < 2; i++ {
+		fs[i] = func() {
+			fmt.Println(i)
+		}
+	}
+	return
 }
 
 func lengthOfLIS(nums []int) int {
