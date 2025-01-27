@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"fmt"
+	"reflect"
 	"testing"
 )
 
@@ -268,6 +269,57 @@ func Test_maxValueOfCoins(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxValueOfCoins(tt.args.piles, tt.args.k); got != tt.want {
 				t.Errorf("maxValueOfCoins() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minimumCoins(t *testing.T) {
+	type args struct {
+		prices []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{prices: []int{1, 10, 1, 1}},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumCoins_dp(tt.args.prices); got != tt.want {
+				t.Errorf("minimumCoins() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_combinationSum2(t *testing.T) {
+	type args struct {
+		candidates []int
+		target     int
+	}
+	tests := []struct {
+		name string
+		args args
+		want [][]int
+	}{
+		{
+			name: "1",
+			args: args{
+				candidates: []int{10, 1, 2, 7, 6, 1, 5},
+				target:     8,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := combinationSum2(tt.args.candidates, tt.args.target); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("combinationSum2() = %v, want %v", got, tt.want)
 			}
 		})
 	}

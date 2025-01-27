@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"math"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -461,4 +462,150 @@ func maxValueOfCoins3(piles [][]int, k int) int {
 	}
 
 	return dp[n][k]
+}
+
+func maxCoins(piles []int) int {
+	slices.Sort(piles)
+	res := 0
+	cnt := 0
+	n := len(piles)
+	for i := len(piles) - 2; i > 0 && cnt < n/3; i -= 2 {
+		res += piles[i]
+		cnt++
+	}
+	return res
+}
+
+func minimumCoins(prices []int) int {
+	n := len(prices)
+	var dfs func(i int) int
+	dfs = func(i int) int {
+		if i*2 >= n {
+			return prices[i-1]
+		}
+		res := math.MaxInt32
+		for j := i + 1; j <= 2*i+1; j++ {
+			res = min(res, dfs(j))
+		}
+		return res + prices[i-1]
+	}
+	return dfs(1)
+}
+
+func minimumCoins_dp(prices []int) int {
+	n := len(prices)
+	dp := make([]int, n+1)
+	// dp[i] 表示在购买第 i 个水果的前提下，
+	// 获得第 i 个及其后面的水果所需要的最少金币数。注意 i 从 1 开始。
+	for i := n; i >= 1; i-- {
+		if i*2 >= n {
+			dp[i] = prices[i-1]
+		} else {
+			res := math.MaxInt32
+			// 如果[i+1,2*i] 都不购买的话，则必须购买2*i+1，比较哪种方式花费的金币少
+			for j := i + 1; j <= 2*i+1; j++ {
+				res = min(res, dp[j])
+			}
+			dp[i] = res + prices[i-1]
+		}
+	}
+	return dp[1]
+}
+
+func minimumMoney(transactions [][]int) int64 {
+	allLose := 0
+	maxFirstrLose := 0
+	for i := 0; i < len(transactions); i++ {
+		cost := transactions[i][0]
+		back := transactions[i][1]
+		allLose += max(0, cost-back)
+		if cost < back {
+			// 赚钱的
+			maxFirstrLose = max(maxFirstrLose, cost)
+		} else {
+			// 亏钱的 因为之前计算总亏损的时候将刚back减去了，需要加回来
+			maxFirstrLose = max(maxFirstrLose, back)
+		}
+
+	}
+	return int64(allLose + maxFirstrLose)
+}
+
+func combinationSum2(candidates []int, target int) [][]int {
+	backtack := func(precombina []int, presum int, start int) {
+	}
+	// 需要去重，所以先排序
+	sort.Ints(candidates)
+	res := [][]int{}
+	//redup := make(map[[51]int]struct{})
+	backtack = func(precombina []int, presum int, start int) {
+		if presum == target {
+			temp := make([]int, len(precombina))
+			copy(temp, precombina)
+			//key := genKey(temp)
+			//if _, ok := redup[key]; ok {
+			//	return
+			//}
+			//redup[key] = struct{}{}
+			res = append(res, temp)
+		}
+		if presum > target {
+			return
+		}
+		for i := start; i < len(candidates); i++ {
+			// 说明没有选candidates[i-1]，则所有等于该数的都不选，防止重复
+			if i > start && candidates[i] == candidates[i-1] {
+				continue
+			}
+			precombina = append(precombina, candidates[i])
+			backtack(precombina, presum+candidates[i], i+1)
+			precombina = precombina[:len(precombina)-1]
+		}
+	}
+	backtack([]int{}, 0, 0)
+	return res
+}
+
+func genKey(nums []int) [51]int {
+	keys := [51]int{}
+	for i := 0; i < len(nums); i++ {
+		keys[nums[i]]++
+	}
+	return keys
+}
+
+func jumpjump(nums []int) int {
+	step := 0
+	end := 0
+	formest := 0
+	for i := 0; i < len(nums); i++ {
+		formest = max(nums[i]+i, formest)
+		if end == i {
+			step++
+			end = formest
+		}
+	}
+	return step
+}
+
+func minTaps(n int, ranges []int) int {
+	nums := make([]int, n+1)
+	for i := 0; i < len(ranges); i++ {
+		start := max(0, i-ranges[i])
+		nums[start] = max(nums[start], i+ranges[i])
+	}
+	step := 0
+	end := 0
+	nextRight := 0
+	for i := 0; i <= n-1; i++ {
+		nextRight = max(nums[i], nextRight)
+		if end == i { //需要新造一座桥
+			if nextRight == i {
+				return -1
+			}
+			end = nextRight
+			step++
+		}
+	}
+	return step
 }
