@@ -609,3 +609,84 @@ func minTaps(n int, ranges []int) int {
 	}
 	return step
 }
+
+func getRow(rowIndex int) []int {
+	if rowIndex == 0 {
+		return []int{1}
+	}
+	res := make([][]int, rowIndex+1)
+	res[0] = []int{1}
+	for i := 1; i <= rowIndex; i++ {
+		res[i] = make([]int, i+1)
+		for j := 0; j <= i; j++ {
+			if j == 0 || j == i {
+				res[i][j] = 1
+			} else {
+				res[i][j] = res[i-1][j] + res[i-1][j-1]
+			}
+		}
+	}
+	return res[rowIndex]
+}
+
+func containsNearbyDuplicate(nums []int, k int) bool {
+	for i := 0; i < len(nums); i++ {
+		for j := i + 1; j < len(nums) && j > i+k; j++ {
+			if nums[j] == nums[i] {
+				return true
+			}
+		}
+	}
+	return false
+}
+
+func containsNearbyDuplicate2(nums []int, k int) bool {
+	numNewIndex := make(map[int]int)
+	for i := 0; i < len(nums); i++ {
+		if index, ok := numNewIndex[nums[i]]; ok && i-index <= k {
+			return true
+		}
+		numNewIndex[nums[i]] = i
+	}
+	return false
+}
+
+func intersect(nums1 []int, nums2 []int) []int {
+	numcnt := make(map[int]int)
+	for i := 0; i < len(nums1); i++ {
+		numcnt[nums1[i]]++
+	}
+	res := []int{}
+	for i := 0; i < len(nums2); i++ {
+		if _, ok := numcnt[nums2[i]]; ok {
+			res = append(res, nums2[i])
+			numcnt[nums2[i]]--
+			if numcnt[nums2[i]] == 0 {
+				delete(numcnt, nums2[i])
+			}
+		}
+	}
+	return res
+}
+
+func intersect2(nums1 []int, nums2 []int) []int {
+	slices.Sort(nums1)
+	slices.Sort(nums2)
+	res := []int{}
+	m := len(nums1)
+	n := len(nums2)
+	i := 0
+	j := 0
+	for i < m && j < n {
+		if nums1[i] == nums2[j] {
+			res = append(res, nums1[i])
+			i++
+			j++
+		} else if nums1[i] < nums2[j] {
+			i++
+		} else if nums1[i] > nums2[j] {
+			j++
+		}
+	}
+	return res
+}

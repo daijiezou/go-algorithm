@@ -85,3 +85,13 @@ func findMin(nums []int) int {
 	}
 	return nums[left]
 }
+
+func searchRange(nums []int, target int) []int {
+	n := len(nums)
+	first := leftBound(nums, target)
+	if first == n || nums[first] != target {
+		return []int{-1, -1}
+	}
+	last := leftBound(nums, target+1) - 1
+	return []int{first, last}
+}
