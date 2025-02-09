@@ -690,3 +690,28 @@ func intersect2(nums1 []int, nums2 []int) []int {
 	}
 	return res
 }
+
+func reverseStr(s string, k int) string {
+	res := []byte(s)
+	start := 0
+	for ; start <= len(s)-2*k; start += (2 * k) {
+		end := start + k
+		myReverse(res, start, end)
+	}
+	end := start + k
+	if start+k > len(s) {
+		end = len(s)
+	}
+	myReverse(res, start, end)
+	return string(res)
+}
+
+func myReverse(bytes []byte, start, end int) {
+	i := start
+	j := end - 1
+	for i <= j {
+		bytes[i], bytes[j] = bytes[j], bytes[i]
+		i++
+		j--
+	}
+}
