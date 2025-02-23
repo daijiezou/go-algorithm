@@ -1,6 +1,10 @@
 package leetcode
 
-import "slices"
+import (
+	"math"
+	"slices"
+	"sort"
+)
 
 func maxCount(m int, n int, ops [][]int) int {
 	minRow := m
@@ -144,4 +148,81 @@ func removeDuplicates_lin(nums []int) int {
 		}
 	}
 	return min(len(nums), stackSize)
+}
+
+type RangeFreqQuery struct {
+	numIndexs map[int][]int
+}
+
+func Constructor0218(arr []int) RangeFreqQuery {
+	inst := RangeFreqQuery{numIndexs: map[int][]int{}}
+	for k, v := range arr {
+		inst.numIndexs[v] = append(inst.numIndexs[v], k)
+	}
+	return inst
+}
+
+func (this *RangeFreqQuery) Query(left int, right int, value int) int {
+	nums := this.numIndexs[value]
+	start := sort.SearchInts(nums, left)
+	// >right 相当于 >=right+1
+	end := sort.SearchInts(nums, right+1)
+	return end - start
+}
+
+func maxDistance(arrays [][]int) int {
+	minNum := arrays[0][0]
+	maxNum := arrays[0][len(arrays[0])-1]
+	res := math.MinInt
+	for i := 1; i < len(arrays); i++ {
+		length := len(arrays[i])
+		curMin := arrays[i][0]
+		curMax := arrays[i][length-1]
+		res = max(res, myabs(curMin, maxNum), myabs(curMax, minNum))
+		minNum = min(minNum, curMin)
+		maxNum = max(maxNum, curMax)
+	}
+	return res
+}
+
+func evenOddBit(n int) []int {
+	//binaryList := []int{}
+	even := 0
+	odd := 0
+	evenflag := true
+	for n != 0 {
+		temp := n % 2
+		if evenflag {
+			if temp == 1 {
+				even++
+			}
+		} else {
+			if temp == 1 {
+				odd++
+			}
+		}
+		evenflag = !evenflag
+		//binaryList = append(binaryList, n%2)
+		n = n / 2
+	}
+	return []int{even, odd}
+}
+
+func similarPairs(words []string) int {
+	res := 0
+	var encode func(word string) [26]int
+	encode = func(word string) [26]int {
+		wordEncode := [26]int{}
+		for i := 0; i < len(word); i++ {
+			wordEncode[word[i]-'a'] = 1
+		}
+		return wordEncode
+	}
+	wordCnt := make(map[[26]int]int)
+	for i := 0; i < len(words); i++ {
+		enCodeWord := encode(words[i])
+		res += wordCnt[enCodeWord]
+		wordCnt[enCodeWord]++
+	}
+	return res
 }
