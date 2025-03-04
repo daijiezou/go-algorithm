@@ -1,4 +1,4 @@
-package leetcode
+package _024
 
 import (
 	"math"
@@ -628,12 +628,12 @@ func findPermutationDifference(s string, t string) int {
 	for i := 0; i < len(s); i++ {
 		i1 := sMap[s[i]]
 		i2 := tMap[s[i]]
-		res += myabs(i1, i2)
+		res += Myabs(i1, i2)
 	}
 	return res
 }
 
-func myabs(a, b int) int {
+func Myabs(a, b int) int {
 	if a > b {
 		return a - b
 	}

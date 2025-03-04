@@ -1,6 +1,9 @@
 package leetcode
 
 import (
+	"Golang-algorithm/leetcode/2024"
+	"container/heap"
+	"fmt"
 	"math"
 	"slices"
 	"sort"
@@ -178,7 +181,7 @@ func maxDistance(arrays [][]int) int {
 		length := len(arrays[i])
 		curMin := arrays[i][0]
 		curMax := arrays[i][length-1]
-		res = max(res, myabs(curMin, maxNum), myabs(curMax, minNum))
+		res = max(res, _024.Myabs(curMin, maxNum), _024.Myabs(curMax, minNum))
 		minNum = min(minNum, curMin)
 		maxNum = max(maxNum, curMax)
 	}
@@ -225,4 +228,84 @@ func similarPairs(words []string) int {
 		wordCnt[enCodeWord]++
 	}
 	return res
+}
+
+type FoodRatings struct {
+	foodMap    map[string]foodPair
+	cuisineMap map[string]*foodHp
+}
+
+type foodHp []foodPair
+
+func (f foodHp) Len() int {
+	return len(f)
+}
+
+func (f foodHp) Less(i, j int) bool {
+	a, b := f[i], f[j]
+	if a.rating == b.rating {
+		return a.foodName < b.foodName
+	}
+	return a.rating > b.rating
+}
+
+func (f foodHp) Swap(i, j int) {
+	f[i], f[j] = f[j], f[i]
+}
+
+func (f *foodHp) Push(x any) {
+	*f = append(*f, x.(foodPair))
+}
+
+func (f *foodHp) Pop() any {
+	v := (*f)[len(*f)-1]
+	*f = (*f)[:len(*f)-1]
+	return v
+}
+
+type foodPair struct {
+	rating   int
+	cuisine  string
+	foodName string
+}
+
+func ConstructorFood(foods []string, cuisines []string, ratings []int) FoodRatings {
+	foodMap := map[string]foodPair{}
+	cuisineMap := map[string]*foodHp{}
+	for i := 0; i < len(foods); i++ {
+		rating, cuisine := ratings[i], cuisines[i]
+		foodMap[foods[i]] = foodPair{
+			rating:  rating,
+			cuisine: cuisine,
+		}
+		if cuisineMap[cuisine] == nil {
+			cuisineMap[cuisine] = &foodHp{}
+		}
+		heap.Push(cuisineMap[cuisine], foodPair{
+			rating:   rating,
+			foodName: foods[i],
+		})
+	}
+	return FoodRatings{
+		foodMap:    foodMap,
+		cuisineMap: cuisineMap,
+	}
+}
+
+func (this *FoodRatings) ChangeRating(food string, newRating int) {
+	p := this.foodMap[food]
+	heap.Push(this.cuisineMap[p.cuisine], foodPair{
+		rating:   newRating,
+		foodName: food,
+	})
+	p.rating = newRating
+	this.foodMap[food] = p
+}
+
+func (this *FoodRatings) HighestRated(cuisine string) string {
+	h := this.cuisineMap[cuisine]
+	for h.Len() > 0 && (*h)[0].rating != this.foodMap[(*h)[0].foodName].rating {
+		fmt.Println(heap.Pop(h))
+	}
+	return (*h)[0].foodName
 }

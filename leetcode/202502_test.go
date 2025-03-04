@@ -132,3 +132,36 @@ func Test_similarPairs(t *testing.T) {
 		})
 	}
 }
+
+func TestConstructorFood(t *testing.T) {
+	type args struct {
+		foods    []string
+		cuisines []string
+		ratings  []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want FoodRatings
+	}{
+		{
+			name: "1",
+			args: args{
+				foods:    []string{"kimchi", "miso", "sushi", "moussaka", "ramen", "bulgogi"},
+				cuisines: []string{"korean", "japanese", "japanese", "greek", "japanese", "korean"},
+				ratings:  []int{9, 12, 8, 15, 14, 7},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			f := ConstructorFood(tt.args.foods, tt.args.cuisines, tt.args.ratings)
+			fmt.Println(f.HighestRated("korean"))
+			fmt.Println(f.HighestRated("japanese"))
+			f.ChangeRating("sushi", 16)
+			fmt.Println(f.HighestRated("japanese"))
+			f.ChangeRating("ramen", 16)
+			fmt.Println(f.HighestRated("japanese"))
+		})
+	}
+}
