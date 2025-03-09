@@ -1,6 +1,9 @@
 package leetcode
 
-import "math"
+import (
+	"math"
+	"slices"
+)
 
 func partition(s string) [][]string {
 	n := len(s)
@@ -143,4 +146,30 @@ func palindromePartition(s string, k int) int {
 		return res
 	}
 	return dfs(k-1, n-1)
+}
+
+// https://leetcode.cn/problems/most-beautiful-item-for-each-query/?envType=daily-question&envId=2025-03-09
+func maximumBeauty(items [][]int, queries []int) []int {
+	ans := make([]int, len(queries))
+	slices.SortFunc(items, func(a, b []int) int { return a[0] - b[0] })
+	for i := 1; i < len(items); i++ {
+		items[i][1] = max(items[i][1], items[i-1][1])
+	}
+	for i, price := range queries {
+		left, right := 0, len(items)-1
+		for left <= right {
+			mid := left + (right-left)/2
+			if items[mid][0] >= price+1 {
+				right = mid - 1
+			} else {
+				left = mid + 1
+			}
+		}
+		if left == 0 || items[left-1][0] > price {
+			ans[i] = 0
+			continue
+		}
+		ans[i] = items[left-1][1]
+	}
+	return ans
 }
