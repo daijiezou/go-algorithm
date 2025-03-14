@@ -10,15 +10,20 @@ func QuickSort(arr []int, left, right int) {
 }
 
 func Part(arr []int, left, right int) int {
-	key := arr[right]
-	index := left
-	for left < right {
-		if arr[left] < key {
-			arr[index], arr[left] = arr[left], arr[index]
-			index++
+	// 选择最左边的元素作为基准值
+	pivot := arr[right]
+	// 初始化指向小于基准值区域的末尾
+	i := left
+
+	// 遍历数组，将小于基准值的元素移到左侧
+	for j := left; j < right; j++ {
+		if arr[j] < pivot {
+			arr[i], arr[j] = arr[j], arr[i]
+			i++
 		}
-		left++
 	}
-	arr[index], arr[right] = arr[right], arr[index]
-	return index
+
+	// 将基准值放到正确的位置
+	arr[right], arr[i] = arr[i], arr[right]
+	return i
 }

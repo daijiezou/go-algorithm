@@ -7,6 +7,7 @@ import (
 )
 
 func main() {
+
 	fs := create()
 	for i := 0; i < len(fs); i++ {
 		fs[i]()
