@@ -8,10 +8,21 @@ import (
 
 func main() {
 
-	fs := create()
-	for i := 0; i < len(fs); i++ {
-		fs[i]()
-	}
+	example()
+}
+
+func example() {
+	defer fmt.Println("deferred 1")
+	defer func() {
+		if r := recover(); r != nil {
+			fmt.Println("Recovered in deferred function:", r)
+		}
+	}()
+	defer fmt.Println("deferred 2")
+
+	fmt.Println("Calling panic")
+	panic("something went wrong")
+	fmt.Println("This line will not be executed")
 }
 
 func create() (fs [2]func()) {

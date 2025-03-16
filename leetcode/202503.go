@@ -296,3 +296,53 @@ func isBalanced(num string) bool {
 	}
 	return sum1 == sum2
 }
+
+func scoreOfString(s string) int {
+	sum := 0
+	for i := 0; i < len(s)-1; i++ {
+		sum += Myabs(int(s[i]), int(s[i+1]))
+	}
+	return sum
+}
+
+func Myabs(a, b int) int {
+	if a > b {
+		return a - b
+	}
+	return b - a
+}
+
+func maxSubArray(nums []int) int {
+	dp := make([]int, len(nums))
+	dp[0] = nums[0]
+	res := dp[0]
+	for i := 1; i < len(nums); i++ {
+		dp[i] = max(dp[i-1], 0) + nums[i]
+		res = max(res, dp[i])
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/substring-with-largest-variance/?envType=daily-question&envId=2025-03-16
+func largestVariance(s string) int {
+	res := 0
+	for a := 'a'; a <= 'z'; a++ {
+		for b := 'a'; b <= 'z'; b++ {
+			if a == b {
+				continue
+			}
+			f0, f1 := 0, math.MinInt
+			for _, x := range s {
+				if x == a {
+					f0 = max(f0, 0) + 1
+					f1 = f1 + 1
+				} else {
+					f0 = max(f0, 0) - 1
+					f1 = f0
+				}
+			}
+			res = max(f1)
+		}
+	}
+	return res
+}
