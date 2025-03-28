@@ -170,3 +170,178 @@ func Test_countOfSubstrings(t *testing.T) {
 		})
 	}
 }
+
+func Test_minSwaps(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{s: "]]][[["},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minSwaps(tt.args.s); got != tt.want {
+				t.Errorf("minSwaps() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_findMatrix(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want [][]int
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{1, 3, 4, 1, 2, 3, 1}},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findMatrix(tt.args.nums); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("findMatrix() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maximumOr(t *testing.T) {
+	type args struct {
+		nums []int
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{12, 9},
+				k:    1,
+			},
+			want: 30,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maximumOr(tt.args.nums, tt.args.k); got != tt.want {
+				t.Errorf("maximumOr() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_canBeValid(t *testing.T) {
+	type args struct {
+		s      string
+		locked string
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "1",
+			args: args{
+				s:      "))()))",
+				locked: "010100",
+			},
+			want: true,
+		},
+		{
+			name: "2",
+			args: args{
+				s:      "()((",
+				locked: "1111",
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := canBeValid(tt.args.s, tt.args.locked); got != tt.want {
+				t.Errorf("canBeValid() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_countPrefixes(t *testing.T) {
+	type args struct {
+		words []string
+		s     string
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				s:     "w",
+				words: []string{"feh", "w", "w", "lwd", "c", "s", "vk", "zwlv", "n", "w", "sw", "qrd", "w", "w", "mqe", "w", "w", "w", "gb", "w", "qy", "xs", "br", "w", "rypg", "wh", "g", "w", "w", "fh", "w", "w", "sccy"},
+			},
+			want: 14,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countPrefixes(tt.args.words, tt.args.s); got != tt.want {
+				t.Errorf("countPrefixes() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minimumSum(t *testing.T) {
+	type args struct {
+		n int
+		k int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				n: 5,
+				k: 4,
+			},
+			want: 18,
+		},
+		{
+			name: "1",
+			args: args{
+				n: 2,
+				k: 3,
+			},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumSum(tt.args.n, tt.args.k); got != tt.want {
+				t.Errorf("minimumSum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

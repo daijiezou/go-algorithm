@@ -346,3 +346,194 @@ func largestVariance(s string) int {
 	}
 	return res
 }
+
+func minSwaps(s string) int {
+	sByte := []byte(s)
+	res := 0
+	stack := 0
+	j := len(s) - 1
+	for _, x := range sByte {
+		if x == '[' {
+			stack++
+		} else {
+			if stack > 0 {
+				stack--
+			} else {
+				// 和最右边的左括号交换
+				for s[j] != '[' {
+					j--
+				}
+				sByte[j] = ']'
+				stack++
+				res++
+			}
+		}
+	}
+	return res
+}
+
+func diagonalPrime(nums [][]int) int {
+	res := 0
+	n := len(nums)
+	for i := 0; i < len(nums); i++ {
+		if checkIsZhi(nums[i][i]) {
+			res = max(nums[i][i], res)
+		}
+		if checkIsZhi(nums[i][n-i-1]) {
+			res = max(nums[i][n-i-1], res)
+		}
+	}
+	return res
+
+}
+
+func checkIsZhi(num int) bool {
+	for i := 2; i*i <= num; i++ {
+		if num%i == 0 {
+			return false
+		}
+	}
+	return num >= 2
+}
+
+func findMatrix(nums []int) [][]int {
+	numsMpa := make(map[int]int)
+	res := make([][]int, 0)
+	for i := 0; i < len(nums); i++ {
+		numsMpa[nums[i]]++
+	}
+	for len(numsMpa) > 0 {
+		size := len(numsMpa)
+		temp := make([]int, 0)
+		for k, v := range numsMpa {
+			temp = append(temp, k)
+			numsMpa[k]--
+			if v == 1 {
+				delete(numsMpa, k)
+			}
+			size--
+			if size == 0 {
+				break
+			}
+		}
+		res = append(res, temp)
+	}
+	return res
+}
+
+/*
+每次操作可以将某个整数乘 2，因此要想使得所有整数的或值更大，我们应该尽量选择二进制表示中具有更高位为 1 的数字。
+而这样的整数有很多个，我们需要一一遍历找到令答案最大的那个，
+一旦将其乘 2 之后，接下来的 k−1 次操作都需要基于该整数进行。
+*/
+func maximumOr(nums []int, k int) int64 {
+	n := len(nums)
+	suf := make([]int, n+1)
+	for i := n - 1; i >= 0; i-- {
+		suf[i] = nums[i] | suf[i+1]
+	}
+	pre := 0
+	res := 0
+	for i := 0; i < n; i++ {
+		res = max(res, pre|nums[i]<<k|suf[i+1])
+		pre |= nums[i]
+	}
+	return int64(res)
+}
+
+func canBeValid(s string, locked string) bool {
+	stack := 0
+	n := len(s)
+	memo := make([][]int, n)
+	for i := 0; i < len(s); i++ {
+		memo[i] = make([]int, n)
+		for j := 0; j < n; j++ {
+			memo[i][j] = -1
+		}
+	}
+	return f3(s, locked, stack, 0, memo)
+}
+
+func f3(s string, locked string, stack, start int, memo [][]int) (res bool) {
+	if start == len(s) {
+		return stack == 0
+	}
+	p := &memo[start][stack]
+	if *p != -1 {
+		return *p == 0
+	}
+	defer func() {
+		if res {
+			*p = 0
+		} else {
+			*p = 1
+		}
+	}()
+	if locked[start] == '0' {
+		if stack > 0 {
+			return f3(s, locked, stack-1, start+1, memo) || f3(s, locked, stack+1, start+1, memo)
+		} else {
+			return f3(s, locked, stack+1, start+1, memo)
+		}
+	} else {
+		if s[start] == '(' {
+			return f3(s, locked, stack+1, start+1, memo)
+		} else {
+			if stack > 0 {
+				return f3(s, locked, stack-1, start+1, memo)
+			} else {
+				*p = 1
+				return false
+			}
+		}
+	}
+}
+
+func countPrefixes(words []string, s string) int {
+	res := 0
+	s0 := []byte(s)
+	sLen := len(s)
+	for i := 0; i < len(words); i++ {
+		if len(words[i]) > sLen {
+			continue
+		}
+		length := min(len(words[i]), sLen)
+		target := string(s0[:length])
+		if strings.HasPrefix(words[i], target) {
+			res++
+		}
+	}
+	return res
+}
+
+func minimumSum(n int, k int) int {
+	res := 0
+
+	forbid := make(map[int]struct{})
+	for i := 1; i < (k-1)/2+1; i++ {
+		forbid[k-i] = struct{}{}
+	}
+	j := 0
+	for i := 1; i < n+k; i++ {
+		if _, ok := forbid[i]; !ok {
+			res += i
+			j++
+		}
+		if j == n {
+			return res
+		}
+	}
+	return 0
+}
+
+//func minimumCost(s string) int64 {
+//
+//}
+
+func minimizedStringLength(s string) int {
+	letterCnt := make(map[byte]struct{})
+	for i := 0; i < len(s); i++ {
+		letterCnt[s[i]] = struct{}{}
+	}
+	return len(letterCnt)
+}
