@@ -537,3 +537,76 @@ func minimizedStringLength(s string) int {
 	}
 	return len(letterCnt)
 }
+
+func longestCycle(edges []int) int {
+	res := -1
+	curTime := 1                   // 当前时间
+	vis := make([]int, len(edges)) // 首次访问x的时间
+	for i := 0; i < len(edges); i++ {
+		startTime := curTime
+		x := edges[i]
+		for x != -1 && vis[x] == 0 {
+			vis[x] = curTime
+			curTime++
+			x = edges[x]
+		}
+		// 如果vis[x]<startTime 则说明不是在这轮访问的
+		if x != -1 && vis[x] >= startTime {
+			res = max(res, curTime-vis[x])
+		}
+	}
+	return res
+}
+
+func longestCycle2(edges []int) int {
+	res := -1
+	label := make([]int, len(edges))
+	current := 0
+	for i := 0; i < len(edges); i++ {
+		// 表示已经访问过
+		if label[i] != 0 {
+			continue
+		}
+		next := edges[i]
+		start := current
+		for next != -1 {
+			current++
+			if label[next] != 0 { //说明已经访问过
+				if label[next] > start {
+					res = max(res, current-label[next])
+				}
+				break
+			}
+			label[next] = current
+			next = edges[next]
+		}
+	}
+	return res
+}
+
+func addSpaces(s string, spaces []int) string {
+	sBytes := []byte(s)
+	res := []byte{}
+	pre := 0
+	for i := 0; i < len(spaces); i++ {
+		res = append(res, sBytes[:spaces[i]-pre]...)
+		sBytes = sBytes[spaces[i]-pre:]
+		res = append(res, ' ')
+		pre = spaces[i]
+	}
+	res = append(res, sBytes...)
+	return string(res)
+}
+
+func addSpaces2(s string, spaces []int) string {
+	res := make([]byte, 0, len(s)+len(spaces))
+	j := 0
+	for i := 0; i < len(s); i++ {
+		if j < len(spaces) && spaces[j] == i {
+			res = append(res, ' ')
+			j++
+		}
+		res = append(res, s[i])
+	}
+	return string(res)
+}

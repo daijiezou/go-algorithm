@@ -345,3 +345,60 @@ func Test_minimumSum(t *testing.T) {
 		})
 	}
 }
+
+func Test_longestCycle(t *testing.T) {
+	type args struct {
+		edges []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{edges: []int{3, 3, 4, 2, 3}},
+			want: 3,
+		},
+		{
+			name: "1",
+			args: args{edges: []int{2, -1, 3, 1}},
+			want: -1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := longestCycle(tt.args.edges); got != tt.want {
+				t.Errorf("longestCycle() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_addSpaces(t *testing.T) {
+	type args struct {
+		s      string
+		spaces []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "!",
+			args: args{
+				s:      "LeetcodeHelpsMeLearn",
+				spaces: []int{8, 13, 15},
+			},
+			want: "Leetcode Helps Me Learn",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := addSpaces2(tt.args.s, tt.args.spaces); got != tt.want {
+				t.Errorf("addSpaces() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
