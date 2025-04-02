@@ -610,3 +610,12 @@ func addSpaces2(s string, spaces []int) string {
 	}
 	return string(res)
 }
+
+func percentageLetter(s string, letter byte) int {
+	bytes := [26]int{}
+	for _, x := range s {
+		bytes[x-'a']++
+	}
+	cnt := bytes[letter-'a']
+	return cnt * 100 / len(s)
+}

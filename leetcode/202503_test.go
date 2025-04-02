@@ -402,3 +402,33 @@ func Test_addSpaces(t *testing.T) {
 		})
 	}
 }
+
+func Test_mostPoints(t *testing.T) {
+	type args struct {
+		questions [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "1",
+			args: args{questions: [][]int{
+				{3, 2},
+				{4, 3},
+				{4, 4},
+				{2, 5},
+			}},
+			want: 5,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got :=
+				mostPoints2(tt.args.questions); got != tt.want {
+				t.Errorf("mostPoints() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
