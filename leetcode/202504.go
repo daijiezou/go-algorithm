@@ -213,3 +213,153 @@ func countSymmetricIntegers(low int, high int) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/count-good-numbers/?envType=daily-question&envId=2025-04-13
+func countGoodNumbers(n int64) int {
+	mod := 1000000007
+	x := 5
+	x2 := 4
+	x1Cnt := n/2 + n%2
+	x2Cnt := n / 2
+
+	return (pow_mod(x, int(x1Cnt), mod) % mod) * (pow_mod(x2, int(x2Cnt), mod) % mod) % mod
+}
+
+func pow_mod(x, y, mod int) int {
+	res := 1
+	for y > 0 {
+		if (y & 1) == 1 {
+			res = res * x % mod
+		}
+		x = x * x % mod
+		y >>= 1
+	}
+	return res
+}
+
+func countGoodTriplets(arr []int, a int, b int, c int) int {
+	n := len(arr)
+	res := 0
+	for i := 0; i < n; i++ {
+		for j := i + 1; j < n; j++ {
+			if Myabs(arr[i], arr[j]) > a {
+				continue
+			}
+			for k := j + 1; k < n; k++ {
+				if Myabs(arr[i], arr[k]) <= b && Myabs(arr[j], arr[k]) <= c {
+					res++
+				}
+			}
+		}
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/count-the-number-of-good-subarrays/?envType=daily-question&envId=2025-04-16
+func countGood(nums []int, k int) int64 {
+	n := len(nums)
+	res := int64(0)
+	left := 0
+	numCnt := make(map[int]int)
+	curCnt := 0
+	for right := 0; right < n; right++ {
+		x := nums[right]
+		curCnt += numCnt[x]
+		numCnt[x]++
+
+		for curCnt >= k {
+
+			leftx := nums[left]
+			numCnt[leftx]--
+			curCnt -= numCnt[leftx]
+			left++
+		}
+		res += int64(left)
+	}
+	return res
+}
+
+func countPairs(nums []int, k int) int {
+	res := 0
+	n := len(nums)
+	equalValueNumbs := make(map[int][]int)
+	numbCntMods := make(map[int]int)
+
+	for i := 0; i < n; i++ {
+		x := nums[i]
+		if i%k == 0 {
+			res += len(equalValueNumbs[x])
+			numbCntMods[x]++
+		} else {
+			for _, index := range equalValueNumbs[x] {
+				if (i*index)%k == 0 {
+					res++
+				}
+			}
+		}
+		equalValueNumbs[x] = append(equalValueNumbs[x], i)
+	}
+
+	return res
+}
+
+func numIdenticalPairs(nums []int) int {
+	numsCnt := make(map[int]int)
+	res := 0
+	for _, x := range nums {
+		res += numsCnt[x]
+		numsCnt[x]++
+	}
+	return res
+}
+
+func countBadPairs(nums []int) int64 {
+	numsCnt := make(map[int]int)
+	n := len(nums)
+	res := n * (n - 1) / 2
+	for i, x := range nums {
+		res -= numsCnt[x-i]
+		numsCnt[x-i]++
+	}
+	return int64(res)
+}
+
+func countFairPairs(nums []int, lower int, upper int) int64 {
+	slices.Sort(nums)
+
+	res := 0
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		x := nums[i]
+		start, ok := slices.BinarySearch(nums, lower-x)
+		if !ok {
+			continue
+		}
+		end, _ := slices.BinarySearch(nums, upper-x+1)
+		end = end - 1
+		start = max(start, i+1)
+
+		cnt := end - start + 1
+		if cnt >= 0 {
+			res += cnt
+		}
+	}
+	return int64(res)
+}
+
+func numRabbits(answers []int) int {
+	numCnt := make(map[int]int)
+	res := 0
+	for _, v := range answers {
+		numCnt[v+1]++
+	}
+
+	for k, v := range numCnt {
+		add := 0
+		if v%(k) != 0 {
+			add = 1
+		}
+		res += (v/(k) + add) * k
+	}
+	return res
+}
