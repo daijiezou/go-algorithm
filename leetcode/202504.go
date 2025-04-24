@@ -363,3 +363,60 @@ func numRabbits(answers []int) int {
 	}
 	return res
 }
+
+func numberOfArrays(differences []int, lower int, upper int) int {
+	origin := 0
+	add := 0
+	sub := 0
+	for i := 0; i < len(differences); i++ {
+		origin += differences[i]
+		add = max(add, origin)
+		sub = min(sub, origin)
+	}
+	return max(0, upper-lower-(add-sub)+1)
+}
+
+func countLargestGroup(n int) int {
+	cnt := make(map[int]int)
+	res := 0
+	maxCnt := 0
+	for i := 1; i <= n; i++ {
+		ds := 0
+		for j := i; j != 0; j /= 10 {
+			ds += j % 10
+		}
+		cnt[ds]++
+		if cnt[ds] > maxCnt {
+			maxCnt = cnt[ds]
+			res = 1
+		} else if cnt[ds] == maxCnt {
+			res++
+		}
+	}
+	return res
+}
+
+func countCompleteSubarrays(nums []int) int {
+	set := make(map[int]struct{})
+	n := len(nums)
+	for i := 0; i < n; i++ {
+		set[nums[i]] = struct{}{}
+	}
+	target := len(set)
+	window := make(map[int]int)
+	left := 0
+	res := 0
+	for i := 0; i < n; i++ {
+		window[nums[i]]++
+		for len(window) == target {
+			x := nums[left]
+			left++
+			window[x]--
+			if window[x] == 0 {
+				delete(window, x)
+			}
+		}
+		res += left
+	}
+	return res
+}

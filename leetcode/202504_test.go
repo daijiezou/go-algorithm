@@ -304,3 +304,65 @@ func Test_numRabbits(t *testing.T) {
 		})
 	}
 }
+
+func Test_numberOfArrays(t *testing.T) {
+	type args struct {
+		differences []int
+		lower       int
+		upper       int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				differences: []int{3, -4, 5, 1, -2},
+				lower:       -4,
+				upper:       5,
+			},
+			want: 4,
+		},
+		{
+			name: "2",
+			args: args{
+				differences: []int{4, -7, 2},
+				lower:       3,
+				upper:       6,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := numberOfArrays(tt.args.differences, tt.args.lower, tt.args.upper); got != tt.want {
+				t.Errorf("numberOfArrays() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_countLargestGroup(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{n: 13},
+			want: 4,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countLargestGroup(tt.args.n); got != tt.want {
+				t.Errorf("countLargestGroup() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
