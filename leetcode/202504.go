@@ -420,3 +420,124 @@ func countCompleteSubarrays(nums []int) int {
 	}
 	return res
 }
+
+func countInterestingSubarrays(nums []int, modulo int, k int) int64 {
+	n := len(nums)
+	presum := make([]int, n+1)
+	for i := 0; i < n; i++ {
+		add := 0
+		if nums[i]%modulo == k {
+			add = 1
+		}
+		presum[i+1] = presum[i] + add
+	}
+	res := int64(0)
+	cnt := make([]int, min(len(nums)+1, modulo))
+	for _, s := range presum {
+		if s >= k {
+			res += int64(cnt[(s-k)%modulo])
+		}
+		cnt[s%modulo]++
+	}
+	return res
+
+}
+
+func countSubarrays(nums []int, minK int, maxK int) int64 {
+	minL, maxL, overl := -1, -1, -1
+	res := int64(0)
+	for i := 0; i < len(nums); i++ {
+		if nums[i] == maxK {
+			maxL = i
+		}
+		if nums[i] == minK {
+			minL = i
+		}
+		if nums[i] < minK || nums[i] > maxK {
+			overl = i
+		}
+		res += int64(max(0, min(minL, maxL)-overl))
+	}
+	return res
+}
+
+func countSubarrays2(nums []int) int {
+	cnt := 0
+	n := len(nums)
+	for i := 1; i < n-1; i++ {
+		if (nums[i-1]+nums[i+1])*2 == nums[i] {
+			cnt++
+		}
+	}
+	return cnt
+}
+
+func countSubarrays3(nums []int, k int64) int64 {
+	n := len(nums)
+	sum := 0
+	left := 0
+	cnt := int64(0)
+	for i := 0; i < n; i++ {
+		sum += nums[i]
+		for left <= i && int64(sum*(i-left+1)) >= k {
+			sum -= nums[left]
+			left++
+		}
+		cnt += int64(i - left + 1)
+	}
+	return cnt
+}
+
+/*
+给你一个整数数组 nums 和一个 正整数 k 。
+请你统计有多少满足 「 nums 中的 最大 元素」至少出现 k 次的子数组，并返回满足这一条件的子数组的数目。
+子数组是数组中的一个连续元素序列。
+*/
+func countSubarrays4(nums []int, k int) int64 {
+	left := 0
+	n := len(nums)
+	maxNum := -1
+	res := int64(0)
+	for i := 0; i < n; i++ {
+		maxNum = max(maxNum, nums[i])
+	}
+	maxCnt := 0
+	for i := 0; i < n; i++ {
+		if nums[i] == maxNum {
+			maxCnt++
+		}
+		for maxCnt >= k {
+			x := nums[left]
+			if x == maxNum {
+				maxCnt--
+			}
+			left++
+		}
+		res += int64(left)
+	}
+	return res
+}
+
+func findNumbers(nums []int) int {
+	res := 0
+	for i := 0; i < len(nums); i++ {
+		str := strconv.Itoa(nums[i])
+		if len(str)%2 == 0 {
+			res++
+		}
+	}
+	return res
+}
+
+func findNumbers2(nums []int) int {
+	res := 0
+	for _, x := range nums {
+		for x > 100 {
+			x /= 100
+		}
+		if x >= 10 {
+			res++
+		}
+	}
+	return res
+}

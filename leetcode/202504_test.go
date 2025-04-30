@@ -366,3 +366,107 @@ func Test_countLargestGroup(t *testing.T) {
 		})
 	}
 }
+
+func Test_countSubarrays(t *testing.T) {
+	type args struct {
+		nums []int
+		minK int
+		maxK int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{1, 3, 5, 2, 7, 5}, minK: 1, maxK: 5},
+			want: 2,
+		},
+		{
+			name: "1",
+			args: args{nums: []int{1, 1, 1, 1}, minK: 1, maxK: 1},
+			want: 10,
+		},
+		{
+			name: "1",
+			args: args{
+				nums: []int{35054, 398719, 945315, 945315, 820417, 945315, 35054, 945315, 171832, 945315, 35054, 109750, 790964, 441974, 552913},
+				minK: 35054,
+				maxK: 945315},
+			want: 10,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countSubarrays(tt.args.nums, tt.args.minK, tt.args.maxK); got != tt.want {
+				t.Errorf("countSubarrays() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_countSubarrays2(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{1, 2, 1, 4, 1}},
+			want: 1,
+		},
+		{
+			name: "2",
+			args: args{nums: []int{-1, -4, -1, 4}},
+			want: 1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countSubarrays2(tt.args.nums); got != tt.want {
+				t.Errorf("countSubarrays2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_countSubarrays3(t *testing.T) {
+	type args struct {
+		nums []int
+		k    int64
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{2, 1, 4, 3, 5},
+				k:    10,
+			},
+			want: 6,
+		},
+		{
+			name: "1",
+			args: args{
+				nums: []int{1, 1, 1},
+				k:    5,
+			},
+			want: 5,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := countSubarrays3(tt.args.nums, tt.args.k); got != tt.want {
+				t.Errorf("countSubarrays3() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
