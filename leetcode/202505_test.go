@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_pushDominoes(t *testing.T) {
 	type args struct {
@@ -67,6 +70,96 @@ func Test_minDominoRotations(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := minDominoRotations1(tt.args.tops, tt.args.bottoms); got != tt.want {
 				t.Errorf("minDominoRotations() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minTimeToReach(t *testing.T) {
+	type args struct {
+		moveTime [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{moveTime: [][]int{
+				{0, 4},
+				{4, 4},
+			}},
+			want: 6,
+		},
+		{
+			name: "2",
+			args: args{moveTime: [][]int{
+				{94, 79, 62, 27, 69, 84},
+				{6, 32, 11, 82, 42, 30},
+			}},
+			want: 74,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minTimeToReach(tt.args.moveTime); got != tt.want {
+				t.Errorf("minTimeToReach() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minSum(t *testing.T) {
+	type args struct {
+		nums1 []int
+		nums2 []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int64
+	}{
+		{
+			args: args{
+				nums1: []int{3, 2, 0, 1, 0},
+				nums2: []int{6, 5, 0},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minSum(tt.args.nums1, tt.args.nums2); got != tt.want {
+				t.Errorf("minSum() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_findEvenNumbers(t *testing.T) {
+	type args struct {
+		digits []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "1",
+			args: args{digits: []int{2, 2, 8, 8, 2}},
+			want: []int{222, 228, 282, 288, 822, 828, 882},
+		},
+		{
+			name: "1",
+			args: args{digits: []int{2, 1, 3, 0}},
+			want: []int{102, 120, 130, 132, 210, 230, 302, 310, 312, 320},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findEvenNumbers2(tt.args.digits); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("findEvenNumbers() = %v, want %v", got, tt.want)
 			}
 		})
 	}

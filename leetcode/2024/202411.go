@@ -747,9 +747,9 @@ func (h *hp) Pop() (v any) { a := *h; *h, v = a[:len(a)-1], a[len(a)-1]; return 
 
 func networkDelayTime3(times [][]int, n, k int) int {
 	type edge struct{ to, wt int }
-	g := make([][]edge, n+1) // 邻接表
+	graph := make([][]edge, n+1) // 邻接表
 	for _, t := range times {
-		g[t[0]] = append(g[t[0]], edge{t[1], t[2]})
+		graph[t[0]] = append(graph[t[0]], edge{t[1], t[2]})
 	}
 
 	dis := make([]int, n+1)
@@ -762,10 +762,10 @@ func networkDelayTime3(times [][]int, n, k int) int {
 	for len(queue) > 0 {
 		cur := queue[0]
 		queue = queue[1:]
-		if cur.dis > dis[cur.x] { // x 之前出队过
+		if cur.dis > dis[cur.x] { // x 之前出队过,从其他路径到x的距离更近，
 			continue
 		}
-		for _, e := range g[cur.x] {
+		for _, e := range graph[cur.x] {
 			y := e.to
 			newDis := cur.dis + e.wt
 			if newDis < dis[y] {

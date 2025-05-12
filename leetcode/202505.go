@@ -1,6 +1,10 @@
 package leetcode
 
-import "math"
+import (
+	"container/heap"
+	"math"
+	"sort"
+)
 
 func pushDominoes(dominoes string) string {
 	bytes := []byte("L" + dominoes + "R")
@@ -79,4 +83,229 @@ func minDominoRotations1(tops []int, bottoms []int) int {
 		return -1
 	}
 	return ans
+}
+
+func numEquivDominoPairs(dominoes [][]int) int {
+	numCnt := make(map[int]int)
+	n := len(dominoes)
+	res := 0
+	for i := 0; i < n; i++ {
+		d := dominoes[i]
+		key := max(d[0]*10+d[1], d[1]*10+d[0])
+		res += numCnt[key]
+		numCnt[key]++
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/domino-and-tromino-tiling/?envType=daily-question&envId=2025-05-05
+
+/*
+考虑这么一种平铺的方式：在第 i 列前面的正方形都被瓷砖覆盖，在第 i 列后面的正方形都没有被瓷砖覆盖（i 从 1 开始计数）。
+那么第 i 列的正方形有四种被覆盖的情况：
+
+一个正方形都没有被覆盖，记为状态 0；
+只有上方的正方形被覆盖，记为状态 1；
+只有下方的正方形被覆盖，记为状态 2；
+上下两个正方形都被覆盖，记为状态 3。
+*/
+func numTilings(n int) int {
+	const mod int = 1e9 + 7
+	dp := make([][4]int, n+1)
+	dp[0][3] = 1
+	for i := 1; i <= n; i++ {
+		dp[i][0] = dp[i-1][3]
+		dp[i][1] = (dp[i-1][0] + dp[i-1][2]) % mod
+		dp[i][2] = (dp[i-1][0] + dp[i-1][1]) % mod
+		dp[i][3] = (((dp[i-1][0]+dp[i-1][1])%mod+dp[i-1][2])%mod + dp[i-1][3]) % mod
+	}
+	return dp[n][3]
+}
+
+func numTilings2(n int) int {
+	if n == 1 {
+		return 1
+	}
+	f := make([]int, n+1)
+	f[0], f[1], f[2] = 1, 1, 2
+	for i := 3; i <= n; i++ {
+		f[i] = (f[i-1]*2 + f[i-3]) % 1_000_000_007
+	}
+	return f[n]
+}
+
+func buildArray(nums []int) []int {
+	n := len(nums)
+	res := make([]int, n)
+	for i := 0; i < n; i++ {
+		res[i] = nums[nums[i]]
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/find-minimum-time-to-reach-last-room-i/?envType=daily-question&envId=2025-05-07
+
+var dirs = []struct{ x, y int }{{-1, 0}, {1, 0}, {0, -1}, {0, 1}}
+
+func minTimeToReach(moveTime [][]int) (ans int) {
+	n, m := len(moveTime), len(moveTime[0])
+	dis := make([][]int, n)
+	for i := range dis {
+		dis[i] = make([]int, m)
+		for j := range dis[i] {
+			dis[i][j] = math.MaxInt
+		}
+	}
+	dis[0][0] = 0
+
+	h := hp{{}}
+	for {
+		top := heap.Pop(&h).(tuple)
+		i, j := top.x, top.y
+		if i == n-1 && j == m-1 {
+			return top.dis
+		}
+		if top.dis > dis[i][j] {
+			continue
+		}
+		time := (i+j)%2 + 1
+		for _, d := range dirs {
+			x, y := i+d.x, j+d.y
+			if 0 <= x && x < n && 0 <= y && y < m {
+				newD := max(top.dis, moveTime[x][y]) + time
+				if newD < dis[x][y] {
+					dis[x][y] = newD
+					heap.Push(&h, tuple{newD, x, y})
+				}
+			}
+		}
+	}
+}
+
+type tuple struct{ dis, x, y int }
+type hp []tuple
+
+func (h hp) Len() int           { return len(h) }
+func (h hp) Less(i, j int) bool { return h[i].dis < h[j].dis }
+func (h hp) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+func (h *hp) Push(v any)        { *h = append(*h, v.(tuple)) }
+func (h *hp) Pop() (v any)      { a := *h; *h, v = a[:len(a)-1], a[len(a)-1]; return }
+
+func minSum(nums1 []int, nums2 []int) int64 {
+	sum1 := 0
+	sum2 := 0
+	zero1 := 0
+	zero2 := 0
+	for i := 0; i < len(nums1); i++ {
+		sum1 += nums1[i]
+		if nums1[i] == 0 {
+			zero1++
+			sum1++
+		}
+	}
+	for i := 0; i < len(nums2); i++ {
+		sum2 += nums2[i]
+		if nums2[i] == 0 {
+			zero2++
+			sum2++
+		}
+	}
+	if zero1 == 0 && sum1 < sum2 {
+		return -1
+	}
+	if zero2 == 0 && sum2 < sum1 {
+		return -1
+	}
+	return int64(max(sum1, sum2))
+}
+
+func threeConsecutiveOdds(arr []int) bool {
+	n := len(arr)
+	oddIndex := make([]int, n)
+	for i := 0; i < len(arr); i++ {
+		if arr[i]%2 == 1 {
+			oddIndex[i] = 1
+			if i > 1 {
+				if oddIndex[i-1] == 1 && oddIndex[i-2] == 1 {
+					return true
+				}
+			}
+		}
+	}
+	return false
+}
+
+func findEvenNumbers(digits []int) []int {
+	n := len(digits)
+	res := make([]int, 0)
+	used := make([]bool, n)
+	cur := make([]int, 0)
+
+	var backtrack func(int)
+	backtrack = func(pos int) {
+		if pos == 3 {
+			x := cur[0]*100 + cur[1]*10 + cur[2]
+			if x >= 100 && x%2 == 0 {
+				res = append(res, x)
+			}
+			return
+		}
+
+		seen := make(map[int]bool) // 避免重复数字
+		for i := 0; i < n; i++ {
+			if used[i] || seen[digits[i]] {
+				continue
+			}
+			if pos == 0 && digits[i] == 0 { // 第一位不能为0
+				continue
+			}
+			seen[digits[i]] = true
+			used[i] = true
+			cur = append(cur, digits[i])
+			backtrack(pos + 1)
+			cur = cur[:len(cur)-1]
+			used[i] = false
+		}
+	}
+
+	backtrack(0)
+	sort.Ints(res)
+	return res
+}
+
+func findEvenNumbers2(digits []int) []int {
+	n := len(digits)
+	unique := make(map[int]struct{})
+	used := make([]bool, n)
+
+	var backtrack func(cur []int)
+	backtrack = func(cur []int) {
+		if len(cur) == 3 {
+			x := cur[0]*100 + cur[1]*10 + cur[2]
+			if x%2 == 0 {
+				unique[x] = struct{}{}
+			}
+			return
+		}
+
+		for i := 0; i < n; i++ {
+			if !used[i] {
+				if len(cur) == 0 && digits[i] == 0 { // 提前终止前导零
+					continue
+				}
+				used[i] = true
+				backtrack(append(cur, digits[i]))
+				used[i] = false
+			}
+		}
+	}
+
+	backtrack([]int{})
+
+	res := make([]int, 0, len(unique))
+	for k := range unique {
+		res = append(res, k)
+	}
+	sort.Ints(res)
+	return res
 }
