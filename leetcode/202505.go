@@ -309,3 +309,159 @@ func findEvenNumbers2(digits []int) []int {
 	sort.Ints(res)
 	return res
 }
+
+const mod = 1000000007
+
+func lengthAfterTransformations(s string, t int) int {
+	cnt := make([]int, 26)
+	for _, ch := range s {
+		cnt[ch-'a']++
+	}
+	for i := 0; i < t; i++ {
+		newCnt := make([]int, 26)
+		newCnt[0] = cnt[25]
+		newCnt[1] = (cnt[0] + cnt[25]) % mod
+		for j := 2; j < 26; j++ {
+			newCnt[j] = cnt[j-1]
+		}
+		cnt = newCnt
+	}
+	ans := 0
+	for _, total := range cnt {
+		ans += total % mod
+	}
+	return ans % mod
+}
+
+// https://leetcode.cn/problems/sort-colors/?envType=daily-question&envId=2025-05-17
+func sortColors(nums []int) {
+	quickSort(nums, 0, len(nums)-1)
+}
+
+func quickSort(nums []int, left, right int) {
+	if left >= right {
+		return
+	}
+	p := Part(nums, left, right)
+	quickSort(nums, left, p-1)
+	quickSort(nums, p+1, right)
+}
+
+func Part(nums []int, left, right int) int {
+	flag := nums[right]
+	i := left
+	for j := left; j < right; j++ {
+		if nums[j] < flag {
+			nums[i], nums[j] = nums[j], nums[i]
+			i++
+		}
+	}
+	nums[i], nums[right] = nums[right], nums[i]
+	return i
+}
+
+func triangleType(nums []int) string {
+	sort.Ints(nums)
+	if nums[0]+nums[1] <= nums[2] {
+		return "none"
+	}
+	if nums[0] == nums[2] {
+		return "equilateral"
+	}
+	if nums[0] == nums[1] || nums[1] == nums[2] {
+		return "isosceles"
+	}
+	return "scalene"
+}
+
+func isZeroArray(nums []int, queries [][]int) bool {
+	n := len(nums)
+	diff := make([]int, n+1)
+	diff[0] = nums[0]
+	for i := 1; i < n; i++ {
+		diff[i] = nums[i] - nums[i-1]
+	}
+
+	for i := 0; i < len(queries); i++ {
+		left := queries[i][0]
+		right := queries[i][1]
+		diff[left] -= 1
+		if right < n-1 {
+			diff[right+1] += 1
+		}
+
+	}
+	if diff[0] > 0 {
+		return false
+	}
+	result := make([]int, n)
+	result[0] = diff[0]
+
+	for i := 1; i < n; i++ {
+		result[i] = result[i-1] + diff[i]
+		if result[i] > 0 {
+			return false
+		}
+	}
+	return true
+}
+
+func isZeroArray2(nums []int, queries [][]int) bool {
+	n := len(nums)
+	diff := make([]int, n+1)
+	for i := 0; i < len(queries); i++ {
+		l := queries[i][0]
+		r := queries[i][1]
+		diff[l] += 1
+		diff[r+1] -= 1
+
+	}
+	sumD := 0
+	for i := 0; i < len(nums); i++ {
+		sumD += diff[i]
+		if sumD < nums[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// https://leetcode.cn/problems/zero-array-transformation-ii/?envType=daily-question&envId=2025-05-21
+func minZeroArray(nums []int, queries [][]int) int {
+	left := 0
+	right := len(queries)
+	for left <= right {
+		mid := left + (right-left)/2
+		if check(nums, queries, mid) {
+			right = mid - 1
+		} else {
+			left = mid + 1
+		}
+	}
+	if left > len(queries) {
+		return -1
+	}
+	return left
+}
+
+func check(nums []int, queries [][]int, k int) bool {
+	diff := make([]int, len(nums)+1)
+	for _, q := range queries[:k] {
+		l, r, val := q[0], q[1], q[2]
+		diff[l] += val
+		diff[r+1] -= val
+	}
+	sumD := 0
+	for i := 0; i < len(nums); i++ {
+		sumD += diff[i]
+		if sumD < nums[i] {
+			return false
+		}
+	}
+	return true
+}
+
+// https://leetcode.cn/problems/zero-array-transformation-iii/?envType=daily-question&envId=2025-05-22
+//func maxRemoval(nums []int, queries [][]int) int {
+//
+//}

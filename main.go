@@ -6,14 +6,7 @@ import (
 	"slices"
 )
 
-type Str1 struct {
-	A int
-	B int
-}
-
 func main() {
-	maps := make(map[int]Str1)
-	maps[1].B = 1
 
 }
 

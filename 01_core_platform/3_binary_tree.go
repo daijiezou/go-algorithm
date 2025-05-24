@@ -141,3 +141,16 @@ func levelOrder(root *TreeNode) [][]int {
 	}
 	return res
 }
+
+func rob(root *TreeNode) int {
+	var dfs func(root *TreeNode) (int, int)
+	dfs = func(root *TreeNode) (int, int) {
+		if root == nil {
+			return 0, 0
+		}
+		robleft, notRobleft := dfs(root.Left)
+		robright, notRobright := dfs(root.Right)
+		return notRobleft + notRobright + root.Val, max(robleft, notRobleft) + max(robright, notRobright)
+	}
+	return max(dfs(root))
+}

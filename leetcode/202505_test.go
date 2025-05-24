@@ -1,6 +1,7 @@
 package leetcode
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -160,6 +161,118 @@ func Test_findEvenNumbers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := findEvenNumbers2(tt.args.digits); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("findEvenNumbers() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func BenchmarkIsPalindrome(b *testing.B) {
+
+	for i := 0; i < b.N; i++ {
+		findEvenNumbers([]int{2, 2, 8, 8, 2})
+	}
+}
+
+func Test_sortColors(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{2, 0, 2, 1, 1, 0},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			sortColors(tt.args.nums)
+		})
+		fmt.Println(tt.args.nums)
+	}
+}
+
+func Test_isZeroArray(t *testing.T) {
+	type args struct {
+		nums    []int
+		queries [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{1, 0, 1},
+				queries: [][]int{
+					{0, 2},
+				},
+			},
+			want: true,
+		},
+		{
+			name: "2",
+			args: args{
+				nums: []int{4, 3, 2, 1},
+				queries: [][]int{
+					{1, 3},
+					{0, 2},
+				},
+			},
+			want: false,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := isZeroArray(tt.args.nums, tt.args.queries); got != tt.want {
+				t.Errorf("isZeroArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minZeroArray(t *testing.T) {
+	type args struct {
+		nums    []int
+		queries [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{2, 0, 2},
+				queries: [][]int{
+					{0, 2, 1},
+					{0, 2, 1},
+					{1, 1, 3}},
+			},
+			want: 2,
+		},
+		{
+			name: "1",
+			args: args{
+				nums: []int{4, 3, 2, 1},
+				queries: [][]int{
+					{1, 3, 2},
+					{0, 2, 1}},
+			},
+			want: -1,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minZeroArray(tt.args.nums, tt.args.queries); got != tt.want {
+				t.Errorf("minZeroArray() = %v, want %v", got, tt.want)
 			}
 		})
 	}
