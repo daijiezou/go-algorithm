@@ -198,3 +198,26 @@ func removeNthFromEnd2(head *ListNode, n int) *ListNode {
 	p2.Next = p2.Next.Next
 	return dummy.Next
 }
+
+func deleteDuplicates2(head *ListNode) *ListNode {
+	dummy := &ListNode{}
+	p := dummy
+	for head != nil {
+		if head.Next != nil && head.Val == head.Next.Val {
+			for head.Next != nil && head.Val == head.Next.Val {
+				head.Next = head.Next.Next
+			}
+			// 把自己也跳过
+			head = head.Next
+			if head == nil {
+				dummy.Next = nil
+			}
+		} else {
+			dummy.Next = head
+			dummy = dummy.Next
+			head = head.Next
+		}
+	}
+	return p.Next
+
+}

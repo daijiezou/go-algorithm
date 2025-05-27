@@ -4,6 +4,7 @@ import (
 	"container/heap"
 	"math"
 	"sort"
+	"strings"
 )
 
 func pushDominoes(dominoes string) string {
@@ -465,3 +466,75 @@ func check(nums []int, queries [][]int, k int) bool {
 //func maxRemoval(nums []int, queries [][]int) int {
 //
 //}
+
+func findWordsContaining(words []string, x byte) []int {
+	res := make([]int, 0)
+	for i := 0; i < len(words); i++ {
+		if strings.Contains(words[i], string(x)) {
+			res = append(res, i)
+		}
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/longest-palindrome-by-concatenating-two-letter-words/?envType=daily-question&envId=2025-05-25
+func longestPalindrome(words []string) int {
+	res := 0
+	letters := make(map[string]int)
+	dupLetters := make(map[string]int)
+	for i := 0; i < len(words); i++ {
+		letter1 := words[i][0]
+		letter2 := words[i][1]
+		if letter1 == letter2 {
+			dupLetters[words[i]]++
+		} else {
+			if _, ok := letters[words[i]]; ok {
+				letters[words[i]] += 1
+			} else {
+				key := string([]byte{letter2, letter1})
+				if _, ok := letters[key]; ok {
+					res += 4
+					letters[key]--
+					if letters[key] == 0 {
+						delete(letters, key)
+					}
+				} else {
+					letters[words[i]] = 1
+				}
+			}
+		}
+	}
+	flag := false
+	for _, v := range dupLetters {
+		res += (v / 2) * 4
+		if v%2 != 0 && !flag {
+			res += 2
+			flag = true
+		}
+	}
+	return res
+}
+
+func longestPalindrome2(words []string) int {
+	wordsMap := make(map[string]int)
+	for i := 0; i < len(words); i++ {
+		wordsMap[words[i]]++
+	}
+	res := 0
+	mid := false
+	for k, cnt := range wordsMap {
+		rk := string(k[1]) + string(k[0])
+		if rk == k {
+			res += (cnt / 2) * 4
+			if cnt%2 == 1 {
+				mid = true
+			}
+		} else {
+			res += min(cnt, wordsMap[rk]) * 2
+		}
+	}
+	if mid {
+		res += 2
+	}
+	return res
+}
