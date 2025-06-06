@@ -1,5 +1,7 @@
 package __graph
 
+import "math"
+
 // 并查集
 type UFI interface {
 	// 将 p 和 q 连接
@@ -120,4 +122,24 @@ func find(parent []int, q int) int {
 		parent[q] = find(parent, parent[q])
 	}
 	return parent[q]
+}
+
+func robotWithString(s string) string {
+	tByte := make([]byte, 0)
+	res := make([]byte, 0)
+	n := len(s)
+	sufMin := make([]byte, n+1)
+	sufMin[n] = math.MaxUint8
+	for i := n - 1; i >= 0; i-- {
+		sufMin[i] = min(sufMin[i+1], s[i])
+	}
+	for i := 0; i < n; i++ {
+		tByte = append(tByte, s[i])
+		for len(tByte) > 0 && tByte[len(tByte)-1] <= sufMin[i+1] {
+			left := tByte[len(tByte)-1]
+			tByte = tByte[:len(tByte)-1]
+			res = append(res, left)
+		}
+	}
+	return string(res)
 }

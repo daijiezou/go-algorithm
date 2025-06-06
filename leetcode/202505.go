@@ -538,3 +538,11 @@ func longestPalindrome2(words []string) int {
 	}
 	return res
 }
+
+// https://leetcode.cn/problems/divisible-and-non-divisible-sums-difference/description/?envType=daily-question&envId=2025-05-27
+func differenceOfSums(n int, m int) int {
+	k := n / m
+	nums2 := (m + k*m) * k / 2
+	nums1 := (1+n)*n/2 - nums2
+	return nums1 - nums2
+}
