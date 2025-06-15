@@ -182,3 +182,95 @@ func Test_smallestEquivalentString(t *testing.T) {
 		})
 	}
 }
+
+func Test_clearStars(t *testing.T) {
+	type args struct {
+		s string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "1",
+			args: args{s: "aaba*"},
+			want: "aab",
+		},
+		{
+			name: "1",
+			args: args{s: "ed"},
+			want: "ed",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := clearStars(tt.args.s); got != tt.want {
+				t.Errorf("clearStars() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minMaxDifference(t *testing.T) {
+	type args struct {
+		num int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{num: 11891},
+			want: 99009,
+		},
+		{
+			name: "1",
+			args: args{num: 99999},
+			want: 99999,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minMaxDifference(tt.args.num); got != tt.want {
+				t.Errorf("minMaxDifference() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxDiff(t *testing.T) {
+	type args struct {
+		num int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "123456",
+			args: args{num: 123456},
+			want: 820000,
+		},
+		{
+			name: "111",
+			args: args{num: 111},
+			want: 888,
+		},
+		{
+			name: "1101057",
+			args: args{num: 1101057},
+			want: 8808050,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxDiff(tt.args.num); got != tt.want {
+				t.Errorf("maxDiff() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}

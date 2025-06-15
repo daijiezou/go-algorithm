@@ -1,5 +1,11 @@
 package leetcode
 
+import (
+	"math"
+	"strconv"
+	"strings"
+)
+
 // https://leetcode.cn/problems/distribute-candies-among-children-ii/?envType=daily-question&envId=2025-06-01
 /*
 给你两个正整数 n 和 limit 。
@@ -128,7 +134,7 @@ func smallestEquivalentString(s1 string, s2 string, baseStr string) string {
 		if parent[b] != b {
 			b = find(parent[b])
 		}
-		return
+		return b
 	}
 	union := func(x, y byte) {
 		small, big := find(x), find(y)
@@ -147,4 +153,122 @@ func smallestEquivalentString(s1 string, s2 string, baseStr string) string {
 	}
 	return string(s)
 
+}
+
+// https://leetcode.cn/problems/lexicographically-minimum-string-after-removing-stars/?envType=daily-question&envId=2025-06-07
+func clearStars(s string) string {
+	stack := make([][]int, 26)
+	sByte := []byte(s)
+	for i := 0; i < len(s); i++ {
+		if s[i] != '*' {
+			stack[s[i]-'a'] = append(stack[s[i]-'a'], i)
+			continue
+		}
+		for j, sItem := range stack {
+			if len(sItem) > 0 {
+				x := sItem[len(sItem)-1]
+				sByte[x] = '*'
+				stack[j] = sItem[:len(sItem)-1]
+				break
+			}
+		}
+	}
+	res := []byte{}
+	for i := 0; i < len(sByte); i++ {
+		if sByte[i] != '*' {
+			res = append(res, sByte[i])
+		}
+	}
+	return string(res)
+}
+
+// https://leetcode.cn/problems/lexicographical-numbers/?envType=daily-question&envId=2025-06-08
+// 给你一个整数 n ，按字典序返回范围 [1, n] 内所有整数。
+// 你必须设计一个时间复杂度为 O(n) 且使用 O(1) 额外空间的算法。
+func lexicalOrder(n int) []int {
+	res := make([]int, n)
+	num := 1
+	for i := 0; i < n; i++ {
+		res[i] = num
+		if num*10 <= n {
+			num *= 10
+		} else {
+			for num%10 == 9 || num+1 > n {
+				num /= 10
+			}
+			num++
+		}
+	}
+	return res
+}
+
+func findKthNumber(n int, k int) int {
+	num := 1
+	for i := 0; i < k; i++ {
+		if num*10 <= n {
+			num *= 10
+		} else {
+			for num%10 == 9 || num+1 > n {
+				num /= 10
+			}
+			num++
+		}
+	}
+	return num
+}
+
+func maxDifference(s string) int {
+	numsCnt := [26]int{}
+	for i := range s {
+		numsCnt[s[i]-'a']++
+	}
+	maxOdd := 0
+	minEven := math.MaxInt32
+	for _, i := range numsCnt {
+		if i == 0 {
+			continue
+		}
+		if i%2 == 1 {
+			maxOdd = max(maxOdd, i)
+		} else {
+			minEven = min(minEven, i)
+		}
+	}
+	return maxOdd - minEven
+}
+
+func minMaxDifference(num int) int {
+	numstr := strconv.Itoa(num)
+	mx := num
+	for i := 0; i < len(numstr); i++ {
+		if numstr[i] != '9' {
+			mx, _ = strconv.Atoi(strings.ReplaceAll(numstr, string(numstr[i]), "9"))
+			break
+		}
+	}
+	mn, _ := strconv.Atoi(strings.ReplaceAll(numstr, string(numstr[0]), "0"))
+	return mx - mn
+}
+
+func maxDiff(num int) int {
+	numstr := strconv.Itoa(num)
+	mx := num
+	mn := num
+	for i := 0; i < len(numstr); i++ {
+		if numstr[i] != '9' {
+			mx, _ = strconv.Atoi(strings.ReplaceAll(numstr, string(numstr[i]), "9"))
+			break
+		}
+	}
+	if numstr[0] != '1' {
+		mn, _ = strconv.Atoi(strings.ReplaceAll(numstr, string(numstr[0]), "1"))
+	} else {
+		for i := 1; i < len(numstr); i++ {
+			if numstr[i] != '1' && numstr[i] != '0' {
+				mn, _ = strconv.Atoi(strings.ReplaceAll(numstr, string(numstr[i]), "0"))
+				break
+			}
+		}
+	}
+	return mx - mn
 }
