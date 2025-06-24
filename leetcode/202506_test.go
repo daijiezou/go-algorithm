@@ -1,6 +1,9 @@
 package leetcode
 
-import "testing"
+import (
+	"reflect"
+	"testing"
+)
 
 func Test_distributeCandies(t *testing.T) {
 	type args struct {
@@ -270,6 +273,135 @@ func Test_maxDiff(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := maxDiff(tt.args.num); got != tt.want {
 				t.Errorf("maxDiff() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maximumDifference(t *testing.T) {
+	type args struct {
+		nums []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{nums: []int{7, 1, 5, 4}},
+			want: 4,
+		},
+		{
+			name: "1",
+			args: args{nums: []int{9, 4, 3, 2}},
+			want: -1,
+		},
+		{
+			name: "1",
+			args: args{nums: []int{1, 5, 2, 10}},
+			want: 9,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maximumDifference(tt.args.nums); got != tt.want {
+				t.Errorf("maximumDifference() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_maxDistance2(t *testing.T) {
+	type args struct {
+		s string
+		k int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				s: "NSWWEW",
+				k: 3,
+			},
+			want: 6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := maxDistance2(tt.args.s, tt.args.k); got != tt.want {
+				t.Errorf("maxDistance2() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_minimumDeletions(t *testing.T) {
+	type args struct {
+		word string
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{
+				word: "dabdcbdcdcd",
+				k:    2,
+			},
+			want: 2,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := minimumDeletions(tt.args.word, tt.args.k); got != tt.want {
+				t.Errorf("minimumDeletions() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_findKDistantIndices(t *testing.T) {
+	type args struct {
+		nums []int
+		key  int
+		k    int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "1",
+			args: args{
+				nums: []int{3, 4, 9, 1, 3, 9, 5},
+				key:  9,
+				k:    1,
+			},
+			want: []int{1, 2, 3, 4, 5, 6},
+		},
+		{
+			name: "1",
+			args: args{
+				nums: []int{2, 2, 2, 2, 2},
+				key:  2,
+				k:    2,
+			},
+			want: []int{0, 1, 2, 3, 4},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := findKDistantIndices(tt.args.nums, tt.args.key, tt.args.k); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("findKDistantIndices() = %v, want %v", got, tt.want)
 			}
 		})
 	}

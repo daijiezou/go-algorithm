@@ -2,6 +2,7 @@ package leetcode
 
 import (
 	"math"
+	"slices"
 	"strconv"
 	"strings"
 )
@@ -271,4 +272,113 @@ func maxDiff(num int) int {
 		}
 	}
 	return mx - mn
+}
+
+func maximumDifference(nums []int) int {
+	n := len(nums)
+	if n == 0 {
+		return -1
+	}
+	preMin := math.MaxInt
+	ans := 0
+	for _, x := range nums {
+		preMin = min(x, preMin)
+		ans = max(ans, x-preMin)
+	}
+	if ans == 0 {
+		return -1
+	}
+	return ans
+}
+
+// https://leetcode.cn/problems/count-the-number-of-arrays-with-k-matching-adjacent-elements/?envType=daily-question&envId=2025-06-17
+func countGoodArrays(n int, m int, k int) int {
+	return 0
+}
+
+// https://leetcode.cn/problems/partition-array-such-that-maximum-difference-is-k/?envType=daily-question&envId=2025-06-19
+func partitionArray(nums []int, k int) int {
+	slices.Sort(nums)
+	res := 1
+	start := nums[0]
+	for i := 1; i < len(nums); i++ {
+		x := nums[i]
+		if x-start > k {
+			start = x
+			res++
+		}
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/maximum-manhattan-distance-after-k-changes/?envType=daily-question&envId=2025-06-20
+func maxDistance2(s string, k int) int {
+	res := 0
+	x, y := 0, 0
+	for i := 0; i < len(s); i++ {
+		switch s[i] {
+		case 'N':
+			y++
+		case 'S':
+			y--
+		case 'W':
+			x++
+		case 'E':
+			x--
+		}
+		res = max(res, min(abs2(x)+abs2(y)+2*k, i+1))
+	}
+
+	return res
+}
+
+func minimumDeletions(word string, k int) int {
+	cnts := make([]int, 26)
+	for _, b := range word {
+		cnts[b-'a']++
+	}
+	slices.Sort(cnts)
+	maxRemain := 0
+	for i, base := range cnts {
+		sum := 0
+		for _, c := range cnts[i:] {
+			sum += min(c, base+k)
+		}
+		maxRemain = max(maxRemain, sum)
+	}
+	return len(word) - maxRemain
+}
+
+func divideString(s string, k int, fill byte) []string {
+	res := make([]string, 0)
+	n := len(s)
+	if n%k != 0 {
+		for i := 0; i < k-(n%k); i++ {
+			s += string(fill)
+		}
+	}
+
+	for i := 0; i < len(s); i += k {
+		res = append(res, s[i:i+k])
+	}
+	return res
+}
+
+func findKDistantIndices(nums []int, key int, k int) []int {
+	res := make([]int, 0)
+	n := len(nums)
+	end := -1
+	for i := 0; i < len(nums); i++ {
+		if nums[i] == key {
+			start := max(0, i-k, end+1)
+			end = min(n-1, i+k)
+			for j := start; j <= end; j++ {
+				res = append(res, j)
+			}
+			if end == n-1 {
+				break
+			}
+		}
+	}
+	return res
 }
