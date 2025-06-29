@@ -1,6 +1,9 @@
 package aim_offer
 
-import "sync"
+import (
+	"math/bits"
+	"sync"
+)
 
 var (
 	x     string
@@ -104,4 +107,34 @@ func findTargetIn2DPlants(plants [][]int, target int) bool {
 		}
 	}
 	return false
+}
+
+func longestSubsequence(s string, k int) int {
+	n := len(s)
+	cnt := 0
+	sum := 0
+
+	bitlen := bits.Len(uint(k))
+	for i := n - 1; i >= 0; i-- {
+		index := n - i - 1
+		if s[i] == '0' {
+			cnt++
+		} else {
+			if index < bitlen && sum+(1<<index) <= k {
+				cnt++
+				sum += 1 << index
+			}
+		}
+	}
+	return cnt
+}
+
+func getSum(bytes []byte) int {
+	base := 1
+	sum := 0
+	for i := 0; i < len(bytes); i++ {
+		sum += int(bytes[i]) * base
+		base *= 2
+	}
+	return sum
 }

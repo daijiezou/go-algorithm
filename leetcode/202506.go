@@ -3,6 +3,7 @@ package leetcode
 import (
 	"math"
 	"slices"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -381,4 +382,70 @@ func findKDistantIndices(nums []int, key int, k int) []int {
 		}
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/find-subsequence-of-length-k-with-the-largest-sum/?envType=daily-question&envId=2025-06-28
+func maxSubsequence(nums []int, k int) []int {
+	type VI struct {
+		v int
+		i int
+	}
+	vis := make([]VI, 0, len(nums))
+	for i := 0; i < len(nums); i++ {
+		vis = append(vis, VI{
+			v: nums[i],
+			i: i,
+		})
+	}
+	sort.Slice(vis, func(i, j int) bool {
+		return vis[i].v > vis[j].v
+	})
+	vis = vis[:k]
+	sort.Slice(vis, func(i, j int) bool {
+		return vis[i].i < vis[j].i
+	})
+	res := []int{}
+	for i := 0; i < k; i++ {
+		res = append(res, vis[i].v)
+	}
+	return res
+}
+
+// https://leetcode.cn/problems/count-pairs-whose-sum-is-less-than-target/
+func countPairs2824(nums []int, target int) int {
+	n := len(nums)
+	res := 0
+	for i := 0; i < n; i++ {
+		for j := i + 1; j < n; j++ {
+			if nums[i]+nums[j] < target {
+				res++
+			}
+		}
+	}
+	return res
+}
+
+func countPairs2824_2(nums []int, target int) int {
+	slices.Sort(nums)
+	n := len(nums)
+	left := 0
+	right := n - 1
+	res := 0
+	for left < right {
+		if nums[left]+nums[right] < target {
+			// 以left为主，和right,right-1,一直到left+1都是符合要求的
+			res += right - left
+			left++
+		} else {
+			// 和最小的left相加都不符合
+			right--
+		}
+	}
+	return res
+
+}
+
+// https://leetcode.cn/problems/number-of-subsequences-that-satisfy-the-given-sum-condition/?envType=daily-question&envId=2025-06-29
+func numSubseq(nums []int, target int) int {
+	return 0
 }
