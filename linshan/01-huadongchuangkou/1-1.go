@@ -218,7 +218,6 @@ func decrypt(code []int, k int) []int {
 	n := len(code)
 	res := make([]int, n)
 	if k == 0 {
-
 		return res
 	}
 	code = append(code, code...)

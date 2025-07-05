@@ -81,3 +81,42 @@ func countSubarrays2(nums []int, k int64) int64 {
 	}
 	return int64(res)
 }
+
+// https://leetcode.cn/problems/continuous-subarrays/
+func continuousSubarrays(nums []int) int64 {
+	minQ := make([]int, 0)
+	maxQ := make([]int, 0)
+	left := 0
+	ans := int64(0)
+	for right, x := range nums {
+		for len(minQ) > 0 && x <= nums[minQ[len(minQ)-1]] {
+			minQ = minQ[:len(minQ)-1]
+		}
+		minQ = append(minQ, right)
+		for len(maxQ) > 0 && x >= nums[maxQ[len(maxQ)-1]] {
+			maxQ = maxQ[:len(maxQ)-1]
+		}
+		maxQ = append(maxQ, right)
+
+		// 检查最大值减最小值是否大于2
+
+		/*
+			条件是判断是否窗口内最大值减最小值是否大于2，
+			所以说当窗口中只有一个值的时候肯定是满足条件的，所以说单调队列并不会为空，
+		*/
+		for nums[maxQ[0]]-nums[minQ[0]] > 2 {
+
+			// 需要缩减窗口
+			left++
+			// 检测单调队列里的值是否已经出队
+			if minQ[0] < left {
+				minQ = minQ[1:]
+			}
+			if maxQ[0] < left {
+				maxQ = maxQ[1:]
+			}
+		}
+		ans += int64(right - left + 1)
+	}
+	return ans
+}

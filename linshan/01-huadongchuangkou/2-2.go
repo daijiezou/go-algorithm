@@ -20,31 +20,6 @@ func minSubArrayLen(target int, nums []int) int {
 	return res
 }
 
-// https://leetcode.cn/problems/shortest-subarray-to-be-removed-to-make-array-sorted/
-// 1574. 删除最短的子数组使剩余数组有序
-func findLengthOfShortestSubarray(arr []int) int {
-	n := len(arr)
-	right := n - 1
-	for right > 0 && arr[right-1] <= arr[right] {
-		right--
-	}
-	// 已经是非递增数组
-	if right == 0 {
-		return 0
-	}
-	ans := right // 删除arr[0:right]
-	// 枚举左端点，移动右端点
-	for left := 0; left == 0 || arr[left-1] <= arr[left]; left++ {
-
-		// 直到arr[right] > arr[left]
-		for right < n && arr[right] < arr[left] {
-			right++
-		}
-		ans = min(right-left-1, ans) // 删除arr[left+1:right]
-	}
-	return ans
-}
-
 // 给你一个字符串 s 、一个字符串 t 。
 // 返回 s 中涵盖 t 所有字符的最小子串。如果 s 中不存在涵盖 t 所有字符的子串，则返回空字符串 "" 。
 func minWindow(s string, t string) string {
@@ -190,4 +165,31 @@ func balancedString(s string) int {
 		right++
 	}
 	return res
+}
+
+// https://leetcode.cn/problems/minimum-size-subarray-in-infinite-array/
+func minSizeSubarray(nums []int, target int) int {
+	total := 0
+	length := len(nums)
+	for i := 0; i < length; i++ {
+		total += nums[i]
+	}
+	ans := math.MaxInt
+	left := 0
+	ctarget := target % total
+	sum := 0
+	for i := 0; i < length*2; i++ {
+		sum += nums[i%length]
+		for sum > ctarget {
+			sum -= nums[left%length]
+			left++
+		}
+		if sum == ctarget {
+			ans = min(ans, i-left+1)
+		}
+	}
+	if ans == math.MaxInt {
+		return -1
+	}
+	return ans + (target/total)*length
 }

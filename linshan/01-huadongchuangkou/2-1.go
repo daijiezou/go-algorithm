@@ -128,3 +128,22 @@ func maximumUniqueSubarray(nums []int) int {
 	}
 	return ans
 }
+
+// https://leetcode.cn/problems/length-of-longest-subarray-with-at-most-k-frequency/
+func maxSubarrayLength(nums []int, k int) int {
+	n := len(nums)
+	window := make(map[int]int)
+	left := 0
+	res := 0
+	for i := 0; i < n; i++ {
+		x := nums[i]
+		window[x]++
+		for window[x] > k {
+			l := nums[left]
+			window[l]--
+			left++
+		}
+		res = max(res, i-left+1)
+	}
+	return res
+}
