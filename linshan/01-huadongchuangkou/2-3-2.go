@@ -120,3 +120,20 @@ func continuousSubarrays(nums []int) int64 {
 	}
 	return ans
 }
+
+func beautifulBouquet(flowers []int, cnt int) int {
+	const mod = 1e9 + 7
+
+	window := make(map[int]int)
+	left := 0
+	res := 0
+	for right, x := range flowers {
+		window[x]++
+		for window[x] > cnt {
+			window[flowers[left]]--
+			left++
+		}
+		res += (right - left + 1) % mod
+	}
+	return res
+}

@@ -19,6 +19,8 @@ func dailyTemperatures(temperatures []int) []int {
 		for len(s) > 0 && temperatures[i] > temperatures[s[len(s)-1]] {
 			j := s[len(s)-1]
 			s = s[:len(s)-1]
+
+			// 此时的i就是j的下一个的更大元素
 			res[j] = i - j
 		}
 		s = append(s, i)
@@ -43,6 +45,25 @@ func dailyTemperatures2(temperatures []int) []int {
 		s = append(s, i)
 	}
 	return res
+}
+
+func trap3(height []int) int {
+	ans := 0
+	s := make([]int, 0)
+	for i := 0; i < len(height); i++ {
+		for len(s) > 0 && height[i] > height[s[len(s)-1]] {
+			bottom := s[len(s)-1]
+			s = s[:len(s)-1]
+			if len(s) == 0 {
+				break
+			}
+			left := s[len(s)-1]
+			h := min(height[left], height[i]) - height[bottom]
+			ans += h * (i - left - 1)
+		}
+		s = append(s, i)
+	}
+	return ans
 }
 
 func finalPrices(prices []int) []int {
@@ -529,7 +550,9 @@ func trap2(height []int) int {
 			if len(s) == 0 {
 				break
 			}
+			// 找到左边比我大的数
 			left := s[len(s)-1]
+
 			width := i - left - 1
 			h := min(height[left], height[i]) - height[bottom]
 			res += width * h
