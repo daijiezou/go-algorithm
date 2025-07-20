@@ -93,3 +93,32 @@ func isPossibleToSplit(nums []int) bool {
 	}
 	return true
 }
+
+func findPeakElement(nums []int) int {
+	left := -1
+	right := len(nums)
+	for left+1 < right {
+		mid := left + (right-left)/2
+		if nums[mid] > nums[mid+1] {
+			right = mid
+		} else {
+			left = mid
+		}
+	}
+	return right
+}
+
+func search(nums []int, target int) int {
+	left, right := -1, len(nums)
+	for left+1 < right {
+		mid := left + (right-left)/2
+		if nums[mid] == target {
+			return mid
+		} else if nums[mid] > target {
+			right = mid
+		} else if nums[mid] < target {
+			left = mid
+		}
+	}
+	return -1
+}
