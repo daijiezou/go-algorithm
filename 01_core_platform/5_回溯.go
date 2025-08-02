@@ -11,34 +11,31 @@ https://leetcode.cn/problems/permutations/
 */
 func permute(nums []int) [][]int {
 	res := [][]int{}
-	track := []int{}
 	used := make([]bool, len(nums))
-
-	backtrack(nums, track, used, &res)
-	return res
-}
-
-func backtrack(nums []int, track []int, used []bool, res *[][]int) {
-	if len(track) == len(nums) {
-		temp := make([]int, len(track))
-		copy(temp, track)
-		*res = append(*res, temp)
-		return
-	}
-
-	for i := 0; i < len(nums); i++ {
-		if used[i] {
-			continue
+	var backtrack = func(track []int) {}
+	backtrack = func(track []int) {
+		if len(track) == len(nums) {
+			temp := make([]int, len(track))
+			copy(temp, track)
+			res = append(res, temp)
+			return
 		}
-		// 做选择
-		used[i] = true // 用 used 数组标记已经在路径上的元素避免重复选择，然后收集所有叶子节点上的值
-		track = append(track, nums[i])
-		backtrack(nums, track, used, res)
+		for i := 0; i < len(nums); i++ {
+			if used[i] {
+				continue
+			}
+			// 做选择
+			used[i] = true // 用 used 数组标记已经在路径上的元素避免重复选择，然后收集所有叶子节点上的值
+			track = append(track, nums[i])
+			backtrack(track)
+			// 撤销选择
+			used[i] = false
+			track = track[:len(track)-1]
+		}
 
-		// 撤销选择
-		used[i] = false
-		track = track[:len(track)-1]
 	}
+	backtrack([]int{})
+	return res
 }
 
 /*

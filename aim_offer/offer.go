@@ -1,8 +1,11 @@
 package aim_offer
 
 import (
+	"container/heap"
 	"fmt"
 	"math/bits"
+	"sort"
+	"strconv"
 	"strings"
 	"sync"
 )
@@ -106,7 +109,7 @@ func findTargetIn2DPlants(plants [][]int, target int) bool {
 			// 如果大于目标数，则这一列都会大于该目标数
 			y--
 		} else if plants[x][y] < target {
-
+			// 如果小于目标数，则这一行都会小于该目标数
 			x++
 		}
 	}
@@ -578,6 +581,7 @@ func deleteDuplication(pHead *ListNode) *ListNode {
 			// 把自身也跳过
 			prev.Next = curr.Next
 		} else {
+			// 相当于接上不重复的
 			prev = prev.Next
 		}
 		curr = curr.Next
@@ -596,4 +600,874 @@ func deleteDupKeepFirstSorted(head *ListNode) *ListNode {
 		}
 	}
 	return head
+}
+
+func match(str string, pattern string) bool {
+	// write code here
+	return matchCore(str, 0, pattern, 0)
+}
+func matchCore(str string, sIndex int, pattern string, pIndex int) bool {
+	// 匹配完成
+	if sIndex == len(str) && pIndex == len(pattern) {
+		return true
+	}
+	if pIndex == len(pattern) {
+		return false
+	}
+	if pIndex+1 < len(pattern) && pattern[pIndex+1] == '*' {
+		if sIndex < len(str) && (pattern[pIndex] == str[sIndex] || pattern[pIndex] == '.') {
+			// 匹配0个或者多个
+			return matchCore(str, sIndex+1, pattern, pIndex) ||
+				//略过当前的*
+				matchCore(str, sIndex, pattern, pIndex+2)
+		} else {
+			//和当前字符不匹配，略过当前的*
+			return matchCore(str, sIndex, pattern, pIndex+2)
+		}
+
+		//if sIndex < len(str) && (pattern[pIndex] == str[sIndex] || pattern[pIndex] == '.') {
+		//    // 匹配1次及以上 或 匹配0次
+		//    return matchCore(str, sIndex+1, pattern, pIndex) || matchCore(str, sIndex, pattern, pIndex+2)
+		//} else {
+		//    // 匹配0次
+		//    return matchCore(str, sIndex, pattern, pIndex+2)
+		//}
+	}
+	if sIndex < len(str) && (pattern[pIndex] == str[sIndex] || pattern[pIndex] == '.') {
+		return matchCore(str, sIndex+1, pattern, pIndex+1)
+	}
+	return false
+}
+
+func reOrderArray(array []int) []int {
+	res := make([]int, 0, len(array))
+	even := make([]int, 0)
+	for i := 0; i < len(array); i++ {
+		if array[i]%2 != 0 {
+			res = append(res, array[i])
+		} else {
+			even = append(even, array[i])
+		}
+	}
+	return append(res, even...)
+}
+
+func reOrderArray1(array []int) []int {
+	n := len(array)
+	for i := 0; i < n; i++ {
+		if array[i]%2 == 1 {
+			j := i
+			// 向前冒泡，直到前面不是偶数为止
+			for j > 0 && array[j-1]%2 == 0 {
+				array[j], array[j-1] = array[j-1], array[j]
+				j--
+			}
+		}
+	}
+	return array
+}
+
+// 不稳定，会打乱顺序
+func reOrderArray2(array []int) []int {
+	// write code here
+	left := 0
+	right := len(array) - 1
+	for left < right {
+		for left < right && array[left]%2 != 0 {
+			left++
+		}
+		for left < right && array[right]%2 == 0 {
+			right--
+		}
+		if left < right {
+			array[left], array[right] = array[right], array[left]
+		}
+		left++
+		right--
+	}
+	return array
+}
+
+func FindKthToTail(pHead *ListNode, k int) *ListNode {
+	if k == 0 || pHead == nil {
+		return nil
+	}
+	fast := pHead
+	slow := pHead
+
+	for i := 0; i < k; i++ {
+		// k 大于链表长度
+		if fast == nil {
+			return fast
+		}
+		fast = fast.Next
+	}
+
+	for fast != nil {
+		fast = fast.Next
+		slow = slow.Next
+	}
+	return slow
+}
+
+func EntryNodeOfLoop(pHead *ListNode) *ListNode {
+	fast := pHead
+	slow := pHead
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+		if slow == fast {
+			// 2. 找入口
+			entry := pHead
+			for entry != slow {
+				entry = entry.Next
+				slow = slow.Next
+			}
+			return entry
+		}
+	}
+
+	return nil
+}
+
+func EntryNodeOfLoop2(pHead *ListNode) *ListNode {
+	fast := pHead
+	slow := pHead
+	var meetingNode *ListNode
+	for fast != nil && fast.Next != nil {
+		slow = slow.Next
+		fast = fast.Next.Next
+		if slow == fast {
+			meetingNode = slow
+			break
+		}
+	}
+	// 没有环
+	if meetingNode == nil {
+		return nil
+	}
+	nodesInLoop := 1
+	node1 := meetingNode
+	for node1.Next != meetingNode {
+		node1 = node1.Next
+		nodesInLoop++
+	}
+	fast = pHead
+	for i := 0; i < nodesInLoop; i++ {
+		fast = fast.Next
+	}
+	slow = pHead
+	for fast != slow {
+		fast = fast.Next
+		slow = slow.Next
+	}
+	return fast
+}
+
+func ReverseList(head *ListNode) *ListNode {
+	// write code here
+	var pre, next *ListNode
+	cur := head
+	for cur != nil {
+		// 先保存下一个节点
+		next = cur.Next
+
+		// 翻转，将下一个链表指向上一个
+		cur.Next = pre
+
+		pre = cur
+		cur = next
+	}
+	// 最后结束的时候cur为nil，pre为cur的上一个节点，返回pre
+	return pre
+}
+
+func Merge(pHead1 *ListNode, pHead2 *ListNode) *ListNode {
+	if pHead1 == nil {
+		return pHead2
+	}
+	if pHead2 == nil {
+		return pHead1
+	}
+	head := &ListNode{}
+	if pHead1.Val < pHead2.Val {
+		head = pHead1
+		head.Next = Merge(pHead1.Next, pHead2)
+	} else {
+		head = pHead2
+		head.Next = Merge(pHead1, pHead2.Next)
+	}
+	return head
+}
+
+func HasSubtree(pRoot1 *TreeNode, pRoot2 *TreeNode) bool {
+	res := false
+	if pRoot1 != nil && pRoot2 != nil {
+		if pRoot1.Val == pRoot2.Val {
+			res = Tree1HasTree2(pRoot1.Left, pRoot2.Left) && Tree1HasTree2(pRoot1.Right, pRoot2.Right)
+		}
+		if !res {
+			res = HasSubtree(pRoot1.Left, pRoot2) || HasSubtree(pRoot1.Right, pRoot2)
+		}
+	}
+	return res
+}
+
+func Tree1HasTree2(pRoot1 *TreeNode, pRoot2 *TreeNode) bool {
+	if pRoot2 == nil {
+		return true
+	}
+	if pRoot1 == nil {
+		return false
+	}
+	if pRoot1.Val != pRoot2.Val {
+		return false
+	}
+	return Tree1HasTree2(pRoot1.Left, pRoot2.Left) && Tree1HasTree2(pRoot1.Right, pRoot2.Right)
+}
+
+func Mirror(pRoot *TreeNode) *TreeNode {
+	if pRoot == nil {
+		return pRoot
+	}
+	pRoot.Right, pRoot.Left = pRoot.Left, pRoot.Right
+	Mirror(pRoot.Right)
+	Mirror(pRoot.Left)
+	return pRoot
+}
+
+func isSymmetrical(pRoot *TreeNode) bool {
+	if pRoot == nil {
+		return true
+	}
+	return checkIsSymmetrical(pRoot.Left, pRoot.Right)
+}
+
+func checkIsSymmetrical(t1, t2 *TreeNode) bool {
+	if t1 == nil && t2 == nil {
+		return true
+	}
+	if t1 == nil || t2 == nil {
+		return false
+	}
+	if t1.Val != t2.Val {
+		return false
+	}
+	return checkIsSymmetrical(t1.Left, t2.Right) && checkIsSymmetrical(t1.Right, t2.Left)
+}
+
+// 顺时针打印矩阵
+func printMatrix(matrix [][]int) []int {
+	// write code here
+	res := make([]int, 0)
+	m := len(matrix)
+	if m <= 0 {
+		return res
+	}
+	n := len(matrix[0])
+	top, bottom := 0, m-1
+	left, right := 0, n-1
+	for top <= bottom && left <= right {
+		for i := left; i <= right; i++ {
+			res = append(res, matrix[top][i])
+		}
+		top++
+		for i := top; i <= bottom; i++ {
+			res = append(res, matrix[i][right])
+		}
+		right--
+
+		// 这里需要额外进行判断。避免重复打印
+		if top <= bottom {
+			for i := right; i >= left; i-- {
+				res = append(res, matrix[bottom][i])
+			}
+			bottom--
+		}
+
+		// 这里需要外进行判断，避免重复打印
+		if right >= left {
+			for i := bottom; i >= top; i-- {
+				res = append(res, matrix[i][left])
+			}
+			left++
+		}
+
+	}
+	return res
+}
+
+var minStack, stack []int
+
+func Push1(node int) {
+	stack = append(stack, node)
+	if len(minStack) == 0 || node <= minStack[len(minStack)-1] {
+		minStack = append(minStack, node)
+	}
+}
+func Pop1() {
+	x := stack[len(stack)-1]
+	stack = stack[:len(stack)-1]
+	if len(minStack) > 0 && x == minStack[len(minStack)-1] {
+		minStack = minStack[:len(minStack)-1]
+	}
+}
+func Top() int {
+	if len(stack) > 0 {
+		return stack[len(stack)-1]
+	}
+	return 0
+}
+func Min() int {
+	if len(minStack) > 0 {
+		return minStack[len(minStack)-1]
+	}
+	return 0
+}
+
+func IsPopOrder(pushV []int, popV []int) bool {
+	var stack3 []int
+	j := 0
+	for _, x := range pushV {
+		if x == popV[j] {
+			j++
+		} else {
+			stack3 = append(stack3, x)
+		}
+		for len(stack3) > 0 && stack3[len(stack3)-1] == popV[j] {
+			j++
+			stack3 = stack3[:len(stack3)-1]
+		}
+	}
+	return j == len(popV)
+}
+
+func PrintFromTopToBottom(root *TreeNode) []int {
+	res := make([]int, 0)
+	if root == nil {
+		return res
+	}
+	queue := []*TreeNode{root}
+	for len(queue) > 0 {
+		cur := queue[0]
+		queue = queue[1:]
+		res = append(res, cur.Val)
+		if cur.Left != nil {
+			queue = append(queue, cur.Left)
+		}
+		if cur.Right != nil {
+			queue = append(queue, cur.Right)
+		}
+	}
+	return res
+}
+
+func Print(pRoot *TreeNode) [][]int {
+	res := make([][]int, 0)
+	if pRoot == nil {
+		return res
+	}
+	queue := []*TreeNode{pRoot}
+	for len(queue) > 0 {
+		size := len(queue)
+		temp := make([]int, 0)
+		for i := 0; i < size; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			temp = append(temp, node.Val)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+		}
+		res = append(res, temp)
+	}
+	return res
+}
+
+func Print2(pRoot *TreeNode) [][]int {
+	res := make([][]int, 0)
+	if pRoot == nil {
+		return res
+	}
+	queue := []*TreeNode{pRoot}
+	flag := false
+	for len(queue) > 0 {
+		size := len(queue)
+		temp := make([]int, 0)
+		for i := 0; i < size; i++ {
+			node := queue[0]
+			queue = queue[1:]
+			temp = append(temp, node.Val)
+			if node.Left != nil {
+				queue = append(queue, node.Left)
+			}
+			if node.Right != nil {
+				queue = append(queue, node.Right)
+			}
+
+		}
+		if flag {
+			reverse(temp)
+		}
+		flag = !flag
+
+		res = append(res, temp)
+	}
+	return res
+}
+
+func reverse(nums []int) {
+	n := len(nums)
+	for i := 0; i < n/2; i++ {
+		nums[i], nums[n-i-1] = nums[n-i-1], nums[i]
+	}
+}
+
+func VerifySquenceOfBST(sequence []int) bool {
+	// write code here
+	if len(sequence) == 0 {
+		return false
+	}
+	return checkSquenceOfBST(sequence)
+}
+
+func checkSquenceOfBST(sequence []int) bool {
+	if len(sequence) == 0 {
+		return true
+	}
+	n := len(sequence)
+	root := sequence[n-1]
+	i := 0
+	left := make([]int, 0)
+	for ; i < n-1; i++ {
+		if sequence[i] > root {
+			break
+		} else {
+			left = append(left, sequence[i])
+		}
+	}
+	right := make([]int, 0)
+	for j := i; j < n-1; j++ {
+		if sequence[j] < root {
+			return false
+		}
+		right = append(right, sequence[j])
+	}
+	return checkSquenceOfBST(left) && checkSquenceOfBST(right)
+}
+
+func FindPath(root *TreeNode, target int) [][]int {
+	cur := make([]int, 0)
+	sum := 0
+	res := make([][]int, 0)
+	var dfs = func(root *TreeNode) {}
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+		sum += root.Val
+		cur = append(cur, root.Val)
+		if root.Right == nil && root.Left == nil {
+			if sum == target {
+				fmt.Println(cur)
+				temp := make([]int, len(cur))
+				copy(temp, cur)
+				res = append(res, temp)
+			}
+		}
+		dfs(root.Left)
+		dfs(root.Right)
+		sum -= root.Val
+		cur = cur[:len(cur)-1]
+	}
+	dfs(root)
+	return res
+}
+
+type RandomListNode struct {
+	Label  int
+	Next   *RandomListNode
+	Random *RandomListNode
+}
+
+/**
+ *
+ * @param pHead RandomListNode类
+ * @return RandomListNode类
+ */
+func Clone(head *RandomListNode) *RandomListNode {
+	if head == nil {
+		return nil
+	}
+
+	// 第一步：创建所有节点的映射，只复制Label值
+	m := make(map[*RandomListNode]*RandomListNode)
+	cur := head
+	for cur != nil {
+		m[cur] = &RandomListNode{
+			Label: cur.Label,
+		}
+		cur = cur.Next
+	}
+
+	// 第二步：设置Next和Random指针，指向新创建的节点
+	cur = head
+	for cur != nil {
+		if cur.Next != nil {
+			m[cur].Next = m[cur.Next]
+		}
+		if cur.Random != nil {
+			m[cur].Random = m[cur.Random]
+		}
+		cur = cur.Next
+	}
+
+	return m[head]
+}
+
+func Convert(pRootOfTree *TreeNode) *TreeNode {
+	if pRootOfTree == nil {
+		return nil
+	}
+
+	var pLastNodeInList *TreeNode
+
+	// 内联的ConvertNode函数逻辑
+	var convertNode func(pCurrent *TreeNode)
+	convertNode = func(pCurrent *TreeNode) {
+		if pCurrent == nil {
+			return
+		}
+
+		// 递归处理左子树
+		convertNode(pCurrent.Left)
+
+		// 处理当前节点：建立双向链接
+		pCurrent.Left = pLastNodeInList
+		if pLastNodeInList != nil {
+			pLastNodeInList.Right = pCurrent
+		}
+
+		// 更新pLastNodeInList为当前节点
+		pLastNodeInList = pCurrent
+
+		// 递归处理右子树
+		convertNode(pCurrent.Right)
+	}
+
+	// 开始转换
+	convertNode(pRootOfTree)
+
+	// pLastNodeInList指向双向链表的尾节点，
+	// 我们需要返回头节点
+	pHeadOfList := pLastNodeInList
+	for pHeadOfList != nil && pHeadOfList.Left != nil {
+		pHeadOfList = pHeadOfList.Left
+	}
+
+	return pHeadOfList
+}
+
+func Convert2(pRootOfTree *TreeNode) *TreeNode {
+	if pRootOfTree == nil {
+		return nil
+	}
+	var dfs func(root *TreeNode)
+	var pHeadOfList *TreeNode
+	dfs = func(cur *TreeNode) {
+		if cur == nil {
+			return
+		}
+		dfs(cur.Right)
+		cur.Right = pHeadOfList
+		if pHeadOfList != nil {
+			pHeadOfList.Left = cur
+		}
+		pHeadOfList = cur
+		dfs(cur.Left)
+	}
+	dfs(pRootOfTree)
+	return pHeadOfList
+}
+
+// Serialize encodes a tree to a single string.
+func Serialize(root *TreeNode) string {
+	var result []string
+	var dfs func(node *TreeNode)
+	dfs = func(node *TreeNode) {
+		if node == nil {
+			result = append(result, "#")
+			return
+		}
+		result = append(result, strconv.Itoa(node.Val))
+		dfs(node.Left)
+		dfs(node.Right)
+	}
+	dfs(root)
+	// 不能直接将数字转为字符串，否则无法区分 12,3 和1，23
+	return strings.Join(result, ",")
+}
+
+// Deserialize decodes your encoded data to tree.
+func Deserialize(data string) *TreeNode {
+	if data == "" {
+		return nil
+	}
+
+	values := strings.Split(data, ",")
+	index := 0
+
+	var dfs func() *TreeNode
+	dfs = func() *TreeNode {
+		if index >= len(values) || values[index] == "#" {
+			index++
+			return nil
+		}
+
+		val, _ := strconv.Atoi(values[index])
+		index++
+
+		node := &TreeNode{Val: val}
+		node.Left = dfs()
+		node.Right = dfs()
+
+		return node
+	}
+
+	return dfs()
+}
+
+func Permutation(str string) []string {
+	if len(str) == 0 {
+		return []string{}
+	}
+
+	// 将字符串转换为字符数组并排序
+	chars := []byte(str)
+	sort.Slice(chars, func(i, j int) bool {
+		return chars[i] < chars[j]
+	})
+
+	n := len(chars)
+	res := make([]string, 0)
+	used := make([]bool, n)
+
+	var backtrack func(track []byte)
+	backtrack = func(track []byte) {
+		if len(track) == n {
+			res = append(res, string(track))
+			return
+		}
+
+		for i := 0; i < n; i++ {
+			// 跳过已使用的字符
+			if used[i] {
+				continue
+			}
+
+			// 关键：跳过重复字符
+			// 如果当前字符与前一个字符相同，且前一个字符还没有被使用，则跳过
+			/*
+				举个具体例子
+				假设我们有字符串"aab"，排序后是['a', 'a', 'b']，索引分别是[0, 1, 2]。
+
+				情况分析：
+				当我们处理索引1的'a'时：
+
+				chars[1] == chars[0]（都是'a'）
+				此时有两种情况：
+				如果used[0] == false（第一个'a'还没用）：
+				我们跳过索引1的'a'
+				强制要求必须先用索引0的'a'
+				如果used[0] == true（第一个'a'已经用了）：
+				我们可以使用索引1的'a'
+				因为已经按顺序了
+			*/
+			if i > 0 && chars[i] == chars[i-1] && !used[i-1] {
+				continue // "如果你想用第二个'a'，但第一个'a'还没用，那就等等！"
+			}
+
+			used[i] = true
+			track = append(track, chars[i])
+			backtrack(track)
+			track = track[:len(track)-1]
+			used[i] = false
+		}
+	}
+
+	backtrack([]byte{})
+	return res
+}
+
+/*
+*摩尔投票算法（Boyer-Moore Majority Vote Algorithm）**来实现O(n)时间复杂度和O(1)空间复杂度的解法。
+这个算法的核心思想是：如果一个数字出现次数超过数组长度的一半，那么它在"投票对抗"中一定会胜出。
+空间效率：相比哈希表O(n)空间，只需要O(1)空间
+时间效率：仍然保持O(n)时间复杂度
+简洁性：代码简单，逻辑清晰
+实用性：在大数据场景下特别有用，内存占用极小
+*/
+
+func MoreThanHalfNum_Solution(numbers []int) int {
+	n := len(numbers)
+	if n < 1 {
+		return -1
+	}
+	cnt := 1
+	candidate := numbers[0]
+	for i := 1; i < n; i++ {
+		if cnt == 0 {
+			candidate = numbers[i]
+			cnt = 1
+		} else if candidate == numbers[i] {
+			cnt++
+		} else {
+			cnt--
+		}
+	}
+	return candidate
+}
+
+// GetLeastNumbers_Solution 使用快速选择算法实现
+func GetLeastNumbers_Solution(input []int, k int) []int {
+	n := len(input)
+	if n <= 0 || k > n || k <= 0 {
+		return []int{}
+	}
+	start := 0
+	end := n - 1
+	index := Part(input, start, end)
+	for index != k-1 {
+		if index > k-1 {
+			end = index - 1
+			index = Part(input, start, end)
+		} else {
+			start = index + 1
+			index = Part(input, start, end)
+		}
+	}
+	return input[:k]
+}
+
+// GetLeastNumbers_Heap 使用大顶堆实现（推荐）
+// 时间复杂度: O(n log k), 空间复杂度: O(k)
+func GetLeastNumbers_Heap(input []int, k int) []int {
+	if len(input) <= 0 || k > len(input) || k <= 0 {
+		return []int{}
+	}
+
+	// 使用大顶堆维护k个最小元素
+	maxHeap := &MaxHeap{}
+
+	for _, num := range input {
+		if maxHeap.Len() < k {
+			// 堆未满，直接加入
+			heap.Push(maxHeap, num)
+		} else if num < maxHeap.Top() {
+			// 当前元素比堆顶小，替换
+			heap.Pop(maxHeap)
+			heap.Push(maxHeap, num)
+		}
+	}
+
+	// 提取结果
+	result := make([]int, 0, k)
+	for maxHeap.Len() > 0 {
+		result = append(result, heap.Pop(maxHeap).(int))
+	}
+
+	//// 由于是大顶堆，出来的顺序是从大到小，需要反转
+	//for i, j := 0, len(result)-1; i < j; i, j = i+1, j-1 {
+	//	result[i], result[j] = result[j], result[i]
+	//}
+
+	return result
+}
+
+// GetLeastNumbers_MinHeap 使用小顶堆实现（空间效率低）
+// 时间复杂度: O(n log n), 空间复杂度: O(n)
+func GetLeastNumbers_MinHeap(input []int, k int) []int {
+	if len(input) <= 0 || k > len(input) || k <= 0 {
+		return []int{}
+	}
+
+	// 将所有元素放入小顶堆
+	minHeap := &MinHeap{}
+	for _, num := range input {
+		heap.Push(minHeap, num)
+	}
+
+	// 取出k个最小元素
+	result := make([]int, 0, k)
+	for i := 0; i < k && minHeap.Len() > 0; i++ {
+		result = append(result, heap.Pop(minHeap).(int))
+	}
+
+	return result
+}
+
+func Part(arr []int, left, right int) int {
+	// 选择最左边的元素作为基准值
+	pivot := arr[right]
+
+	i := left
+	// 遍历数组，将小于基准值的元素移到左侧
+	for j := left; j < right; j++ {
+		if arr[j] < pivot {
+			arr[i], arr[j] = arr[j], arr[i]
+			i++
+		}
+	}
+
+	// 将基准值放到正确的位置
+	arr[right], arr[i] = arr[i], arr[right]
+	return i
+}
+
+// MaxHeap 大顶堆实现
+type MaxHeap []int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] } // 大顶堆：父节点大于子节点
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	n := len(*h)
+	x := (*h)[n-1]
+	*h = (*h)[0 : n-1]
+	return x
+}
+
+// Top 返回堆顶元素（不删除）
+func (h MaxHeap) Top() int {
+	if len(h) == 0 {
+		return 0
+	}
+	return h[0]
+}
+
+// MinHeap 小顶堆实现
+type MinHeap []int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] < h[j] } // 小顶堆：父节点小于子节点
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	old := *h
+	n := len(old)
+	x := old[n-1]
+	*h = old[0 : n-1]
+	return x
 }

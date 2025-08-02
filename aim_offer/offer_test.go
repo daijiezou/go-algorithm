@@ -1,6 +1,7 @@
 package aim_offer
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -335,6 +336,72 @@ func Test_printNumbers(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := printNumbers(tt.args.n); !reflect.DeepEqual(got, tt.want) {
 				t.Errorf("printNumbers() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_reOrderArray(t *testing.T) {
+	type args struct {
+		array []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want []int
+	}{
+		{
+			name: "1",
+			args: args{array: []int{2, 4, 6, 5, 7}},
+			want: []int{5, 7, 2, 4, 6},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := reOrderArray1(tt.args.array); !reflect.DeepEqual(got, tt.want) {
+				t.Errorf("reOrderArray() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func TestMinStack(t *testing.T) {
+	Push1(2)
+	Push1(3)
+	Push1(6)
+	Push1(2)
+	Push1(4)
+	Push1(5)
+	Pop1()
+	Pop1()
+	Pop1()
+	fmt.Println(Min())
+
+}
+
+func TestIsPopOrder(t *testing.T) {
+	type args struct {
+		pushV []int
+		popV  []int
+	}
+	tests := []struct {
+		name string
+		args args
+		want bool
+	}{
+		{
+			name: "!",
+			args: args{
+				pushV: []int{1, 2, 3, 4, 5},
+				popV:  []int{4, 5, 3, 2, 1},
+			},
+			want: true,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := IsPopOrder(tt.args.pushV, tt.args.popV); got != tt.want {
+				t.Errorf("IsPopOrder() = %v, want %v", got, tt.want)
 			}
 		})
 	}
