@@ -3,6 +3,7 @@ package aim_offer
 import (
 	"container/heap"
 	"fmt"
+	"math"
 	"math/bits"
 	"sort"
 	"strconv"
@@ -66,9 +67,11 @@ func dup2(nums []int) int {
 				break
 			}
 		}
+		// 重复的数字出现在前半段
 		if cnt > mid-start+1 {
 			end = mid
 		} else {
+			//
 			start = mid + 1
 		}
 	}
@@ -231,30 +234,61 @@ type TreeLinkNode struct {
 	Next  *TreeLinkNode // 指向父节点
 }
 
-// 获取中序遍历的下一个节点
-// 左根右
+// 获取中序遍历的下一个节点：左根右
+// GetNext 查找二叉搜索树中序遍历中指定节点的下一个节点
+// 参数: pNode - 当前节点指针
+// 返回: 中序遍历序列中的下一个节点指针，如果不存在则返回nil
+//
+// 中序遍历顺序: 左子树 -> 根节点 -> 右子树
+// 算法思路:
+//  1. 如果当前节点有右子树，下一个节点是右子树中的最左节点
+//  2. 如果当前节点没有右子树，需要向上查找父节点，直到找到一个祖先节点，
+//     使得当前节点在该祖先节点的左子树中，该祖先节点就是下一个节点
 func GetNext(pNode *TreeLinkNode) *TreeLinkNode {
+	// 边界条件检查：如果输入节点为空，直接返回nil
 	if pNode == nil {
 		return nil
 	}
+
+	// 用于存储找到的下一个节点
 	var next *TreeLinkNode
-	// 查看节点的右子树是否存在，如存在则为节点右子树的左边节点
+
+	// 情况1: 当前节点有右子树
+	// 在中序遍历中，访问完当前节点后，下一个要访问的是右子树的最小值节点
+	// 右子树的最小值节点就是右子树中最左边的节点
 	if pNode.Right != nil {
+		// 从右子树的根节点开始
 		pRight := pNode.Right
+		// 一直向左走，找到最左边的节点（即右子树的最小值）
 		for pRight.Left != nil {
 			pRight = pRight.Left
 		}
+		// 右子树的最左节点就是下一个要访问的节点
 		next = pRight
 	} else if pNode.Next != nil {
+		// 情况2: 当前节点没有右子树，但有父节点
+		// 需要向上查找，直到找到一个祖先节点，使得当前路径是从该祖先的左子树来的
+
+		// 保存当前节点和父节点的引用
 		pCurrent := pNode
 		pParent := pNode.Next
-		// 直到找到当前节点是其父节点的左子树，则下一个节点就是其父节点
+
+		// 向上遍历，寻找合适的祖先节点
+		// 如果当前节点是父节点的右子节点，说明父节点已经被访问过了
+		// 需要继续向上查找，直到找到一个节点，当前路径是从其左子树来的
 		for pParent != nil && pCurrent == pParent.Right {
+			// 继续向上移动
 			pCurrent = pParent
 			pParent = pParent.Next
 		}
+
+		// 找到的父节点就是下一个要访问的节点
+		// 如果pParent为nil，说明当前节点是中序遍历的最后一个节点
 		next = pParent
 	}
+	// 情况3: 当前节点既没有右子树，也没有父节点
+	// 这种情况下next保持为nil，表示当前节点是中序遍历的最后一个节点
+
 	return next
 }
 
@@ -1470,4 +1504,248 @@ func (h *MinHeap) Pop() interface{} {
 	x := old[n-1]
 	*h = old[0 : n-1]
 	return x
+}
+
+func (h MinHeap) Top() int {
+	if len(h) == 0 {
+		return 0
+	}
+	return h[0]
+}
+
+var (
+	// 最大堆的所有的数值都要小于最小堆的所有值
+	maxHeap = &MaxHeap{}
+	minHeap = &MinHeap{}
+)
+
+func init() {
+	heap.Init(maxHeap)
+	heap.Init(minHeap)
+}
+
+func Insert(num int) {
+	if (minHeap.Len()+maxHeap.Len())%2 == 0 {
+		// 插入到最小堆
+		if maxHeap.Len() > 0 && num < maxHeap.Top() {
+			x1 := heap.Pop(maxHeap).(int)
+			heap.Push(maxHeap, num)
+			heap.Push(minHeap, x1)
+		} else {
+			heap.Push(minHeap, num)
+		}
+	} else {
+		// 插入到最大
+		if minHeap.Len() > 0 && num > minHeap.Top() {
+			x1 := heap.Pop(minHeap).(int)
+			heap.Push(minHeap, num)
+			heap.Push(maxHeap, x1)
+		} else {
+			heap.Push(maxHeap, num)
+		}
+	}
+}
+
+func GetMedian() float64 {
+	if (minHeap.Len()+maxHeap.Len())%2 == 0 {
+		return (float64(maxHeap.Top()) + float64(minHeap.Top())) / 2
+	} else {
+		return float64(minHeap.Top())
+	}
+}
+
+// FindGreatestSumOfSubArray 使用Kadane算法找到数组中连续子数组的最大和
+// 时间复杂度: O(n), 空间复杂度: O(1)
+//
+// 算法原理解释：
+//
+//  1. 核心思想：对于任意位置i，以i结尾的最大子数组和只有两种情况：
+//     a) 包含前面的元素：sum = 前面的最大和 + array[i]
+//     b) 不包含前面的元素：sum = array[i]
+//
+//  2. 关键洞察：如果前面的最大和 < 0，那么加上它只会让结果更小
+//     所以我们应该放弃前面的累积，重新开始
+//
+// 3. 为什么这个算法是正确的？
+//   - 我们维护了两个变量：
+//     sum: 当前位置结尾的最大子数组和
+//     res: 目前为止遇到的最大子数组和
+//   - 每次迭代都保证了sum是当前位置结尾的最优解
+//   - res始终记录全局最优解
+func FindGreatestSumOfSubArray(array []int) int {
+	if len(array) == 0 {
+		return 0
+	}
+
+	// sum: 当前位置结尾的最大子数组和
+	sum := 0
+	// res: 目前为止遇到的最大子数组和
+	res := math.MinInt
+
+	for i := 0; i < len(array); i++ {
+		// 将当前元素加入子数组
+		sum += array[i]
+
+		// 更新全局最大值
+		res = max(res, sum)
+
+		// 关键步骤：如果sum < 0，说明前面的累积对后面没有贡献
+		// 因为任何数 + 负数 < 该数本身
+		// 所以我们重置sum，从下一个元素重新开始计算
+		if sum < 0 {
+			sum = 0
+		}
+	}
+
+	return res
+}
+
+func FindGreatestSumOfSubArray2(array []int) int {
+	n := len(array)
+	if n == 0 {
+		return 0
+	}
+
+	// dp[i]表示以i结尾的最大子数组和
+	dp := make([]int, n)
+	dp[0] = array[0]
+
+	for i := 1; i < n; i++ {
+		dp[i] = max(dp[i-1]+array[i], array[i])
+	}
+	res := math.MinInt
+	for i := 0; i < n; i++ {
+		res = max(res, dp[i])
+	}
+	return res
+}
+
+// NumberOf1Between1AndN_Solution 计算从1到n中数字1出现的总次数
+// 使用递归分治的方法，按位分析每一位上1的出现次数
+//
+// 算法思路：
+// 对于一个数字，我们分析每一位上1的出现次数，主要分为三种情况：
+// 1. 当前位数字 > 1：该位上1的出现次数 = (高位数字+1) * 10^(低位位数)
+// 2. 当前位数字 = 1：该位上1的出现次数 = 高位数字 * 10^(低位位数) + 低位数字 + 1
+// 3. 当前位数字 = 0：该位上1的出现次数 = 高位数字 * 10^(低位位数)
+//
+// 例如：对于数字1234，分析百位上1的出现次数：
+// - 高位：1，低位：34，当前位：2 > 1
+// - 所以百位上1的出现次数 = (1+1) * 10^2 = 200
+// - 即：100-199, 1100-1199 这200个数字的百位都是1
+func NumberOf1Between1AndN_Solution(n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	count := 0
+	digit := 1 // 当前分析的位数（个位、十位、百位...）
+
+	for digit <= n {
+		// 计算高位、当前位、低位的值
+		high := n / (digit * 10) // 高位数字
+		cur := (n / digit) % 10  // 当前位数字
+		low := n % digit         // 低位数字
+
+		// 根据当前位的值计算该位上1的出现次数
+		if cur == 0 {
+			// 当前位为0：该位上1的出现次数 = high * digit
+			count += high * digit
+		} else if cur == 1 {
+			// 当前位为1：该位上1的出现次数 = high * digit + low + 1
+			count += high*digit + low + 1
+		} else {
+			// 当前位>1：该位上1的出现次数 = (high + 1) * digit
+			count += (high + 1) * digit
+		}
+
+		digit *= 10 // 移动到下一位
+	}
+
+	return count
+}
+
+// NumberOf1Between1AndN_Recursive 递归版本的实现（教学用途）
+// 这个版本更容易理解递归的思路，但效率不如上面的迭代版本
+func NumberOf1Between1AndN_Recursive(n int) int {
+	if n <= 0 {
+		return 0
+	}
+
+	var countInRange func(n int) int
+	countInRange = func(n int) int {
+		if n <= 0 {
+			return 0
+		}
+
+		// 单位数的情况
+		if n < 10 {
+			return 1
+		}
+
+		// 计算位数和最高位
+		digits := len(strconv.Itoa(n))
+		powerOf10 := int(math.Pow10(digits - 1))
+
+		firstDigit := n / powerOf10
+		remaining := n % powerOf10
+
+		// 计算最高位为1的数字个数
+		numFirstDigit := 0
+		if firstDigit > 1 {
+			// 最高位>1：最高位为1的数字有 10^(digits-1) 个
+			numFirstDigit = powerOf10
+		} else if firstDigit == 1 {
+			// 最高位=1：最高位为1的数字有 remaining+1 个
+			numFirstDigit = remaining + 1
+		}
+
+		// 递归计算其他位的1的个数
+		// 1. 1到10^(digits-1)-1 范围内其他位的1的个数
+		numOtherDigits := firstDigit * countInRange(powerOf10-1)
+
+		// 2. 10^(digits-1) 到 n 范围内其他位的1的个数
+		numRecursive := countInRange(remaining)
+
+		return numFirstDigit + numOtherDigits + numRecursive
+	}
+
+	return countInRange(n)
+}
+
+// findNthDigit 查找数字序列中第n位对应的数字
+// 数字序列格式: 0123456789101112131415...
+// 参数: n - 目标位置（从0开始计数）
+// 返回: 第n位对应的数字
+func findNthDigit(n int) int {
+	// 边界条件：如果n小于10，直接返回对应的单位数字
+	if n < 10 {
+		return n
+	}
+	
+	// 从1位数字开始计算
+	digits := 1      // 当前处理的数字位数
+	start := 1       // 当前位数的起始数字
+	count := 9       // 当前位数的数字个数
+	
+	// 找到第n位数字属于几位数
+	for n > digits*count {
+		n -= digits * count  // 减去当前位数占用的总位数
+		digits++            // 位数加1
+		start *= 10         // 起始数字变为下一位数的起始值
+		count *= 10         // 数字个数变为下一位数的个数
+	}
+	
+	// 此时n表示在当前位数范围内的位置（从1开始）
+	// 计算具体是哪个数字
+	number := start + (n-1)/digits
+	
+	// 计算是该数字的第几位（从左开始，0-indexed）
+	digitIndex := (n - 1) % digits
+	
+	// 将数字转换为字符串，然后取对应位置的字符
+	numberStr := fmt.Sprintf("%d", number)
+	
+	// 将字符转换为数字并返回
+	return int(numberStr[digitIndex] - '0')
 }
