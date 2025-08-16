@@ -15,16 +15,16 @@ x>=9 相当于 x
 
 // 适用于>=
 func lowerBound(nums []int, target int) int {
-	left, right := 0, len(nums)-1
-	for left <= right {
+	left, right := -1, len(nums)
+	for left+1 < right {
 		mid := left + (right-left)/2
 		if nums[mid] >= target {
-			right = mid - 1
+			right = mid
 		} else {
-			left = mid + 1
+			left = mid
 		}
 	}
-	return left
+	return right
 }
 
 // 34. 在排序数组中查找元素的第一个和最后一个位置
@@ -95,13 +95,16 @@ func isPossibleToSplit(nums []int) bool {
 }
 
 func findPeakElement(nums []int) int {
+	n := len(nums)
 	left := -1
-	right := len(nums)
+	right := n-1
 	for left+1 < right {
 		mid := left + (right-left)/2
+		// mid要不在峰顶，要不在峰顶的右侧
 		if nums[mid] > nums[mid+1] {
 			right = mid
 		} else {
+			// mid在峰顶左侧
 			left = mid
 		}
 	}

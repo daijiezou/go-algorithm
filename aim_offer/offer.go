@@ -336,20 +336,35 @@ func Fibonacci(n int) int {
 	return fibN
 }
 
+// minNumberInRotateArray 在旋转排序数组中找到最小值
+// 使用二分搜索，通过比较中间元素与右边界元素来确定搜索方向
+// 时间复杂度：O(log n)，最坏情况下O(n)
 func minNumberInRotateArray(nums []int) int {
-	// [0,n-2]
-	//（-1，n-1)
+	// 使用开区间(-1, n-1)进行二分搜索
+	// left初始化为-1，right初始化为数组最后一个索引
 	left, right := -1, len(nums)-1
+
+	// 当left和right不相邻时继续搜索
 	for left+1 < right {
+		// 计算中间位置，避免整数溢出
 		mid := left + (right-left)/2
+
 		if nums[mid] > nums[right] {
+			// 情况1：mid在左半部分（较大值区域）
+			// 最小值一定在mid右侧，所以left移动到mid
 			left = mid
 		} else if nums[mid] < nums[right] {
+			// 情况2：mid在右半部分（较小值区域）
+			// 最小值可能就是mid或在mid左侧，所以right移动到mid
 			right = mid
 		} else {
+			// 情况3：nums[mid] == nums[right]
+			// 无法确定mid在哪一侧，但可以安全排除right位置
+			// 因为mid位置有相同值，所以right左移一位
 			right--
 		}
 	}
+	// 循环结束时，right指向最小值位置
 	return nums[right]
 }
 
@@ -1344,7 +1359,7 @@ func Permutation(str string) []string {
 简洁性：代码简单，逻辑清晰
 实用性：在大数据场景下特别有用，内存占用极小
 */
-
+// 39.数组中出现超过一半的数字
 func MoreThanHalfNum_Solution(numbers []int) int {
 	n := len(numbers)
 	if n < 1 {
@@ -1554,7 +1569,8 @@ func GetMedian() float64 {
 	}
 }
 
-// FindGreatestSumOfSubArray 使用Kadane算法找到数组中连续子数组的最大和
+// FindGreatestSumOfSubArray 42.连续子数组的最大和
+// 使用Kadane算法找到数组中连续子数组的最大和
 // 时间复杂度: O(n), 空间复杂度: O(1)
 //
 // 算法原理解释：
@@ -1722,30 +1738,30 @@ func findNthDigit(n int) int {
 	if n < 10 {
 		return n
 	}
-	
+
 	// 从1位数字开始计算
-	digits := 1      // 当前处理的数字位数
-	start := 1       // 当前位数的起始数字
-	count := 9       // 当前位数的数字个数
-	
+	digits := 1 // 当前处理的数字位数
+	start := 1  // 当前位数的起始数字
+	count := 9  // 当前位数的数字个数
+
 	// 找到第n位数字属于几位数
 	for n > digits*count {
-		n -= digits * count  // 减去当前位数占用的总位数
+		n -= digits * count // 减去当前位数占用的总位数
 		digits++            // 位数加1
 		start *= 10         // 起始数字变为下一位数的起始值
 		count *= 10         // 数字个数变为下一位数的个数
 	}
-	
+
 	// 此时n表示在当前位数范围内的位置（从1开始）
 	// 计算具体是哪个数字
 	number := start + (n-1)/digits
-	
+
 	// 计算是该数字的第几位（从左开始，0-indexed）
 	digitIndex := (n - 1) % digits
-	
+
 	// 将数字转换为字符串，然后取对应位置的字符
 	numberStr := fmt.Sprintf("%d", number)
-	
+
 	// 将字符转换为数字并返回
 	return int(numberStr[digitIndex] - '0')
 }
