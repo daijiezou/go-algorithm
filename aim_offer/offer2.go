@@ -700,3 +700,25 @@ func maxProfit(prices []int) int {
 	}
 	return res
 }
+
+// 64
+func Sum_Solution(n int) int {
+	// write code here
+	if n <= 1 {
+		return 1
+	}
+	return Sum_Solution(n-1) + n
+}
+
+func Add(num1 int, num2 int) int {
+	for num2 != 0 {
+		// 进行异或运算，相当于加法，不及进位
+		sum := num1 ^ num2
+		// 计算有无进位
+		carry := (num1 & num2) << 1
+
+		num1 = sum
+		num2 = carry
+	}
+	return num1
+}

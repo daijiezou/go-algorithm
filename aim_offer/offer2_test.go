@@ -347,3 +347,26 @@ func TestLastRemaining_Solution(t *testing.T) {
 		})
 	}
 }
+
+func TestSum_Solution(t *testing.T) {
+	type args struct {
+		n int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{n: 5},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := Sum_Solution(tt.args.n); got != tt.want {
+				t.Errorf("Sum_Solution() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
