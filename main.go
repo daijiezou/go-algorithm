@@ -1,13 +1,171 @@
+// file: labs/01-indexing/main.go
 package main
 
 import (
 	"fmt"
 	"math"
+	"math/rand"
 	"slices"
+	"sort"
+	"time"
 )
 
-func main() {
+type Record struct {
+	ID     int64
+	UserID int64
+	Email  string
+}
 
+// 本地索引：email -> 记录ID，分散在每个 user 分区（这里用 map[user] 来模拟“分区”）
+type LocalIndex struct {
+	// 每个“分区”一份索引（真实系统是分区与主数据共置）
+	shards map[int64]*localShard
+}
+type localShard struct {
+	emailToIDs map[string][]int64
+	records    map[int64]Record
+}
+
+func NewLocalIndex() *LocalIndex {
+	return &LocalIndex{shards: make(map[int64]*localShard)}
+}
+func (li *LocalIndex) ensureShard(uid int64) *localShard {
+	s, ok := li.shards[uid]
+	if !ok {
+		s = &localShard{emailToIDs: make(map[string][]int64), records: make(map[int64]Record)}
+		li.shards[uid] = s
+	}
+	return s
+}
+func (li *LocalIndex) Write(rec Record) {
+	s := li.ensureShard(rec.UserID)
+	s.records[rec.ID] = rec
+	s.emailToIDs[rec.Email] = append(s.emailToIDs[rec.Email], rec.ID)
+}
+func (li *LocalIndex) QueryByEmail(email string) []Record {
+	// scatter-gather：遍历所有分区搜集
+	var out []Record
+	for _, s := range li.shards {
+		if ids, ok := s.emailToIDs[email]; ok {
+			for _, id := range ids {
+				out = append(out, s.records[id])
+			}
+		}
+	}
+	return out
+}
+
+// 全局索引：单独分区，email -> 记录ID（真实系统会独立分片；这里用单 map 模拟）
+type GlobalIndex struct {
+	emailToIDs map[string][]int64
+	records    map[int64]Record // 主表（简化为本地）
+}
+
+func NewGlobalIndex() *GlobalIndex {
+	return &GlobalIndex{emailToIDs: make(map[string][]int64), records: make(map[int64]Record)}
+}
+func (gi *GlobalIndex) Write(rec Record) {
+	gi.records[rec.ID] = rec
+	gi.emailToIDs[rec.Email] = append(gi.emailToIDs[rec.Email], rec.ID)
+}
+func (gi *GlobalIndex) QueryByEmail(email string) []Record {
+	var out []Record
+	if ids, ok := gi.emailToIDs[email]; ok {
+		for _, id := range ids {
+			out = append(out, gi.records[id])
+		}
+	}
+	return out
+}
+
+type LatencyStats struct {
+	samples []int64 // microseconds
+}
+
+func (ls *LatencyStats) Add(d time.Duration) {
+	ls.samples = append(ls.samples, d.Microseconds())
+}
+func (ls *LatencyStats) Summary() (p50, p95, p99 int64) {
+	if len(ls.samples) == 0 {
+		return
+	}
+	cp := append([]int64(nil), ls.samples...)
+	sort.Slice(cp, func(i, j int) bool { return cp[i] < cp[j] })
+	idx := func(p float64) int {
+		k := int(float64(len(cp)-1) * p)
+		if k < 0 {
+			k = 0
+		}
+		if k >= len(cp) {
+			k = len(cp) - 1
+		}
+		return k
+	}
+	return cp[idx(0.50)], cp[idx(0.95)], cp[idx(0.99)]
+}
+
+func main() {
+	rand.Seed(1)
+	const (
+		NUsers     = 1000
+		NRecords   = 200_000
+		ReadQ      = 20_000
+		HotEmailsK = 10 // 热点 email 数（模拟倾斜）
+	)
+
+	// 生成数据
+	userIDs := make([]int64, NUsers)
+	for i := range userIDs {
+		userIDs[i] = int64(i + 1)
+	}
+	hotEmails := make([]string, HotEmailsK)
+	for i := range hotEmails {
+		hotEmails[i] = fmt.Sprintf("hot%02d@example.com", i)
+	}
+	genEmail := func() string {
+		// 20% 概率落到热点，80% 随机
+		if rand.Float64() < 0.2 {
+			return hotEmails[rand.Intn(len(hotEmails))]
+		}
+		return fmt.Sprintf("user%06d@example.com", rand.Intn(NUsers*5))
+	}
+
+	local := NewLocalIndex()
+	global := NewGlobalIndex()
+
+	// 写入（两边各写一份，用相同数据）
+	for i := 0; i < NRecords; i++ {
+		rec := Record{
+			ID:     int64(i + 1),
+			UserID: userIDs[rand.Intn(len(userIDs))],
+			Email:  genEmail(),
+		}
+		local.Write(rec)
+		global.Write(rec)
+	}
+
+	// 读压测：按 email 查
+	var latLocal, latGlobal LatencyStats
+	emailsForRead := make([]string, ReadQ)
+	for i := 0; i < ReadQ; i++ {
+		emailsForRead[i] = genEmail()
+	}
+
+	for _, email := range emailsForRead {
+		t0 := time.Now()
+		_ = local.QueryByEmail(email)
+		latLocal.Add(time.Since(t0))
+	}
+	for _, email := range emailsForRead {
+		t0 := time.Now()
+		_ = global.QueryByEmail(email)
+		latGlobal.Add(time.Since(t0))
+	}
+
+	lp50, lp95, lp99 := latLocal.Summary()
+	gp50, gp95, gp99 := latGlobal.Summary()
+	fmt.Printf("LocalIndex  read latency (us): p50=%d p95=%d p99=%d\n", lp50, lp95, lp99)
+	fmt.Printf("GlobalIndex read latency (us): p50=%d p95=%d p99=%d\n", gp50, gp95, gp99)
 }
 
 func example() {
