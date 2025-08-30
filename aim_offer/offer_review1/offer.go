@@ -1,7 +1,10 @@
 package offer_review1
 
 import (
+	"container/heap"
 	"fmt"
+	"math"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -872,4 +875,525 @@ func Deserialize(s string) *TreeNode {
 		return root
 	}
 	return dfs()
+}
+
+// 38.字符串的排列
+func Permutation(str string) []string {
+	res := []string{}
+	n := len(str)
+	// 将字符串转换为字符数组并排序
+	chars := []byte(str)
+	sort.Slice(chars, func(i, j int) bool {
+		return chars[i] < chars[j]
+	})
+	vis := make([]bool, n)
+	var backtrack func(cur []byte)
+	backtrack = func(cur []byte) {
+		if len(cur) == n {
+			res = append(res, string(cur))
+			return
+		}
+		for i := 0; i < n; i++ {
+			if vis[i] {
+				continue
+			}
+			// 在使用第二个同样的字符时，必须要第一个也使用了，保证顺序
+			if i > 0 && chars[i] == chars[i-1] && !vis[i-1] {
+				continue
+			}
+			vis[i] = true
+			cur = append(cur, chars[i])
+			backtrack(cur)
+			vis[i] = false
+			cur = cur[:len(cur)-1]
+		}
+	}
+	backtrack([]byte{})
+
+	return res
+}
+
+// 39.数组中出现次数超过一半的数组
+func MoreThanHalfNum_Solution(numbers []int) int {
+	if len(numbers) <= 1 {
+		return -1
+	}
+	// write code here
+	candidate := numbers[0]
+	cnt := 1
+	for i := 1; i < len(numbers); i++ {
+		if numbers[i] != candidate {
+			cnt--
+			if cnt <= 0 {
+				cnt = 1
+				candidate = numbers[i]
+			}
+		} else {
+			cnt++
+		}
+	}
+	return candidate
+}
+
+// 40.最小的K个数
+func GetLeastNumbers_Solution(input []int, k int) []int {
+	if k <= 0 || k > len(input) {
+		return []int{}
+	}
+	left := 0
+	right := len(input) - 1
+	index := part(input, left, right)
+	for index != k-1 {
+		if index > k-1 {
+			right = index - 1
+			index = part(input, left, right)
+		} else {
+			left = index + 1
+			index = part(input, left, right)
+		}
+	}
+	return input[:k]
+}
+
+func part(nums []int, left, right int) int {
+	flag := nums[right]
+	index := left
+	for i := left; i < right; i++ {
+		if nums[i] < flag {
+			nums[index], nums[i] = nums[i], nums[index]
+			index++
+		}
+	}
+	nums[index], nums[right] = nums[right], nums[index]
+	return index
+}
+
+// MaxHeap 大顶堆实现
+type MaxHeap []int
+
+func (h MaxHeap) Len() int           { return len(h) }
+func (h MaxHeap) Less(i, j int) bool { return h[i] > h[j] } // 大顶堆：父节点大于子节点
+func (h MaxHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MaxHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MaxHeap) Pop() interface{} {
+	n := len(*h)
+	x := (*h)[n-1]
+	*h = (*h)[0 : n-1]
+	return x
+}
+
+// Top 返回堆顶元素（不删除）
+func (h MaxHeap) Top() int {
+	if len(h) == 0 {
+		return 0
+	}
+	return h[0]
+}
+
+// MinHeap 小顶堆实现
+type MinHeap []int
+
+func (h MinHeap) Len() int           { return len(h) }
+func (h MinHeap) Less(i, j int) bool { return h[i] < h[j] } // 小顶堆：父节点小于子节点
+func (h MinHeap) Swap(i, j int)      { h[i], h[j] = h[j], h[i] }
+
+func (h *MinHeap) Push(x interface{}) {
+	*h = append(*h, x.(int))
+}
+
+func (h *MinHeap) Pop() interface{} {
+	n := len(*h)
+	x := (*h)[n-1]
+	*h = (*h)[0 : n-1]
+	return x
+}
+
+func (h MinHeap) Top() int {
+	if len(h) == 0 {
+		return 0
+	}
+	return h[0]
+}
+
+var maxh = &MaxHeap{}
+var minh = &MinHeap{}
+
+func init() {
+	heap.Init(maxh)
+	heap.Init(minh)
+}
+
+// 41.数据流中的中位数
+func Insert(num int) {
+	// 默认往大顶堆塞
+	if (minh.Len()+maxh.Len())%2 == 0 {
+		if minh.Len() > 0 && num > minh.Top() {
+			heap.Push(minh, num)
+			x := heap.Pop(minh)
+			heap.Push(maxh, x)
+		} else {
+			heap.Push(maxh, num)
+		}
+	} else {
+		if maxh.Len() > 0 && num < maxh.Top() {
+			x := heap.Pop(maxh)
+			heap.Push(minh, x)
+			heap.Push(maxh, num)
+		} else {
+			heap.Push(minh, num)
+		}
+	}
+}
+
+func GetMedian() float64 {
+	if (minh.Len()+maxh.Len())%2 == 0 {
+		return (float64(minh.Top()) + float64(maxh.Top())) / 2
+	} else {
+		return float64(maxh.Top())
+	}
+}
+
+// 42.连续子数组的最大和
+func FindGreatestSumOfSubArray(array []int) int {
+	if len(array) <= 0 {
+		return -1
+	}
+	sum := 0
+	res := math.MinInt
+	for i := 0; i < len(array); i++ {
+		sum += array[i]
+		res = max(res, sum)
+		if sum < 0 {
+			sum = 0
+		}
+	}
+	return res
+}
+
+// 43.整数中1出现的次数,比如 n=12,那么1出现了5次,11算两次
+func NumberOf1Between1AndN_Solution(n int) int {
+	// 边界：n<=0 时没有正数，直接返回 0
+	if n <= 0 {
+		return 0
+	}
+	count := 0
+	// factor 表示正在统计的位权：
+	// 1 表示个位，10 表示十位，100 表示百位，依此类推
+	// 思路：对每一位单独计算“这一位上出现数字1”的次数，然后把各位的次数相加
+	for factor := 1; factor <= n; factor *= 10 {
+		// 把 n 按当前位拆成三段： high | cur | low
+		// 以 factor = 10（十位）为例：
+		//   n = high * (factor*10) + cur * factor + low
+		high := n / (factor * 10) // 当前位左侧的高位数值
+		cur := (n / factor) % 10  // 当前位的数字（0..9）
+		low := n % factor         // 当前位右侧的低位数值
+
+		// 针对“当前位”为 1 的出现次数，有三种情况：
+		if cur == 0 {
+			// 情况1：当前位小于1（即为 0）
+			// 高位可完整循环 high 次，每次这一位会有 factor 个数取到“1”
+			// 例如：统计十位为1，有 0..9 的低位变化共 factor 种
+			// 故贡献：high * factor
+			count += high * factor
+		} else if cur == 1 {
+			// 情况2：当前位等于1
+			// 除了 high 次完整循环外，最后一次“未完整循环”也会落在当前位为1，
+			// 这一次能贡献 (low + 1) 个（从低位 0 计到 low）
+			// 故贡献：high*factor + (low + 1)
+			count += high*factor + low + 1
+		} else {
+			// 情况3：当前位大于1（2..9）
+			// 表示已经“跨过了1”这个段，所以等价于完整循环了 (high+1) 次
+			// 故贡献：(high + 1) * factor
+			count += (high + 1) * factor
+		}
+	}
+	return count
+}
+
+// 44.数字序列中某一位的数字
+// 44. 数字序列中某一位的数字
+func findNthDigit(n int) int {
+	if n < 10 { // 0..9 直接返回
+		return n
+	}
+
+	// 跳过一位数（0..9 共 10 个字符）
+	n -= 10
+
+	// 依次尝试 2 位数段、3 位数段、...
+	digitLen := 2
+	countInBlock := 90 // 2 位数有 90 个：10..99
+	for n > digitLen*countInBlock {
+		n -= digitLen * countInBlock
+		digitLen++
+		countInBlock *= 10 // 下一段数量 ×10：90, 900, 9000...
+	}
+
+	// 该段起始数字，如 2位段=10，3位段=100
+	firstOfBlock := pow10(digitLen - 1)
+
+	// 在该段内第 indexInBlock 个字符（从 0 开始）
+	indexInBlock := n
+	// 落到的具体第几个数字（从 0 开始）
+	numberIndex := indexInBlock / digitLen
+	// 在该数字内的第几位（从 0 开始，左→右）
+	offsetInNumber := indexInBlock % digitLen
+
+	// 得到目标数字
+	target := firstOfBlock + numberIndex
+
+	// 取出第 offsetInNumber 位
+	s := strconv.Itoa(target)
+	return int(s[offsetInNumber] - '0')
+}
+
+// 简单的 10 的幂（非负）
+func pow10(k int) int {
+	res := 1
+	for k > 0 {
+		res *= 10
+		k--
+	}
+	return res
+}
+
+// 45.把数组排成最小的数
+func PrintMinNumber(numbers []int) string {
+	// write code here
+	strs := make([]string, len(numbers))
+	for i, num := range numbers {
+		strs[i] = strconv.Itoa(num)
+	}
+	sort.Slice(strs, func(i, j int) bool {
+		return strs[i]+strs[j] < strs[j]+strs[i]
+	})
+	return strings.Join(strs, "")
+}
+
+// 46.把数字翻译成字符串
+func solve(nums string) int {
+	// write code here
+	n := len(nums)
+	dp := make([]int, n+1)
+	dp[n] = 1
+	if nums[n-1] != '0' {
+		dp[n-1] = 1
+	}
+	for i := n - 2; i >= 0; i-- {
+		if nums[i] != '0' {
+			dp[i] = dp[i+1]
+		}
+		// 处理两个数字
+		if nums[i] == '1' || (nums[i] == '2' && nums[i+1] <= '6') {
+			dp[i] += dp[i+2]
+		}
+	}
+	return dp[0]
+}
+
+// 47. 最大礼物价值
+func maxValue(grid [][]int) int {
+	m := len(grid)
+	n := len(grid[0])
+	dp := make([][]int, m+1)
+	for i := 0; i <= m; i++ {
+		dp[i] = make([]int, n+1)
+	}
+	dp[1][1] = grid[0][0]
+	for i := 1; i <= m; i++ {
+		for j := 1; j <= n; j++ {
+			dp[i][j] = max(dp[i-1][j], dp[i][j-1]) + grid[i-1][j-1]
+		}
+	}
+	return dp[m][n]
+}
+
+// 48.最长不含重复字符的子字符串
+func lengthOfLongestSubstring(s string) int {
+
+	cnts := make(map[uint8]int)
+	left := 0
+	res := 1
+	for i := 0; i < len(s); i++ {
+		x := s[i]
+		cnts[x]++
+		for cnts[x] > 1 {
+			leave := s[left]
+			left++
+			cnts[leave]--
+		}
+		res = max(res, i-left+1)
+	}
+	return res
+}
+
+func max(a, b int) int {
+	if a > b {
+		return a
+	}
+	return b
+}
+
+// 49.丑数
+func GetUglyNumber_Solution(index int) int {
+	// write code here
+	ugly2 := 1
+	p2 := 0
+	ugly3 := 1
+	p3 := 0
+	ugly5 := 1
+	p5 := 0
+	uglys := make([]int, index)
+	for i := 0; i < index; i++ {
+		curUgly := min(ugly2, ugly3, ugly5)
+		uglys[i] = curUgly
+		if curUgly >= ugly2 {
+			ugly2 = uglys[p2] * 2
+			p2++
+		}
+		if curUgly >= ugly3 {
+			ugly3 = uglys[p3] * 3
+			p3++
+		}
+		if curUgly >= ugly5 {
+			ugly5 = uglys[p5] * 5
+			p5++
+		}
+	}
+	return uglys[index-1]
+}
+
+// 50.数组中第一个出现一次的字符
+func FirstNotRepeatingChar(str string) int {
+	// write code here
+	maps := make(map[int32][]int)
+	for i, x := range str {
+		maps[x] = append(maps[x], i)
+	}
+	minIndex := len(str)
+	for _, x := range maps {
+		if len(x) == 1 {
+			minIndex = min(minIndex, x[0])
+		}
+	}
+	if minIndex == len(str) {
+		return -1
+	}
+	return minIndex
+}
+
+// 数组中的逆序对
+func InversePairs(nums []int) int {
+	// 归并排序计数，时间 O(n log n)，空间 O(n)
+	const mod = 1000000007
+	n := len(nums)
+	if n < 2 {
+		return 0
+	}
+	tmp := make([]int, n)
+
+	var mergeSort func(l, r int) int
+	mergeSort = func(l, r int) int {
+		if l >= r {
+			return 0
+		}
+		m := l + (r-l)/2
+		left := mergeSort(l, m) % mod
+		right := mergeSort(m+1, r) % mod
+
+		// 合并并统计跨区间逆序对
+		i, j, k := l, m+1, l
+		cnt := 0
+		for i <= m && j <= r {
+			if nums[i] <= nums[j] {
+				tmp[k] = nums[i]
+				// 当左边元素放入时，右边已放入的元素个数为 (j - (m+1))，
+				// 它们都小于等于当前左元素，不构成新的逆序对
+				k++
+				i++
+			} else {
+				// nums[i] > nums[j]，形成 (m - i + 1) 个逆序对
+				tmp[k] = nums[j]
+				cnt += (m - i + 1)
+				if cnt >= mod { // 减少大数累积
+					cnt %= mod
+				}
+				k++
+				j++
+			}
+		}
+		for i <= m {
+			tmp[k] = nums[i]
+			k++
+			i++
+		}
+		for j <= r {
+			tmp[k] = nums[j]
+			k++
+			j++
+		}
+		// 拷回原数组
+		for p := l; p <= r; p++ {
+			nums[p] = tmp[p]
+		}
+		total := left + right
+		total %= mod
+		total += cnt
+		total %= mod
+		return total
+	}
+
+	return mergeSort(0, n-1) % mod
+}
+
+// 52.两个链表的第一个公共节点
+func FindFirstCommonNode(pHead1 *ListNode, pHead2 *ListNode) *ListNode {
+	if pHead1 == nil || pHead2 == nil {
+		return nil
+	}
+	// write code here
+	a := pHead1
+	b := pHead2
+	for pHead1 != pHead2 {
+		if pHead1 == nil {
+			pHead1 = b
+		} else {
+			pHead1 = pHead1.Next
+		}
+
+		if pHead2 == nil {
+			pHead2 = a
+		} else {
+			pHead2 = pHead2.Next
+		}
+	}
+	return pHead1
+}
+
+func GetNumberOfK(nums []int, k int) int {
+	first := lowerBound(nums, k)
+	if first == len(nums) {
+		return 0
+	}
+	last := lowerBound(nums, k+1) - 1
+	return last - first + 1
+}
+
+func lowerBound(nums []int, k int) int {
+	left := -1
+	right := len(nums)
+	for left+1 < right {
+		mid := left + (right-left)/2
+		if nums[mid] >= k {
+			right = mid
+		} else {
+			left = mid
+		}
+	}
+	return right
 }
