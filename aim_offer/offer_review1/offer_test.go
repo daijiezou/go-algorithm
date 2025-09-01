@@ -1,6 +1,7 @@
 package offer_review1
 
 import (
+	"fmt"
 	"reflect"
 	"testing"
 )
@@ -465,6 +466,67 @@ func TestGetNumberOfK(t *testing.T) {
 			if got := GetNumberOfK(tt.args.nums, tt.args.k); got != tt.want {
 				t.Errorf("GetNumberOfK() = %v, want %v", got, tt.want)
 			}
+		})
+	}
+}
+
+func TestLeftRotateString(t *testing.T) {
+	type args struct {
+		str string
+		n   int
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "1",
+			args: args{
+				str: "abcXYZdef",
+				n:   3,
+			},
+			want: "XYZdefabc",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := LeftRotateString(tt.args.str, tt.args.n); got != tt.want {
+				t.Errorf("LeftRotateString() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_reverse(t *testing.T) {
+	type args struct {
+		strs  []byte
+		left  int
+		right int
+	}
+	tests := []struct {
+		name string
+		args args
+	}{
+		{
+			name: "1",
+			args: args{
+				strs:  []byte{'a', 'b', 'c'},
+				left:  0,
+				right: 2,
+			},
+		},
+		{
+			name: "1",
+			args: args{
+				strs: []byte{'a', 'b', 'c', 'x', 'y', 'z'},
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			reverse(tt.args.strs)
+			fmt.Println(string(tt.args.strs))
 		})
 	}
 }

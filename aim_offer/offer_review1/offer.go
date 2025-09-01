@@ -1397,3 +1397,101 @@ func lowerBound(nums []int, k int) int {
 	}
 	return right
 }
+
+// 54. 二叉搜索树的第K小的值
+func KthNode(proot *TreeNode, k int) int {
+	// write code here
+	var dfs func(root *TreeNode)
+	res := -1
+	dfs = func(root *TreeNode) {
+		if root == nil {
+			return
+		}
+
+		dfs(root.Left)
+		k--
+		if k == 0 {
+			res = root.Val
+			return
+		}
+		dfs(root.Right)
+	}
+	dfs(proot)
+	return res
+}
+
+// 55.二叉树的深度
+func TreeDepth(pRoot *TreeNode) int {
+	if pRoot == nil {
+		return 0
+	}
+	leftDepth := TreeDepth(pRoot.Left) + 1
+	rightDepth := TreeDepth(pRoot.Right) + 1
+	return max(leftDepth, rightDepth)
+}
+
+// 56.数组中只出现一次的两个数字
+func FindNumsAppearOnce(nums []int) []int {
+	res := 0
+	for _, x := range nums {
+		res ^= x
+	}
+	mask := res & -res
+
+	a, b := 0, 0
+	for _, x := range nums {
+		if x&mask == 0 {
+			a ^= x
+		} else {
+			b ^= x
+		}
+	}
+
+	if a < b {
+		return []int{a, b}
+	} else {
+		return []int{b, a}
+	}
+
+}
+
+// 57.和为s的两个数字
+func FindNumbersWithSum(array []int, sum int) []int {
+	// write code here
+	target := map[int]struct{}{}
+	for _, x := range array {
+		if _, ok := target[sum-x]; ok {
+			return []int{x, sum - x}
+		} else {
+			target[x] = struct{}{}
+		}
+	}
+	return []int{}
+}
+
+// 58.左旋字符串
+func LeftRotateString(str string, n int) string {
+	if str == "" {
+		return str
+	}
+	lenth := len(str)
+	n = lenth - (n % lenth)
+	strs := []byte(str)
+	reverse(strs)
+	reverse(strs[:n])
+	reverse(strs[n:])
+	return string(strs)
+}
+
+func reverse(s []byte) {
+
+	for i, j := 0, len(s)-1; i < j; i, j = i+1, j-1 {
+		s[i], s[j] = s[j], s[i]
+	}
+}
+
+// 59.滑动窗口的最大值
+func maxInWindows(num []int, size int) []int {
+	// write code here
+	return []int{}
+}
