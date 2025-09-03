@@ -1492,6 +1492,176 @@ func reverse(s []byte) {
 
 // 59.滑动窗口的最大值
 func maxInWindows(num []int, size int) []int {
+	n := len(num)
+	if size == 0 || size > n {
+		return []int{}
+	}
+	win := make([]int, 0)
+	res := make([]int, 0)
+	for i := 0; i < n; i++ {
+		for len(win) > 0 && num[i] > num[win[len(win)-1]] {
+			win = win[:len(win)-1]
+		}
+		win = append(win, i)
+		for win[0] < i-size+1 {
+			win = win[1:]
+		}
+		if i >= size-1 {
+			res = append(res, num[win[0]])
+		}
+
+	}
 	// write code here
-	return []int{}
+	return res
+}
+
+// 61.扑克牌顺子
+func IsContinuous(numbers []int) bool {
+	sort.Ints(numbers)
+	zeroCnt := 0
+	need := 0
+	for i := 0; i < 5; i++ {
+		if numbers[i] == 0 {
+			zeroCnt++
+		}
+	}
+	for i := zeroCnt + 1; i < 5; i++ {
+		if numbers[i] == numbers[i-1] {
+			return false
+		}
+		need += numbers[i] - numbers[i-1] - 1
+	}
+	return need <= zeroCnt
+}
+
+// 62 孩子们的游戏(圆圈中最后剩下的数)
+func LastRemaining_Solution(n int, m int) int {
+	if n == 1 {
+		return 0
+	}
+	// 无论怎么样，存活的人就只有一个，我们需要做的就是把这个人的编号映射到原始的编号
+	// 在5人圈 0,1,2,3,4 中，第一个淘汰的是 2。
+	// 剩下 3, 4, 0, 1。为了套用 f(4,3) 的解，我们把 3,4,0,1 重新编号为 0', 1', 2', 3'。
+	// 我们刚算出 f(4,3) 的解是 0。这意味着在新编号 0', 1', 2', 3' 中，幸存者是 0'。
+	// 现在，我们看 0' 对应回5人圈的原始编号是谁？
+	// 0' -> 3 = (0 + m) % n
+	// 1' -> 4 = (1 + m) % n
+	// 2' -> 0 = (2 + m) % n
+	// 3' -> 1 = (3 + m) % n
+	// 幸存者 0' 对应的原始编号是 3。
+	// 下面按此递推实现：
+	// f(n, m) = (f(n-1, m) + m) % n
+	res := 0
+	for i := 2; i <= n; i++ {
+		res = (res + m) % i
+	}
+	return res
+}
+
+// LastRemaining_Debug: 迭代版，边循环边打印“编码偏移”的映射过程
+// 等价递推：ans_i 表示 f(i, m)，有 ans_1 = 0，ans_i = (ans_{i-1} + m) % i。
+// 打印内容：
+//   - i：当前规模（总人数）
+//   - kill = (m-1)%i：本轮第一个被淘汰的原始位置
+//   - start = (kill+1)%i = m%i：下一轮重编号的起点
+//   - ans_{i-1}：规模 i-1 的“新编号体系”下的答案
+//   - 映回原编号：ans_i = (ans_{i-1} + start) % i = (ans_{i-1} + m) % i
+func LastRemaining_Debug(n, m int) int {
+	if n <= 0 {
+		fmt.Println("n 必须为正")
+		return -1
+	}
+	ans := 0 // f(1,m) = 0
+	fmt.Printf("i=%d, ans=%d (初始)\n", 1, ans)
+	for i := 2; i <= n; i++ {
+		kill := (m - 1) % i
+		start := (kill + 1) % i // 等价于 m % i
+		prev := ans
+		ans = (ans + m) % i
+		fmt.Printf("i=%d | kill=%d start=%d | ans_{i-1}=%d -> ans_i=(%d+%d)%%%d=%d\n",
+			i, kill, start, prev, prev, m, i, ans)
+	}
+	fmt.Printf("最终答案 f(%d,%d)=%d\n", n, m, ans)
+	return ans
+}
+
+// 63.买卖股票的最好时机
+func maxProfit(prices []int) int {
+	// write code here
+	preMin := prices[0]
+	res := 0
+	for i := 1; i < len(prices); i++ {
+		res = max(res, prices[i]-preMin)
+		preMin = min(preMin, prices[i])
+
+	}
+	return res
+}
+
+// 64.求1+2+3+...+n
+func Sum_Solution(n int) int {
+	// write code here
+	if n <= 1 {
+		return 1
+	}
+	return Sum_Solution(n-1) + n
+}
+
+// 65.不用加减乘除做加法
+func Add(num1 int, num2 int) int {
+	// write code here
+	for num2 != 0 {
+		sum := num1 ^ num2
+		// 计算进位
+		carry := (num1 & num2) << 1
+		num1 = sum
+		num2 = carry
+	}
+	return num1
+}
+
+// 67.把字符串转换成整数
+func StrToInt(str string) int {
+	// 1. 去前导空格
+	i := 0
+	for i < len(str) && str[i] == ' ' {
+		i++
+	}
+
+	// 如果全是空格
+	if i == len(str) {
+		return 0
+	}
+
+	// 2. 处理符号
+	sign := 1
+	if str[i] == '-' {
+		sign = -1
+		i++
+	} else if str[i] == '+' {
+		i++
+	}
+
+	// 3. 解析数字
+	var res int
+	for i < len(str) && str[i] >= '0' && str[i] <= '9' {
+		digit := int(str[i] - '0')
+
+		// 4. 溢出判断
+		// math.MaxInt32 = 2147483647
+		if res > 214748364 || (res == 214748364 && digit > 7) {
+			if sign == 1 {
+				return 2147483647
+			} else {
+				// 如果是负数，且溢出，应返回 math.MinInt32
+				// 此处 res*sign 会是 -214748364 * 10 - digit，必然小于 MinInt32
+				return -2147483648
+			}
+		}
+
+		res = res*10 + digit
+		i++
+	}
+
+	return res * sign
 }

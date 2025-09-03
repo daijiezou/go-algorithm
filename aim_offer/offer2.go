@@ -710,6 +710,7 @@ func Sum_Solution(n int) int {
 	return Sum_Solution(n-1) + n
 }
 
+// 65.计算两个数的加法
 func Add(num1 int, num2 int) int {
 	for num2 != 0 {
 		// 进行异或运算，相当于加法，不及进位
