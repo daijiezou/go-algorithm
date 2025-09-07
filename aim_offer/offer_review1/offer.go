@@ -1232,13 +1232,6 @@ func lengthOfLongestSubstring(s string) int {
 	return res
 }
 
-func max(a, b int) int {
-	if a > b {
-		return a
-	}
-	return b
-}
-
 // 49.丑数
 func GetUglyNumber_Solution(index int) int {
 	// write code here
@@ -1664,4 +1657,459 @@ func StrToInt(str string) int {
 	}
 
 	return res * sign
+}
+
+// 68.二叉搜索树的最近公共祖先
+func lowestCommonAncestor(root *TreeNode, p int, q int) int {
+	for root != nil {
+		if root.Val > p && root.Val < q {
+			return root.Val
+		} else if root.Val < p && root.Val > q {
+			return root.Val
+		} else if root.Val == p || root.Val == q {
+			return root.Val
+		} else if root.Val > p && root.Val > q {
+			// p,q 都在左子树
+			root = root.Left
+		} else {
+			// p,q 都在右子树
+			root = root.Right
+		}
+	}
+	return -1
+}
+
+// 69.跳楼梯
+func jumpFloor(number int) int {
+	if number == 1 {
+		return 1
+	}
+	if number == 2 {
+		return 2
+	}
+	dp := make([]int, number+1)
+	dp[0] = 0
+	dp[1] = 1
+	dp[2] = 2
+	for i := 2; i <= number; i++ {
+		dp[i] = dp[i-1] + dp[i-2]
+	}
+	return dp[number]
+}
+
+// 70.矩形覆盖
+func rectCover(number int) int {
+	if number == 0 {
+		return 0
+	}
+	if number == 1 {
+		return 1
+	}
+	if number == 2 {
+		return 2
+	}
+	// write code here
+	dp := make([]int, number+1)
+	dp[1] = 1
+	dp[2] = 2
+
+	for i := 3; i <= number; i++ {
+		dp[i] = dp[i-1] + dp[i-2]
+	}
+	return dp[number]
+}
+
+// 71.跳台阶拓展问题
+func jumpFloorII(number int) int {
+	if number == 1 {
+		return 1
+	}
+	if number == 2 {
+		return 2
+	}
+	dp := make([]int, number+1)
+	dp[0] = 0
+	dp[1] = 1
+	dp[2] = 2
+	sum := 3
+	for i := 2; i <= number; i++ {
+		dp[i] = sum + 1
+		sum += dp[i]
+	}
+	// 位运算
+	// f(n) = f(n-1) + f(n-2) + ... + f(1) + f(0)
+	// f(n-1) = f(n-2) + ... + f(1) + f(0)
+	// f(1) = 1
+	// f(2) = 2
+	// f(3) = 4
+	// f(4) = 8
+	// f(n) = 2^(n-1)
+	// return 1 << (number - 1)
+	return dp[number]
+}
+
+// 73.翻转单词序列
+func ReverseSentence(str string) string {
+	// write code here
+	bytes := []byte(str)
+	reverse(bytes)
+	start := 0
+	for i := 0; i < len(str); i++ {
+		if bytes[i] == ' ' {
+			reverse(bytes[start:i])
+			start = i + 1
+		}
+	}
+	reverse(bytes[start:])
+	return string(bytes)
+}
+
+func FindContinuousSequence(sum int) [][]int {
+	window := []int{}
+	curSum := 0
+	res := make([][]int, 0)
+	for i := 1; i <= sum/2+1; i++ {
+		window = append(window, i)
+		curSum += i
+		for curSum > sum {
+			x := window[0]
+			window = window[1:]
+			curSum -= x
+		}
+		if curSum == sum && len(window) > 1 {
+			temp := make([]int, len(window))
+			copy(temp, window)
+			res = append(res, temp)
+		}
+	}
+	return res
+}
+
+type DoubleListNode struct {
+	Val  int
+	Next *ListNode
+	Pre  *ListNode
+}
+
+// 使用 map 统计频率
+var counts map[byte]int
+
+// 使用队列保持“只出现一次”的字符的顺序
+var queue []byte
+
+func init() {
+	// 在程序启动时或需要重置状态时调用
+	counts = make(map[byte]int)
+	queue = make([]byte, 0)
+}
+
+// 75.字符流中第一个不重复的字符
+func Insert1(ch byte) {
+	// 计数值加一
+	counts[ch]++
+	// 如果是第一次出现，则加入队列
+	if counts[ch] == 1 {
+		queue = append(queue, ch)
+	}
+}
+
+func FirstAppearingOnce() byte {
+	// 循环检查队首元素，如果它已经不是“只出现一次”，则将其从队首移除
+	for len(queue) > 0 && counts[queue[0]] > 1 {
+		queue = queue[1:] // 出队
+	}
+
+	// 如果队列不为空，队首元素就是答案
+	if len(queue) > 0 {
+		return queue[0]
+	}
+
+	// 如果队列为空，说明没有只出现一次的字符
+	return '#'
+}
+
+// 删除链表中重复的节点
+func deleteDuplication(pHead *ListNode) *ListNode {
+	// 创建一个哨兵节点，以防头节点就是重复节点
+	dummy := &ListNode{Next: pHead}
+	cur := dummy
+
+	// 确保 cur.Next 存在，我们总是判断 cur 后面的节点
+	for cur.Next != nil && cur.Next.Next != nil {
+		// 发现重复
+		if cur.Next.Val == cur.Next.Next.Val {
+			x := cur.Next.Val // 记录下重复值
+			// 循环删除所有值为 x 的节点
+			for cur.Next != nil && cur.Next.Val == x {
+				cur.Next = cur.Next.Next
+			}
+		} else {
+			// 没有发现重复，cur 安全前进
+			cur = cur.Next
+		}
+	}
+	return dummy.Next
+}
+
+// 删除排序链表中的重复元素（保留一个）
+func deleteDuplicates_keepOne(pHead *ListNode) *ListNode {
+	if pHead == nil {
+		return nil
+	}
+	cur := pHead
+	for cur != nil && cur.Next != nil {
+		// 如果当前节点和下一个节点的值相同
+		if cur.Val == cur.Next.Val {
+			// 跳过下一个节点
+			cur.Next = cur.Next.Next
+		} else {
+			// 否则，正常前进
+			cur = cur.Next
+		}
+	}
+	return pHead
+}
+
+func Print(pRoot *TreeNode) [][]int {
+	res := make([][]int, 0)
+	if pRoot == nil {
+		return res
+	}
+	q := []*TreeNode{pRoot}
+	flag := false
+	for len(q) > 0 {
+		size := len(q)
+		temp := make([]int, size)
+		flag = !flag
+		for i := 0; i < size; i++ {
+			x := q[0]
+			q = q[1:]
+			if flag {
+				temp[i] = x.Val
+			} else {
+				temp[size-i-1] = x.Val
+			}
+			if x.Left != nil {
+				q = append(q, x.Left)
+			}
+			if x.Right != nil {
+				q = append(q, x.Right)
+			}
+		}
+		res = append(res, temp)
+	}
+	return res
+}
+
+func IsBalanced_Solution(pRoot *TreeNode) bool {
+	// 调用辅助函数，如果返回 -1 则不平衡，否则平衡
+	return getHeightAndCheck(pRoot) != -1
+}
+
+// 辅助函数：自底向上计算高度，并同时检查平衡性
+// 返回值：-1 表示不平衡，否则返回树的高度
+func getHeightAndCheck(node *TreeNode) int {
+	// 基准情况：空树是平衡的，高度为 0
+	if node == nil {
+		return 0
+	}
+
+	// 递归获取左子树的高度
+	leftHeight := getHeightAndCheck(node.Left)
+	// 如果左子树已经不平衡，直接返回 -1，进行“剪枝”
+	if leftHeight == -1 {
+		return -1
+	}
+
+	// 递归获取右子树的高度
+	rightHeight := getHeightAndCheck(node.Right)
+	// 如果右子树已经不平衡，直接返回 -1
+	if rightHeight == -1 {
+		return -1
+	}
+
+	// 检查当前节点是否平衡
+	if abs(leftHeight-rightHeight) > 1 {
+		return -1
+	}
+
+	// 返回当前树的高度
+	return max(leftHeight, rightHeight) + 1
+}
+
+// abs 返回整数的绝对值
+func abs(x int) int {
+	if x < 0 {
+		return -x
+	}
+	return x
+}
+
+func reOrderArrayTwo(array []int) []int {
+	// write code here
+	left := 0
+	right := len(array)
+	for left < right {
+		for left < right && array[left]%2 == 0 {
+			array[left], array[right] = array[right], array[left]
+			right--
+		}
+		left++
+	}
+	return array
+}
+
+// 83.
+
+func hasPathSum(root *TreeNode, sum int) bool {
+	// write code here
+	if root == nil {
+		return false
+	}
+	sum -= root.Val
+	if root.Left == nil && root.Right == nil && sum == 0 {
+		return true
+	}
+	if hasPathSum(root.Left, sum) {
+		return true
+	}
+	if hasPathSum(root.Right, sum) {
+		return true
+	}
+	sum += root.Val
+	return false
+}
+
+func FindPath3(root *TreeNode, sum int) int {
+	// write code here
+	cnts := make(map[int]int)
+	cnts[0] = 1
+	res := 0
+	var dfs func(root *TreeNode, cur int)
+	dfs = func(root *TreeNode, cur int) {
+		if root == nil {
+			return
+		}
+		cur += root.Val
+		res += cnts[cur-sum]
+		cnts[cur]++
+		// 核心：当结束当前节点（及其子树）的访问并返回时，
+		// 需要将为当前节点添加的前缀和计数减一，以免影响其他分支的计算。
+		// 'cur' 在此时仍然是包含当前节点值的路径和。
+		defer func() {
+			cnts[cur]--
+		}()
+		dfs(root.Left, cur)
+		dfs(root.Right, cur)
+	}
+	dfs(root, 0)
+	return res
+}
+
+// 85
+func FindGreatestSumOfSubArray2(array []int) []int {
+	if len(array) == 0 {
+		return []int{}
+	}
+
+	// 初始化全局最大和与当前最大和
+	globalMax := array[0]
+	currentMax := array[0]
+
+	// 初始化最终返回的子数组的边界
+	startIndex := 0
+	endIndex := 0
+
+	// 用于追踪当前子数组的起始位置
+	currentStartIndex := 0
+
+	for i := 1; i < len(array); i++ {
+		// 判断是延续当前子数组，还是从当前元素开始一个新子数组
+		if array[i] > currentMax+array[i] {
+			currentMax = array[i]
+			currentStartIndex = i
+		} else {
+			currentMax = currentMax + array[i]
+		}
+
+		// 如果当前子数组的和大于已知的全局最大和，或者和相等但长度更长，
+		// 则更新全局最大和及其边界。
+		if currentMax > globalMax || (currentMax == globalMax && (i-currentStartIndex+1) > (endIndex-startIndex+1)) {
+			globalMax = currentMax
+			startIndex = currentStartIndex
+			endIndex = i
+		}
+	}
+
+	return array[startIndex : endIndex+1]
+}
+
+// 86.二叉树的最近公共祖先
+func lowestCommonAncestor2(root *TreeNode, o1 int, o2 int) int {
+	// 基准情况：如果树为空，或者找到了 o1 或 o2，则返回当前节点的值（或-1）
+	if root == nil {
+		return -1
+	}
+	if root.Val == o1 || root.Val == o2 {
+		return root.Val
+	}
+
+	// 递归搜索左、右子树
+	left := lowestCommonAncestor2(root.Left, o1, o2)
+	right := lowestCommonAncestor2(root.Right, o1, o2)
+
+	// 情况1：o1 和 o2 分别在左右子树中，那么当前 root 就是 LCA
+	if left != -1 && right != -1 {
+		return root.Val
+	}
+
+	// 情况2：o1 和 o2 都在左子树中，返回左子树的结果
+	if left != -1 {
+		return left
+	}
+
+	// 情况3：o1 和 o2 都在右子树中，返回右子树的结果
+	if right != -1 {
+		return right
+	}
+
+	// 情况4：左右子树都没有找到 o1 或 o2
+	return -1
+}
+
+func cutRope2(number int64) int64 {
+	// 贪心策略：尽可能多地剪出长度为 3 的段
+	const MOD = 998244353
+
+	if number <= 3 {
+		return number - 1
+	}
+
+	a := number / 3
+	b := number % 3
+
+	if b == 0 {
+		// 完美分解为 a 个 3
+		return quickPow(3, a, MOD)
+	} else if b == 1 {
+		// 把这个1，当成是3+1=4,所以3要少一个
+		// 分解为 a-1 个 3 和一个 4 (2*2)
+		return (quickPow(3, a-1, MOD) * 4) % MOD
+	} else { // b == 2
+		// 分解为 a 个 3 和一个 2
+		return (quickPow(3, a, MOD) * 2) % MOD
+	}
+}
+
+// 快速幂算法（用于计算 x^n % mod）
+func quickPow(x, n, mod int64) int64 {
+	res := int64(1)
+	for n > 0 {
+		if n%2 == 1 {
+			res = (res * x) % mod
+		}
+		x = (x * x) % mod
+		n /= 2
+	}
+	return res
 }

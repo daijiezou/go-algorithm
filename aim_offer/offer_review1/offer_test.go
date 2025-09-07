@@ -703,3 +703,27 @@ func TestStrToInt(t *testing.T) {
 		})
 	}
 }
+
+func TestReverseSentence(t *testing.T) {
+	type args struct {
+		str string
+	}
+	tests := []struct {
+		name string
+		args args
+		want string
+	}{
+		{
+			name: "1",
+			args: args{str: "nowcoder. a am I"},
+			want: "I am a nowcoder.",
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := ReverseSentence(tt.args.str); got != tt.want {
+				t.Errorf("ReverseSentence() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
