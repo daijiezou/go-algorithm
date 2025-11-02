@@ -9,6 +9,7 @@ import (
 	"strings"
 )
 
+// 01.数组中重复的数字
 func duplicate(numbers []int) int {
 	for i := 0; i < len(numbers); i++ {
 		for numbers[i] != i {
@@ -42,8 +43,10 @@ func Find(target int, array [][]int) bool {
 		if x == target {
 			return true
 		} else if x > target {
+			// 说明这一列都大于目标数字
 			j--
 		} else {
+			// 说明这一行都小于目标数字
 			i++
 		}
 	}
@@ -125,6 +128,7 @@ func GetNext(pNode *TreeLinkNode) *TreeLinkNode {
 	if pNode == nil {
 		return nil
 	}
+
 	if pNode.Right != nil {
 		cur := pNode.Right
 		for cur.Left != nil {
@@ -132,6 +136,7 @@ func GetNext(pNode *TreeLinkNode) *TreeLinkNode {
 		}
 		return cur
 	}
+
 	var next *TreeLinkNode
 	if pNode.Next != nil {
 		cur := pNode
@@ -167,7 +172,7 @@ func Fibonacci(n int) int {
 	return fibN
 }
 
-// 11.旋转排序数组
+// 11.搜索旋转排序数组中最小的数字
 func minNumberInRotateArray(nums []int) int {
 	n := len(nums)
 	left := -1
@@ -212,15 +217,18 @@ func hasPath(matrix [][]byte, word string) bool {
 				if visited[newi*n+newj] {
 					continue
 				}
+				// 做选择
 				visited[newi*n+newj] = true
 				if bfs(newi, newj, index+1, visited) {
 					return true
 				}
+				// 回溯,撤销选择
 				visited[newi*n+newj] = false
 			}
 		}
 		return false
 	}
+	// 用一维数组来存放二维数组的访问状态
 	vis := make([]bool, m*n)
 	for i := 0; i < m; i++ {
 		for j := 0; j < n; j++ {
@@ -334,6 +342,7 @@ func printNumbers(n int) []int {
 	return res
 }
 
+// 删除指定的节点
 func deleteNode(head *ListNode, val int) *ListNode {
 	dummy := &ListNode{Next: head}
 	cur := dummy
@@ -362,7 +371,7 @@ func match(str string, pattern string) bool {
 
 		if pi+1 < len(pattern) && pattern[pi+1] == '*' {
 			if si < len(str) && (str[si] == pattern[pi] || pattern[pi] == '.') {
-				// 匹配多个或者直接跳过
+				// 匹配1个或者直接跳过
 				return dfs(si+1, pi) || dfs(si, pi+2)
 			} else {
 				// 不满足，匹配0个
@@ -386,6 +395,7 @@ func isNumeric() {
 }
 
 // 21.调整数组顺序使得奇数位于偶数前面
+// 解法一：类似插入排序，时间 O(n^2)，空间 O(1)，稳定
 func reOrderArray(array []int) []int {
 	// write code here
 	n := len(array)
@@ -397,6 +407,47 @@ func reOrderArray(array []int) []int {
 				array[j], array[j-1] = array[j-1], array[j]
 				j--
 			}
+		}
+	}
+	return array
+}
+
+// 解法二：使用辅助数组，时间 O(n)，空间 O(n)，稳定
+func reOrderArray2(array []int) []int {
+	if len(array) == 0 {
+		return []int{}
+	}
+	res := make([]int, 0, len(array))
+	// 第一次遍历，放入所有奇数
+	for _, num := range array {
+		if num%2 == 1 {
+			res = append(res, num)
+		}
+	}
+	// 第二次遍历，放入所有偶数
+	for _, num := range array {
+		if num%2 == 0 {
+			res = append(res, num)
+		}
+	}
+	return res
+}
+
+// 解法三：双指针，时间 O(n)，空间 O(1)，不稳定
+func reOrderArray3(array []int) []int {
+	left, right := 0, len(array)-1
+	for left < right {
+		// 从左向右找偶数
+		for left < right && array[left]%2 == 1 {
+			left++
+		}
+		// 从右向左找奇数
+		for left < right && array[right]%2 == 0 {
+			right--
+		}
+		// 交换
+		if left < right {
+			array[left], array[right] = array[right], array[left]
 		}
 	}
 	return array
@@ -509,6 +560,7 @@ func ReverseList(head *ListNode) *ListNode {
 	return pre
 }
 
+// 25.合并两个排序的链表
 func Merge(pHead1 *ListNode, pHead2 *ListNode) *ListNode {
 	if pHead1 == nil {
 		return pHead2
@@ -530,7 +582,6 @@ func Merge(pHead1 *ListNode, pHead2 *ListNode) *ListNode {
 		head.Next = Merge(pHead2.Next, pHead1)
 		return head
 	}
-
 }
 
 // 26.树的子结构
@@ -668,6 +719,8 @@ func printMatrix2(matrix [][]int) []int {
 			res = append(res, matrix[i][right])
 		}
 		right--
+
+		// 避免重复打印
 		if upper <= lower {
 			for i := right; i >= left; i-- {
 				res = append(res, matrix[lower][i])
@@ -675,6 +728,7 @@ func printMatrix2(matrix [][]int) []int {
 		}
 		lower--
 
+		// 避免重复打印
 		if left <= right {
 			for i := lower; i >= upper; i-- {
 				res = append(res, matrix[i][left])
@@ -751,13 +805,13 @@ func checkSubSquenceOfBST(sequence []int) bool {
 			break
 		}
 	}
+	// 判断右子树是不是都小于根节点
 	right = append(right, sequence[index:n-1]...)
 	for i := 0; i < len(right); i++ {
 		if right[i] < root {
 			return false
 		}
 	}
-	fmt.Println(left, right)
 	return checkSubSquenceOfBST(left) && checkSubSquenceOfBST(right)
 }
 
@@ -924,6 +978,7 @@ func MoreThanHalfNum_Solution(numbers []int) int {
 	for i := 1; i < len(numbers); i++ {
 		if numbers[i] != candidate {
 			cnt--
+			// 换一个候选人
 			if cnt <= 0 {
 				cnt = 1
 				candidate = numbers[i]
@@ -1053,6 +1108,7 @@ func GetMedian() float64 {
 	if (minh.Len()+maxh.Len())%2 == 0 {
 		return (float64(minh.Top()) + float64(maxh.Top())) / 2
 	} else {
+		// 因为默认往大顶堆去塞，所以如果最后的总数是单数的话，中位数就会出现在大顶堆的首位
 		return float64(maxh.Top())
 	}
 }
@@ -1179,8 +1235,7 @@ func PrintMinNumber(numbers []int) string {
 func solve(nums string) int {
 	// write code here
 	n := len(nums)
-	dp := make([]int, n+1)
-	dp[n] = 1
+	dp := make([]int, n)
 	if nums[n-1] != '0' {
 		dp[n-1] = 1
 	}
@@ -1190,7 +1245,11 @@ func solve(nums string) int {
 		}
 		// 处理两个数字
 		if nums[i] == '1' || (nums[i] == '2' && nums[i+1] <= '6') {
-			dp[i] += dp[i+2]
+			if i == n-2 {
+				dp[i] += 1
+			} else {
+				dp[i] += dp[i+2]
+			}
 		}
 	}
 	return dp[0]
@@ -1245,14 +1304,17 @@ func GetUglyNumber_Solution(index int) int {
 	for i := 0; i < index; i++ {
 		curUgly := min(ugly2, ugly3, ugly5)
 		uglys[i] = curUgly
+
 		if curUgly >= ugly2 {
 			ugly2 = uglys[p2] * 2
 			p2++
 		}
+
 		if curUgly >= ugly3 {
 			ugly3 = uglys[p3] * 3
 			p3++
 		}
+
 		if curUgly >= ugly5 {
 			ugly5 = uglys[p5] * 5
 			p5++
@@ -1368,6 +1430,7 @@ func FindFirstCommonNode(pHead1 *ListNode, pHead2 *ListNode) *ListNode {
 	return pHead1
 }
 
+// 数字在升序数组中出现的次数
 func GetNumberOfK(nums []int, k int) int {
 	first := lowerBound(nums, k)
 	if first == len(nums) {
@@ -1484,6 +1547,7 @@ func reverse(s []byte) {
 }
 
 // 59.滑动窗口的最大值
+// 给定一个长度为 n 的数组 num 和滑动窗口的大小 size ，找出所有滑动窗口里数值的最大值。
 func maxInWindows(num []int, size int) []int {
 	n := len(num)
 	if size == 0 || size > n {
@@ -1679,6 +1743,24 @@ func lowestCommonAncestor(root *TreeNode, p int, q int) int {
 	return -1
 }
 
+func lowestCommonAncestor_2(root *TreeNode, p int, q int) int {
+	if root == nil {
+		return -1
+	}
+	if root.Val > p && root.Val < q {
+		return root.Val
+	} else if root.Val > q && root.Val < p {
+		return root.Val
+	} else if root.Val == p || root.Val == q {
+		return root.Val
+	} else if root.Val > p && root.Val > q {
+		return lowestCommonAncestor(root.Left, p, q)
+	} else {
+		// p,q 都在右子树
+		return lowestCommonAncestor(root.Right, p, q)
+	}
+}
+
 // 69.跳楼梯
 func jumpFloor(number int) int {
 	if number == 1 {
@@ -1733,8 +1815,8 @@ func jumpFloorII(number int) int {
 	dp[2] = 2
 	sum := 3
 	for i := 2; i <= number; i++ {
-		dp[i] = sum + 1
-		sum += dp[i]
+		dp[i] = sum + 1 // 可以跳上n级
+		sum += dp[i]    // 统计之前的总数
 	}
 	// 位运算
 	// f(n) = f(n-1) + f(n-2) + ... + f(1) + f(0)
@@ -1870,6 +1952,7 @@ func deleteDuplicates_keepOne(pHead *ListNode) *ListNode {
 	return pHead
 }
 
+// 77.按之字型打印二叉树
 func Print(pRoot *TreeNode) [][]int {
 	res := make([][]int, 0)
 	if pRoot == nil {
@@ -1945,6 +2028,7 @@ func abs(x int) int {
 	return x
 }
 
+// 调整数组顺序使得奇数位于偶数之前
 func reOrderArrayTwo(array []int) []int {
 	// write code here
 	left := 0
@@ -1959,8 +2043,7 @@ func reOrderArrayTwo(array []int) []int {
 	return array
 }
 
-// 83.
-
+// 82.路径和（从根节点开始）
 func hasPathSum(root *TreeNode, sum int) bool {
 	// write code here
 	if root == nil {
@@ -1976,37 +2059,32 @@ func hasPathSum(root *TreeNode, sum int) bool {
 	if hasPathSum(root.Right, sum) {
 		return true
 	}
-	sum += root.Val
 	return false
 }
 
+// 二叉树路径和，从任意节点开始
 func FindPath3(root *TreeNode, sum int) int {
 	// write code here
 	cnts := make(map[int]int)
 	cnts[0] = 1
 	res := 0
-	var dfs func(root *TreeNode, cur int)
-	dfs = func(root *TreeNode, cur int) {
+	var dfs func(root *TreeNode, cur int, cnts map[int]int)
+	dfs = func(root *TreeNode, cur int, cnts map[int]int) {
 		if root == nil {
 			return
 		}
 		cur += root.Val
 		res += cnts[cur-sum]
+		// 记录之前路径的值
 		cnts[cur]++
-		// 核心：当结束当前节点（及其子树）的访问并返回时，
-		// 需要将为当前节点添加的前缀和计数减一，以免影响其他分支的计算。
-		// 'cur' 在此时仍然是包含当前节点值的路径和。
-		defer func() {
-			cnts[cur]--
-		}()
-		dfs(root.Left, cur)
-		dfs(root.Right, cur)
+		dfs(root.Left, cur, cnts)
+		dfs(root.Right, cur, cnts)
 	}
-	dfs(root, 0)
+	dfs(root, 0, cnts)
 	return res
 }
 
-// 85
+// 85连续子数组的最大和
 func FindGreatestSumOfSubArray2(array []int) []int {
 	if len(array) == 0 {
 		return []int{}
@@ -2077,6 +2155,7 @@ func lowestCommonAncestor2(root *TreeNode, o1 int, o2 int) int {
 	return -1
 }
 
+// 剪绳子
 func cutRope2(number int64) int64 {
 	// 贪心策略：尽可能多地剪出长度为 3 的段
 	const MOD = 998244353
@@ -2109,7 +2188,96 @@ func quickPow(x, n, mod int64) int64 {
 			res = (res * x) % mod
 		}
 		x = (x * x) % mod
-		n /= 2
+		n >>= 1
 	}
 	return res
+}
+
+// LRU 缓存实现
+// 双向链表节点
+type DListNode struct {
+	key, value int
+	prev, next *DListNode
+}
+
+// LRU 缓存结构
+type LRUCache struct {
+	capacity int
+	cache    map[int]*DListNode
+	head     *DListNode // 虚拟头节点
+	tail     *DListNode // 虚拟尾节点
+}
+
+// 构造函数，初始化 LRU 缓存
+func Constructor(capacity int) LRUCache {
+	head := &DListNode{}
+	tail := &DListNode{}
+	head.next = tail
+	tail.prev = head
+
+	return LRUCache{
+		capacity: capacity,
+		cache:    make(map[int]*DListNode),
+		head:     head,
+		tail:     tail,
+	}
+}
+
+// 将节点移动到链表头部（最近使用）
+func (lru *LRUCache) moveToHead(node *DListNode) {
+	// 先从当前位置删除
+	lru.removeNode(node)
+	// 添加到头部
+	lru.addToHead(node)
+}
+
+// 从链表中删除节点
+func (lru *LRUCache) removeNode(node *DListNode) {
+	node.prev.next = node.next
+	node.next.prev = node.prev
+}
+
+// 在链表头部添加节点
+func (lru *LRUCache) addToHead(node *DListNode) {
+	node.prev = lru.head
+	node.next = lru.head.next
+	lru.head.next.prev = node
+	lru.head.next = node
+}
+
+// 删除链表尾部节点（最久未使用）
+func (lru *LRUCache) removeTail() *DListNode {
+	node := lru.tail.prev
+	lru.removeNode(node)
+	return node
+}
+
+// Get 操作：获取键对应的值
+func (lru *LRUCache) Get(key int) int {
+	if node, exists := lru.cache[key]; exists {
+		// 将访问的节点移到头部
+		lru.moveToHead(node)
+		return node.value
+	}
+	return -1 // 不存在返回 -1
+}
+
+// Put 操作：插入或更新键值对
+func (lru *LRUCache) Put(key int, value int) {
+	if node, exists := lru.cache[key]; exists {
+		// 键已存在，更新值并移到头部
+		node.value = value
+		lru.moveToHead(node)
+	} else {
+		// 键不存在，创建新节点
+		newNode := &DListNode{key: key, value: value}
+		lru.cache[key] = newNode
+		lru.addToHead(newNode)
+
+		// 检查容量，超出则删除最久未使用的节点
+		if len(lru.cache) > lru.capacity {
+			tailNode := lru.removeTail()
+			delete(lru.cache, tailNode.key)
+		}
+	}
 }

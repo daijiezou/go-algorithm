@@ -1,4 +1,4 @@
-package _4_grid_chart
+package _5_grid_chart
 
 // https://leetcode.cn/problems/nearest-exit-from-entrance-in-maze/
 func nearestExit(maze [][]byte, entrance []int) int {

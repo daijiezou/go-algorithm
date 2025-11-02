@@ -24,6 +24,7 @@ func numSubarraysWithSum(nums []int, goal int) int {
 	left2 := 0
 	for right, x := range nums {
 		sum += x
+
 		for sum >= goal && left <= right {
 			goalCnt += length - right
 			sum -= nums[left]

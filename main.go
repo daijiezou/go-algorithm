@@ -4,11 +4,29 @@ package main
 import (
 	"fmt"
 	"math"
-	"math/rand"
 	"slices"
 	"sort"
 	"time"
 )
+
+func main() {
+	defer func() {
+		innerRecover()
+	}()
+	fn1()
+}
+
+func innerRecover() {
+	fmt.Println(recover())
+}
+
+func fn1() {
+	fn2()
+}
+
+func fn2() {
+	panic("xixi")
+}
 
 type Record struct {
 	ID     int64
@@ -102,70 +120,6 @@ func (ls *LatencyStats) Summary() (p50, p95, p99 int64) {
 		return k
 	}
 	return cp[idx(0.50)], cp[idx(0.95)], cp[idx(0.99)]
-}
-
-func main() {
-	rand.Seed(1)
-	const (
-		NUsers     = 1000
-		NRecords   = 200_000
-		ReadQ      = 20_000
-		HotEmailsK = 10 // 热点 email 数（模拟倾斜）
-	)
-
-	// 生成数据
-	userIDs := make([]int64, NUsers)
-	for i := range userIDs {
-		userIDs[i] = int64(i + 1)
-	}
-	hotEmails := make([]string, HotEmailsK)
-	for i := range hotEmails {
-		hotEmails[i] = fmt.Sprintf("hot%02d@example.com", i)
-	}
-	genEmail := func() string {
-		// 20% 概率落到热点，80% 随机
-		if rand.Float64() < 0.2 {
-			return hotEmails[rand.Intn(len(hotEmails))]
-		}
-		return fmt.Sprintf("user%06d@example.com", rand.Intn(NUsers*5))
-	}
-
-	local := NewLocalIndex()
-	global := NewGlobalIndex()
-
-	// 写入（两边各写一份，用相同数据）
-	for i := 0; i < NRecords; i++ {
-		rec := Record{
-			ID:     int64(i + 1),
-			UserID: userIDs[rand.Intn(len(userIDs))],
-			Email:  genEmail(),
-		}
-		local.Write(rec)
-		global.Write(rec)
-	}
-
-	// 读压测：按 email 查
-	var latLocal, latGlobal LatencyStats
-	emailsForRead := make([]string, ReadQ)
-	for i := 0; i < ReadQ; i++ {
-		emailsForRead[i] = genEmail()
-	}
-
-	for _, email := range emailsForRead {
-		t0 := time.Now()
-		_ = local.QueryByEmail(email)
-		latLocal.Add(time.Since(t0))
-	}
-	for _, email := range emailsForRead {
-		t0 := time.Now()
-		_ = global.QueryByEmail(email)
-		latGlobal.Add(time.Since(t0))
-	}
-
-	lp50, lp95, lp99 := latLocal.Summary()
-	gp50, gp95, gp99 := latGlobal.Summary()
-	fmt.Printf("LocalIndex  read latency (us): p50=%d p95=%d p99=%d\n", lp50, lp95, lp99)
-	fmt.Printf("GlobalIndex read latency (us): p50=%d p95=%d p99=%d\n", gp50, gp95, gp99)
 }
 
 func example() {
