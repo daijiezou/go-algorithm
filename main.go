@@ -3,17 +3,106 @@ package main
 
 import (
 	"fmt"
+	"iter"
 	"math"
 	"slices"
 	"sort"
 	"time"
 )
 
+// Backward 返回一个逆序遍历切片的迭代器函数
+func Backward[E any](s []E) iter.Seq2[int, E] {
+	// 返回符合 iter.Seq2 签名的函数
+	return func(yield func(int, E) bool) {
+		// 从后往前遍历
+		for i := len(s) - 1; i >= 0; i-- {
+			// 调用 yield "产出" 索引和元素
+			// 如果 yield 返回 false，立即停止迭代
+			if !yield(i, s[i]) {
+				return
+			}
+		}
+	}
+}
+
 func main() {
-	defer func() {
-		innerRecover()
-	}()
-	fn1()
+	data := []string{"a", "b", "c"}
+
+	// ========== Push 模式示例 ==========
+	fmt.Println("========== Push 模式（迭代器推送数据） ==========")
+
+	// Push 方式1: 使用 for range（最常见）
+	fmt.Println("\n=== Push-1: for range ===")
+	for i, s := range Backward(data) {
+		fmt.Printf("Index: %d, Value: %s\n", i, s)
+		if i == 1 {
+			break
+		}
+	}
+
+	// Push 方式2: 手动调用迭代器
+	fmt.Println("\n=== Push-2: 手动调用 ===")
+	Backward(data)(func(i int, s string) bool {
+		fmt.Printf("手动处理 - Index: %d, Value: %s\n", i, s)
+		return i != 1 // 当 i == 1 时停止
+	})
+
+	// ========== Pull 模式示例 ==========
+	fmt.Println("\n========== Pull 模式（消费者拉取数据） ==========")
+
+	// Pull 方式1: 使用 iter.Pull2 转换为 Pull 模式
+	fmt.Println("\n=== Pull-1: 基本用法 ===")
+	next, stop := iter.Pull2(Backward(data))
+	defer stop() // 确保清理资源
+
+	// 手动拉取前两个元素
+	if i, s, ok := next(); ok {
+		fmt.Printf("第1次拉取 - Index: %d, Value: %s\n", i, s)
+	}
+	if i, s, ok := next(); ok {
+		fmt.Printf("第2次拉取 - Index: %d, Value: %s\n", i, s)
+	}
+
+	// Pull 方式2: 在循环中拉取
+	fmt.Println("\n=== Pull-2: 循环拉取 ===")
+	next2, stop2 := iter.Pull2(Backward(data))
+	defer stop2()
+
+	count := 0
+	for {
+		i, s, ok := next2()
+		if !ok {
+			break // 没有更多元素
+		}
+		fmt.Printf("拉取 #%d - Index: %d, Value: %s\n", count+1, i, s)
+		count++
+		if count >= 2 { // 只拉取前2个
+			break
+		}
+	}
+
+	// Pull 方式3: 条件拉取（跳过某些元素）
+	fmt.Println("\n=== Pull-3: 条件拉取 ===")
+	next3, stop3 := iter.Pull2(Backward(data))
+	defer stop3()
+
+	for {
+		i, s, ok := next3()
+		if !ok {
+			break
+		}
+		// 跳过索引为 1 的元素
+		if i == 1 {
+			fmt.Printf("跳过 Index: %d\n", i)
+			continue
+		}
+		fmt.Printf("处理 - Index: %d, Value: %s\n", i, s)
+	}
+
+	// Pull vs Push 对比
+	fmt.Println("\n=== 关键区别 ===")
+	fmt.Println("Push 模式: 迭代器控制节奏，通过 yield 推送数据")
+	fmt.Println("Pull 模式: 消费者控制节奏，通过 next() 主动拉取")
 }
 
 func innerRecover() {
