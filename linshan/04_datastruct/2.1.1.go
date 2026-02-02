@@ -108,3 +108,24 @@ func corpFlightBookings(bookings [][]int, n int) []int {
 	}
 	return res
 }
+
+func isZeroArray(nums []int, queries [][]int) bool {
+	if len(nums) == 0 {
+		return true
+	}
+	diff := make([]int, len(nums))
+	for _, t := range queries {
+		diff[t[0]]++
+		if t[1]+1 < len(nums) {
+			diff[t[1]+1]--
+		}
+	}
+	sum := 0
+	for i, x := range diff {
+		sum += x
+		if sum < nums[i] {
+			return false
+		}
+	}
+	return true
+}
