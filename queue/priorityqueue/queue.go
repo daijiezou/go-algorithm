@@ -6,6 +6,7 @@ type MaxPQ struct {
 }
 
 // NewMinPQ 初始化一个小顶堆
+// 堆顶是最小的元素
 func NewMinPQ(cap int) *MaxPQ {
 	// 索引 0 不用，所以多分配一个空间
 	pq := make([]int, cap+1)
@@ -38,9 +39,8 @@ func (mpq *MaxPQ) pop() int {
 
 /* 上浮第 x 个元素，以维护最小堆性质 */
 func (mpq *MaxPQ) swim(x int) {
-	// 查看是否比自己的父节点小
-	// 如果比自己的父节点小就与父节点交换位置
-	for x > 1 && mpq.more(mpq.parent(x), x) {
+	// 查看父节点是否大于自己，如果大于则交换
+	for x > 1 && (mpq.pq[mpq.parent(x)] > mpq.pq[x]) {
 		mpq.swap(mpq.parent(x), x)
 		x = mpq.parent(x)
 	}
@@ -49,17 +49,15 @@ func (mpq *MaxPQ) swim(x int) {
 /* 下沉第 x 个元素，以维护最小堆性质 */
 func (mpq *MaxPQ) sink(x int) {
 	for mpq.left(x) <= mpq.size {
-		min := mpq.left(x)
-		// 如果tempMin比左孩子更大，则重置一下min的值
-		if mpq.right(x) <= mpq.size && mpq.more(min, mpq.right(x)) {
-			min = mpq.right(x)
+		minIndex := mpq.left(x)
+		if mpq.right(x) <= mpq.size && mpq.pq[mpq.right(x)] < mpq.pq[minIndex] {
+			minIndex = mpq.right(x)
 		}
-		// 节点x比两个孩子都小，不必下沉了
-		if mpq.more(min, x) {
+		if mpq.pq[x] <= mpq.pq[minIndex] {
 			break
 		}
-		mpq.swap(x, min)
-		x = min
+		mpq.swap(x, minIndex)
+		x = minIndex
 	}
 }
 
@@ -68,11 +66,6 @@ func (mpq *MaxPQ) swap(i, j int) {
 	temp := mpq.pq[i]
 	mpq.pq[i] = mpq.pq[j]
 	mpq.pq[j] = temp
-}
-
-/* pq[i] 是否比 pq[j] 大？ */
-func (mpq *MaxPQ) more(i, j int) bool {
-	return mpq.pq[i] > mpq.pq[j]
 }
 
 // 父节点的索引

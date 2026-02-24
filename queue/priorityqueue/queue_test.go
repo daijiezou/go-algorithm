@@ -13,6 +13,9 @@ func TestNewMinPQ(t *testing.T) {
 	pq.insert(3)
 	fmt.Println(pq.pq)
 	fmt.Println(pq.pop())
+	fmt.Println(pq.pop())
+	fmt.Println(pq.pop())
+	fmt.Println(pq.pop())
 	fmt.Println(pq.pq)
 }
 
