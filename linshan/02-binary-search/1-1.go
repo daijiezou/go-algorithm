@@ -14,17 +14,46 @@ x>=9 相当于 x
 */
 
 // 适用于>=
+// lowerBound 返回最小的满足 nums[i] >= target 的下标 i
+// 如果数组为空，或者所有数都 < target，则返回 len(nums)
+// 要求 nums 是非递减的，即 nums[i] <= nums[i + 1]
 func lowerBound(nums []int, target int) int {
-	left, right := -1, len(nums)
-	for left+1 < right {
+	left, right := -1, len(nums) // 开区间 (left, right)
+	for left+1 < right {         // 区间不为空
+		// 循环不变量：
+		// nums[left] < target
+		// nums[right] >= target
 		mid := left + (right-left)/2
 		if nums[mid] >= target {
-			right = mid
+			right = mid // 范围缩小到 (left, mid)
 		} else {
-			left = mid
+			left = mid // 范围缩小到 (mid, right)
 		}
 	}
+	// 循环结束后 left+1 = right
+	// 此时 nums[left] < target 而 nums[right] >= target
+	// 所以 right 就是第一个 >= target 的元素下标
 	return right
+}
+
+func lowerBound2(nums []int, target int) int {
+	left, right := 0, len(nums)-1 // 闭区间 [left, right]
+	for left <= right {           // 区间不为空
+		// 循环不变量：
+		// nums[left-1] < target
+		// nums[right+1] >= target
+		mid := left + (right-left)/2
+		if nums[mid] >= target {
+			right = mid - 1 // 范围缩小到 [left, mid-1]
+		} else {
+			left = mid + 1 // 范围缩小到 [mid+1, right]
+		}
+	}
+	// 循环结束后 left = right+1
+	// 此时 nums[left-1] < target 而 nums[left] = nums[right+1] >= target
+	// 所以 left 就是第一个 >= target 的元素下标
+	// 或者return
+	return left
 }
 
 // 34. 在排序数组中查找元素的第一个和最后一个位置
@@ -97,7 +126,7 @@ func isPossibleToSplit(nums []int) bool {
 func findPeakElement(nums []int) int {
 	n := len(nums)
 	left := -1
-	right := n-1
+	right := n - 1
 	for left+1 < right {
 		mid := left + (right-left)/2
 		// mid要不在峰顶，要不在峰顶的右侧
