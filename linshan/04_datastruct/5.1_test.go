@@ -80,3 +80,63 @@ func Test_maximumProduct_2233(t *testing.T) {
 		})
 	}
 }
+
+func Test_smallestChair(t *testing.T) {
+	type args struct {
+		times        [][]int
+		targetFriend int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "!",
+			args: args{
+				times: [][]int{
+					{3, 10},
+					{1, 5},
+					{2, 6},
+				},
+				targetFriend: 0,
+			},
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := smallestChair(tt.args.times, tt.args.targetFriend); got != tt.want {
+				t.Errorf("smallestChair() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
+
+func Test_getNumberOfBacklogOrders(t *testing.T) {
+	type args struct {
+		orders [][]int
+	}
+	tests := []struct {
+		name string
+		args args
+		want int
+	}{
+		{
+			name: "1",
+			args: args{orders: [][]int{
+				{10, 5, 0},
+				{15, 2, 1},
+				{25, 1, 1},
+				{30, 4, 0},
+			}},
+			want: 6,
+		},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			if got := getNumberOfBacklogOrders(tt.args.orders); got != tt.want {
+				t.Errorf("getNumberOfBacklogOrders() = %v, want %v", got, tt.want)
+			}
+		})
+	}
+}
